@@ -1,0 +1,16 @@
+<footer class="footer">
+    <nav>
+        <ul>
+            {% for item in site.footer %}
+                <li>
+                    <a
+                        href="{{ item.url ?? path(item.path, item.params ?? {}) }}"
+                        {% if item.url is defined %}target="_blank"{% endif %}
+                    >
+                        <span>{{ item.label }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+</footer>

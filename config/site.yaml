@@ -1,0 +1,16 @@
+# Exposes any variables you need to access in your templates globally regarding your site:
+twig:
+    globals:
+        site:
+            title: "RémiJ"
+            description: "Développement web, spécialisé PHP et Symfony, basé à Champagne-en-Valromey"
+
+            menu:
+                - { path: 'home', label: 'Accueil' }
+                - { path: 'article_list', label: 'Articles', children: ['article_show'] }
+                - { path: 'page', params: { slug: 'contact' }, label: 'Me contacter' }
+
+            footer:
+                - { path: 'page', params: { slug: 'outils-et-partenaires' }, label: 'Outils et partenaires' }
+                - { path: 'page', params: { slug: 'mentions-legales' }, label: 'Mentions légales' }
+                - { path: 'page', params: { slug: 'contact' }, label: 'Me contacter' }

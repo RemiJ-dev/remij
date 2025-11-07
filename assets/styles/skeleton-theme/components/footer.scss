@@ -1,0 +1,18 @@
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin: $gutter * 2 0;
+  padding: $gutter 0;
+  border-top: 1px solid rgba($color-secondary, 0.33);
+
+  nav {
+    ul {
+      display: flex;
+      flex-direction: row;
+      gap: $gutter;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block meta_title "Articles pour le tag #" ~ tag ~ ' - ' ~ parent() %}
+
+{% block content %}
+    <h1>Articles pour le tag #{{ tag }}</h1>
+
+    <main class="articles">
+        {% for article in articles %}
+            <article class="row">
+                {% if article.image %}
+                    <div class="column-50 thumbnail">
+                        <img src="{{ article.image|glide_image_preset('article_thumbnail') }}" alt="{{ article.title }}" />
+                    </div>
+                {% endif %}
+
+                <div class="column content">
+                    <h2 class="article_header">
+                        <a href="{{ path('article_show', { article: article.slug }) }}">{{ article.title }}</a>
+                    </h2>
+                    <aside>{{ article.lastModifiedOrCreated|date('d/m/Y') }}</aside>
+
+                    <p>{{ article.description }}</p>
+
+                    <div>
+                        <a href="{{ path('article_show', { article: article.slug }) }}" class="button button-outline">
+                            Lire l'article "{{ article.title }}"
+                        </a>
+
+                        <aside>
+                            {% for articleTag in article.tags %}
+                                <a class="chip" href="{{ path('article_list_by_tag', {"tag": articleTag}) }}">#{{ articleTag|lower }}</a>
+                            {% endfor %}
+                        </aside>
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </main>
+{% endblock %}

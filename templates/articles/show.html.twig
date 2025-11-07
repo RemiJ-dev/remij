@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block meta_title article.title ~ ' - ' ~ parent() %}
+{% block meta_description article.description %}
+
+{% block content %}
+    <main class="article">
+        <nav>
+            <a href="{{ path('article_list') }}">← Retour à la liste des articles</a>
+        </nav>
+
+        <header>
+            {% if article.image %}
+                <div class="banner">
+                    <img src="{{ article.image|glide_image_preset('article_banner') }}" alt="{{ article.title }}" />
+                </div>
+            {% endif %}
+            <h1>{{ article.title }}</h1>
+        </header>
+
+        {% include 'articles/toc.html.twig' with { toc: article.tableOfContent } only %}
+
+        <article>
+            {{ article.content|raw }}
+        </article>
+
+        <footer>
+            <small>
+                Published le {{ article.publishedAt|date('d/m/Y') }}
+                par
+                {% for authorSlug in article.authors %}
+                    {% set author = content_get('App\\Model\\Author', authorSlug) %}
+                    {{ author.name -}}
+                    {%- if loop.length > 1 -%}
+                        {{ loop.revindex0 > 1 ? ', ' : '' }}
+                        {{ loop.revindex0 == 1 ? 'and ' : '' }}
+                    {% endif %}
+                {% endfor %}
+            </small>
+        </footer>
+
+        <nav class="row">
+            <div class="column">
+                <a href="{{ path('article_list') }}">← Retour à la liste des articles</a>
+            </div>
+            <div class="column">
+                {% if article.nextArticle %}
+                    {% set nextArticle = content_get('App\\Model\\Article', article.nextArticle) %}
+                    <a href="{{ path('article_show', { article: nextArticle.slug }) }}">
+                        ➜ Article suivant : « {{ nextArticle.title }} »
+                    </a>
+                {% endif %}
+            </div>
+        </nav>
+    </main>
+{% endblock %}

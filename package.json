@@ -1,0 +1,21 @@
+{
+    "name": "remij",
+    "version": "1.0.0",
+    "description": "Site de la société RémiJ",
+    "license": "MIT",
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/RemiJ-dev/remij.git"
+    },
+    "engines": {
+        "node": ">=24",
+        "npm": ">=11"
+    },
+    "devDependencies": {
+        "concurrently": "^6.2.0",
+        "core-js": "^3.23.0",
+        "eslint": "^7.29.0",
+        "eslint-plugin-json": "^3.0.0"
+    }
+}

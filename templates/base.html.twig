@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="{% block meta_locale app.request.locale %}" class="no-js">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block meta_title site.title %}</title>
+
+        {% block meta %}
+            <meta name="description" content="{% block meta_description site.description %}" />
+            <link rel="canonical" href="{{ app.request.uri }}" />
+        {% endblock %}
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles/app.scss') }}">
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ importmap('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        <div class="container">
+            {% block header %}
+                {% include 'layout/header.html.twig' %}
+            {% endblock %}
+
+            <main>
+                {% block content %}{% endblock %}
+            </main>
+
+            {% block footer %}
+                {% include 'layout/footer.html.twig' %}
+            {% endblock %}
+        </div>
+    </body>
+</html>
