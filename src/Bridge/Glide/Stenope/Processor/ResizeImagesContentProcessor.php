@@ -16,7 +16,7 @@ use Symfony\Component\Filesystem\Path;
 /**
  * Provide resized and optimized images, for retina devices as well, inside a specific content.
  */
-class ResizeImagesContentProcessor implements ProcessorInterface
+readonly class ResizeImagesContentProcessor implements ProcessorInterface
 {
     public function __construct(
         private ResizedUrlGenerator $resizedUrlGenerator,
@@ -25,7 +25,7 @@ class ResizeImagesContentProcessor implements ProcessorInterface
         private string $projectDir,
         private string $type,
         private string $preset,
-        private string $property = 'content'
+        private string $property = 'content',
     ) {
     }
 
@@ -138,6 +138,7 @@ class ResizeImagesContentProcessor implements ProcessorInterface
             return $imgPath;
         }
 
+        /** @var string $currentContentPath */
         $currentContentPath = $content->getMetadata()['path'];
 
         return Path::makeRelative(

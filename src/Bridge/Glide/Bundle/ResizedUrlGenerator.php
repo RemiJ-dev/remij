@@ -9,21 +9,24 @@ use League\Glide\Server;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class ResizedUrlGenerator
+readonly class ResizedUrlGenerator
 {
     public function __construct(
-        private readonly Server $server,
-        private readonly GlideUrlBuilder $glideUrlBuilder,
-        private readonly array $presetsNames = [],
-        private readonly bool $preGenerate = false,
-        private readonly LoggerInterface $logger = new NullLogger()
+        private Server $server,
+        private GlideUrlBuilder $glideUrlBuilder,
+        private array $presetsNames = [],
+        private bool $preGenerate = false,
+        private LoggerInterface $logger = new NullLogger(),
     ) {
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function withPreset(string $filename, string $preset, array $options = []): string
     {
         if (!\in_array($preset, $this->presetsNames, true)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new \InvalidArgumentException(\sprintf(
                 'Preset "%s" does not exists. Known presets are %s',
                 $preset,
                 json_encode($this->presetsNames, JSON_THROW_ON_ERROR),

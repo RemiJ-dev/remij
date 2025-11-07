@@ -36,7 +36,7 @@ class DefaultController extends AbstractController
         try {
             $page = $this->contentManager->getContent(Page::class, $slug);
         } catch (ContentNotFoundException $exception) {
-            throw $this->createNotFoundException(sprintf(
+            throw $this->createNotFoundException(\sprintf(
                 'Page not found. Did you forget to create a `content/pages/%s.md` file?',
                 $slug,
             ), $exception);

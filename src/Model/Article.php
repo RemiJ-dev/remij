@@ -23,12 +23,14 @@ class Article
         public string $title,
         public ?string $description,
         public string $content,
-        public ?string $image = null,
         public ?string $nextArticle,
+        /** @var array<int, Author> $authors */
         public array $authors,
+        /** @var array<int, string> $tags */
         public array $tags,
         #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
         public \DateTimeInterface $publishedAt,
+        public ?string $image = null,
         public ?\DateTimeInterface $lastModified = null,
         /** Automatically populated by {@link TableOfContentProcessor} */
         public ?TableOfContent $tableOfContent = null,

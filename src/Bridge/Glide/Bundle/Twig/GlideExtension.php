@@ -10,21 +10,21 @@ use Twig\TwigFilter;
 
 class GlideExtension extends AbstractExtension
 {
-    private ResizedUrlGenerator $resizedUrlGenerator;
-
-    public function __construct(ResizedUrlGenerator $resizer)
+    public function __construct(private readonly ResizedUrlGenerator $resizedUrlGenerator)
     {
-        $this->resizedUrlGenerator = $resizer;
     }
 
     public function getFilters(): array
     {
         return [
-            new TwigFilter('glide_image_resize', \Closure::fromCallable([$this, 'resizeImage'])),
-            new TwigFilter('glide_image_preset', \Closure::fromCallable([$this, 'resizeImageWithPreset'])),
+            new TwigFilter('glide_image_resize', $this->resizeImage(...)),
+            new TwigFilter('glide_image_preset', $this->resizeImageWithPreset(...)),
         ];
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function resizeImageWithPreset(string $filename, string $preset, array $options = []): string
     {
         return $this->resizedUrlGenerator->withPreset($filename, $preset, $options);

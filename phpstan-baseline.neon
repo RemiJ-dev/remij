@@ -1,0 +1,145 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#1 \$environment of class App\\Kernel constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: public/index.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\DecoratingApiServerFactory\:\:__construct\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/DecoratingApiServerFactory.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\DecoratingApiServerFactory\:\:createWithSkippedTypes\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/DecoratingApiServerFactory.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\DependencyInjection\\GlideExtension\:\:configureServer\(\) has parameter \$presets with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/DependencyInjection/GlideExtension.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\DependencyInjection\\GlideExtension\:\:configureServer\(\) has parameter \$skippedTypes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/DependencyInjection/GlideExtension.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_keys expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bridge/Glide/Bundle/DependencyInjection/GlideExtension.php
+
+		-
+			message: '#^Parameter \#2 \$source of method App\\Bridge\\Glide\\Bundle\\DependencyInjection\\GlideExtension\:\:configureServer\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bridge/Glide/Bundle/DependencyInjection/GlideExtension.php
+
+		-
+			message: '#^Parameter \#2 \$value of method Symfony\\Component\\DependencyInjection\\Container\:\:setParameter\(\) expects array\|bool\|float\|int\|string\|UnitEnum\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bridge/Glide/Bundle/DependencyInjection/GlideExtension.php
+
+		-
+			message: '#^Parameter \#3 \$cache of method App\\Bridge\\Glide\\Bundle\\DependencyInjection\\GlideExtension\:\:configureServer\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bridge/Glide/Bundle/DependencyInjection/GlideExtension.php
+
+		-
+			message: '#^Parameter \#4 \$cacheWithExtensions of method App\\Bridge\\Glide\\Bundle\\DependencyInjection\\GlideExtension\:\:configureServer\(\) expects bool, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bridge/Glide/Bundle/DependencyInjection/GlideExtension.php
+
+		-
+			message: '#^Parameter \#5 \$groupCacheInFolders of method App\\Bridge\\Glide\\Bundle\\DependencyInjection\\GlideExtension\:\:configureServer\(\) expects bool, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bridge/Glide/Bundle/DependencyInjection/GlideExtension.php
+
+		-
+			message: '#^Parameter \#6 \$presets of method App\\Bridge\\Glide\\Bundle\\DependencyInjection\\GlideExtension\:\:configureServer\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bridge/Glide/Bundle/DependencyInjection/GlideExtension.php
+
+		-
+			message: '#^Parameter \#7 \$skippedTypes of method App\\Bridge\\Glide\\Bundle\\DependencyInjection\\GlideExtension\:\:configureServer\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Bridge/Glide/Bundle/DependencyInjection/GlideExtension.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\GlideUrlBuilder\:\:buildUrl\(\) has parameter \$params with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/GlideUrlBuilder.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\ResizedUrlGenerator\:\:__construct\(\) has parameter \$presetsNames with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/ResizedUrlGenerator.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\ResizedUrlGenerator\:\:withOptions\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/ResizedUrlGenerator.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\ResizedUrlGenerator\:\:withPreset\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/ResizedUrlGenerator.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\SkippedTypes\:\:__construct\(\) has parameter \$skippedTypes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/SkippedTypes.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\SkippingMimeTypesApi\:\:run\(\) has parameter \$params with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/SkippingMimeTypesApi.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\Twig\\GlideExtension\:\:resizeImage\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/Twig/GlideExtension.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Bundle\\Twig\\GlideExtension\:\:resizeImageWithPreset\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Bundle/Twig/GlideExtension.php
+
+		-
+			message: '#^Method App\\Bridge\\Glide\\Stenope\\Processor\\ResizeImagesContentProcessor\:\:__invoke\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Bridge/Glide/Stenope/Processor/ResizeImagesContentProcessor.php
+
+		-
+			message: '#^Method App\\Stenope\\Processor\\AssetsProcessor\:\:__invoke\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Stenope/Processor/AssetsProcessor.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, mixed given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: tests/bootstrap.php

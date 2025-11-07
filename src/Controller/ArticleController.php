@@ -23,21 +23,27 @@ class ArticleController extends AbstractController
     {
         $articles = $this->manager->getContents(Article::class, ['publishedAt' => true], '_.isPublished()');
 
+        /** @var ?\DateTimeInterface $lastModified */
+        $lastModified = ContentUtils::max($articles, 'lastModifiedOrCreated');
+
         return $this->render('articles/list.html.twig', [
             'articles' => $articles,
-        ])->setLastModified(ContentUtils::max($articles, 'lastModifiedOrCreated'));
+        ])->setLastModified($lastModified);
     }
 
     #[Route('/tag/{tag}', name: 'list_by_tag')]
     public function listByTag(string $tag): Response
     {
-        $articles = $this->manager->getContents(Article::class, ['publishedAt' => true], '_.isPublished() and "'.$tag.'" in _.tags');
+        $articles = $this->manager->getContents(Article::class, ['publishedAt' => true], '_.isPublished() and "' . $tag . '" in _.tags');
+
+        /** @var ?\DateTimeInterface $lastModified */
+        $lastModified = ContentUtils::max($articles, 'lastModifiedOrCreated');
+
         return $this->render('articles/list_by_tag.html.twig', [
             'articles' => $articles,
             'tag' => $tag,
-        ])->setLastModified(ContentUtils::max($articles, 'lastModifiedOrCreated'));
+        ])->setLastModified($lastModified);
     }
-
 
     #[Route('/{article}', name: 'show', requirements: ['article' => '.+'])]
     public function show(Article $article): Response

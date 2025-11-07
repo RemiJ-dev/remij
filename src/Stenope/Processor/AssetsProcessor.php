@@ -14,17 +14,13 @@ use Stenope\Bundle\Service\AssetUtils;
  *
  * These changes could be made upstream (in Stenope)
  */
-class AssetsProcessor implements ProcessorInterface
+readonly class AssetsProcessor implements ProcessorInterface
 {
-    private AssetUtils $assetUtils;
-    private HtmlCrawlerManagerInterface $crawlers;
-    private string $property;
-
-    public function __construct(AssetUtils $assetUtils, HtmlCrawlerManagerInterface $crawlers, string $property = 'content')
-    {
-        $this->assetUtils = $assetUtils;
-        $this->crawlers = $crawlers;
-        $this->property = $property;
+    public function __construct(
+        private AssetUtils $assetUtils,
+        private HtmlCrawlerManagerInterface $crawlers,
+        private string $property = 'content',
+    ) {
     }
 
     public function __invoke(array &$data, Content $content): void
