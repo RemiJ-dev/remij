@@ -21,7 +21,7 @@ class ArticleController extends AbstractController
     #[Route('/', name: 'list')]
     public function list(): Response
     {
-        $articles = $this->manager->getContents(Article::class, ['publishedAt' => true], '_.isPublished()');
+        $articles = $this->manager->getContents(Article::class, ['publishedAt' => false], '_.isPublished()');
 
         /** @var ?\DateTimeInterface $lastModified */
         $lastModified = ContentUtils::max($articles, 'lastModifiedOrCreated');
@@ -34,7 +34,7 @@ class ArticleController extends AbstractController
     #[Route('/tag/{tag}', name: 'list_by_tag')]
     public function listByTag(string $tag): Response
     {
-        $articles = $this->manager->getContents(Article::class, ['publishedAt' => true], '_.isPublished() and "' . $tag . '" in _.tags');
+        $articles = $this->manager->getContents(Article::class, ['publishedAt' => false], '_.isPublished() and "' . $tag . '" in _.tags');
 
         /** @var ?\DateTimeInterface $lastModified */
         $lastModified = ContentUtils::max($articles, 'lastModifiedOrCreated');

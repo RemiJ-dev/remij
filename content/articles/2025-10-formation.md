@@ -16,7 +16,7 @@ Comme je l'ai mentionné dans [le premier article de ce blog](2025-08-init.md), 
 
 ## Expérience acquise
 
-Avec [Drakona](https://www.drakona.fr), j'ai pu travailler avec l'[organisme de formation Human Booster](https://humanbooster.com/), sur des parcours <abbr title="Developpeur Web et Web Mobile">DWWM</abbr> ou <abbr title="Concepteur Developpeur d'application">CDA</abbr>. Je suis surtout intervenu sur les modules PHP/Symfony, mais aussi sur quelques notions Linux ou sur la gestion de versions avec Git (+ GitHub). Les [supports de cours](https://drakoformation.github.io/cours/) sont toujours en ligne, même si les vidéos ne sont actuellement plus disponibles, pour la plupart.
+Avec [Drakona](https://www.drakona.fr), j'ai pu travailler avec l'[organisme de formation Human Booster](https://humanbooster.com/), sur des parcours <abbr title="Développeur Web et Web Mobile">DWWM</abbr> ou <abbr title="Concepteur Développeur d'application">CDA</abbr>. Je suis surtout intervenu sur les modules PHP/Symfony, mais aussi sur quelques notions Linux ou sur la gestion de versions avec Git (+ GitHub). Les [supports de cours](https://drakoformation.github.io/cours/) sont toujours en ligne, même si les vidéos ne sont actuellement plus disponibles, pour la plupart.
 
 J'ai tenu quelque temps une petite chaîne YouTube, [Drakolab](https://www.youtube.com/@drakolab) pour tenter de diffuser mes connaissances en PHP/Symfony, avec une grosse dizaine de vidéos sur le sujet (allant quand même de 15 minutes à... 2 heures), mais mes manières de faire ont beaucoup évoluées, Symfony aussi, et tout n'est plus d'actualité.
 

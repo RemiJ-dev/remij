@@ -20,7 +20,7 @@ class DefaultController extends AbstractController
     ) {
     }
 
-    #[Route('/', name: 'home')]
+    #[Route('/', name: 'page_home')]
     public function home(): Response
     {
         return $this->render('home.html.twig');
@@ -30,7 +30,7 @@ class DefaultController extends AbstractController
      * This route is used to display pages from `content/pages`.
      * Since this is a catch-all route, it has a very low priority.
      */
-    #[Route('/{slug}', name: 'page', requirements: ['slug' => '[^\.]+'], priority: -500)]
+    #[Route('/{slug}', name: 'page_content', requirements: ['slug' => '[^\.]+'], priority: -500)]
     public function page(string $slug): Response
     {
         try {

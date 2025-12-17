@@ -6,11 +6,11 @@ twig:
             description: "Développement web, spécialisé PHP et Symfony, basé à Champagne-en-Valromey"
 
             menu:
-                - { path: 'home', label: 'Accueil' }
+                - { path: 'page_home', label: 'Accueil' }
                 - { path: 'article_list', label: 'Articles', children: ['article_show'] }
-                - { path: 'page', params: { slug: 'contact' }, label: 'Me contacter' }
+                - { path: 'page_content', params: { slug: 'contact' }, label: 'Me contacter' }
 
             footer:
-                - { path: 'page', params: { slug: 'outils-et-partenaires' }, label: 'Outils et partenaires' }
-                - { path: 'page', params: { slug: 'mentions-legales' }, label: 'Mentions légales' }
-                - { path: 'page', params: { slug: 'contact' }, label: 'Me contacter' }
+                - { path: 'page_content', params: { slug: 'outils-et-partenaires' }, label: 'Outils et partenaires' }
+                - { path: 'page_content', params: { slug: 'mentions-legales' }, label: 'Mentions légales' }
+                - { path: 'page_content', params: { slug: 'contact' }, label: 'Me contacter' }

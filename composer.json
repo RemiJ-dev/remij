@@ -32,6 +32,7 @@
         "symfony/string": "7.3.*",
         "symfony/translation": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
+        "symfony/ux-turbo": "^2.31",
         "symfony/yaml": "7.3.*",
         "symfonycasts/sass-bundle": "^0.8",
         "twig/twig": "^3.22"

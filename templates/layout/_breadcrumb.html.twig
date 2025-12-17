@@ -1,0 +1,11 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for menuItem in breadcrumb() %}
+            <li class="breadcrumb-item{% if menuItem.isActive %} active{% endif %}"{% if menuItem.isActive %} aria-current="page"{% endif %}>
+                <a href="{{ path(menuItem.route, menuItem.routeParams) }}">
+                    {{ menuItem.label|default(pageTitle|default('')) }}
+                </a>
+            </li>
+        {% endfor %}
+    </ol>
+</nav>

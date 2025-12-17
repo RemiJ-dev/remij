@@ -1,6 +1,8 @@
-{% extends 'base.html.twig' %}
-
 {% set page = content_get('App\\Model\\Page', 'home') %}
+
+{% set pageTitle = page.title %}
+
+{% extends 'base.html.twig' %}
 
 {% block meta_title page.title %}
 

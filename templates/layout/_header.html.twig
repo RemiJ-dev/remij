@@ -1,0 +1,76 @@
+<header class="navbar navbar-expand-lg sticky-top bg-primary-subtle">
+    <nav class="container-fluid">
+        <a class="navbar-brand" href="{{ path('page_home') }}">{{ site.title }}</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                {% for item in site.menu %}
+                    {% set route = app.request.attributes.get( '_route' ) %}
+                    {% set isActive = item.path is defined and route == item.path or route in item.children|default([]) %}
+                    <li class="nav-item">
+                        <a
+                            href="{{ item.url ?? path(item.path, item.params|default({})) }}"
+                            class="nav-link{% if isActive %} active{% endif %}"
+                            {% if item.url is defined %}target="_blank"{% endif %}
+                        >
+                            {% if item.icon|default(false) %}
+                                <i class="icon icon--{{ item.icon }}" aria-hidden="true"></i>
+                            {% endif %}
+                            <span>{{ item.label }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <button
+                        class="btn btn-link nav-link px-0 px-lg-2 py-2 dropdown-toggle d-flex align-items-center"
+                        id="bd-theme"
+                        type="button"
+                        aria-expanded="false"
+                        data-bs-toggle="dropdown"
+                        data-bs-display="static"
+                        aria-label="Couleurs (auto)"
+                    >
+                        <span class="ms-2" id="bd-theme-text">Couleurs</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme-text">
+                        <li>
+                            <button
+                                type="button"
+                                class="dropdown-item d-flex align-items-center"
+                                data-bs-theme-value="light"
+                                aria-pressed="false"
+                            >
+                                Claires
+                            </button>
+                        </li>
+                        <li>
+                            <button
+                                type="button"
+                                class="dropdown-item d-flex align-items-center active"
+                                data-bs-theme-value="dark"
+                                aria-pressed="false"
+                            >
+                                Sombres
+                            </button>
+                        </li>
+                        <li>
+                            <button
+                                type="button"
+                                class="dropdown-item d-flex align-items-center"
+                                data-bs-theme-value="auto"
+                                aria-pressed="true"
+                            >
+                                Auto
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>

@@ -1,3 +1,5 @@
+{% set pageTitle = page.title %}
+
 {% extends 'base.html.twig' %}
 
 {% block meta_title page.title ~ ' - ' ~ parent() %}
@@ -11,6 +13,6 @@
     {{ page.content|raw }}
 
     <nav>
-        <a href="{{ path('home') }}">< Retour à l'accueil</a>
+        <a href="{{ path('page_home') }}">< Retour à l'accueil</a>
     </nav>
 {% endblock %}

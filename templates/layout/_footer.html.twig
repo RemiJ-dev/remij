@@ -1,0 +1,21 @@
+<footer class="footer">
+    <nav class="navbar sticky-bottom navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <ul class="navbar-nav">
+                {% set route = app.request.attributes.get( '_route' ) %}
+                {% for item in site.footer %}
+                    {% set isActive = item.path is defined and route == item.path or route in item.children|default([]) %}
+                    <li class="nav-item">
+                        <a
+                            href="{{ item.url ?? path(item.path, item.params ?? {}) }}"
+                            class="nav-link{% if isActive %} active{% endif %}"
+                            {% if item.url is defined %}target="_blank"{% endif %}
+                        >
+                            <span>{{ item.label }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+</footer>

@@ -9,4 +9,4 @@ stenope:
     resolve_links:
         #App\Model\Author: { route: 'author_show', slug: 'author' }
         App\Model\Article: { route: 'article_show', slug: 'article' }
-        App\Model\Page: { route: 'page', slug: 'slug' }
+        App\Model\Page: { route: 'page_content', slug: 'slug' }

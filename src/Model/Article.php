@@ -24,7 +24,7 @@ class Article
         public ?string $description,
         public string $content,
         public ?string $nextArticle,
-        /** @var array<int, Author> $authors */
+        /** @var array<int, string> $authors */
         public array $authors,
         /** @var array<int, string> $tags */
         public array $tags,

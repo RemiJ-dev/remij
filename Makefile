@@ -66,7 +66,6 @@ clear.cache:
 ## Build - Build assets
 build.assets: export APP_ENV = prod
 build.assets:
-	symfony console sass:build
 	symfony console asset-map:compile
 
 ## Build - Build static site

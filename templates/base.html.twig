@@ -1,5 +1,7 @@
+{% set pageTitle = pageTitle|default('') %}
+
 <!DOCTYPE html>
-<html lang="{% block meta_locale app.request.locale %}" class="no-js">
+<html lang="{% block meta_locale app.request.locale %}">
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,27 +13,26 @@
             <link rel="canonical" href="{{ app.request.uri }}" />
         {% endblock %}
 
-        {% block stylesheets %}
-            <link rel="stylesheet" href="{{ asset('styles/app.scss') }}">
-        {% endblock %}
-
         {% block javascripts %}
             {{ importmap('app') }}
         {% endblock %}
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles/app.scss') }}">
+        {% endblock %}
     </head>
     <body>
-        <div class="container">
-            {% block header %}
-                {% include 'layout/header.html.twig' %}
-            {% endblock %}
+        {% block header %}
+            {% include 'layout/_header.html.twig' %}
+        {% endblock %}
 
-            <main>
-                {% block content %}{% endblock %}
-            </main>
+        <main class="container main">
+            {% include 'layout/_breadcrumb.html.twig' %}
+            {% block content %}{% endblock %}
+        </main>
 
-            {% block footer %}
-                {% include 'layout/footer.html.twig' %}
-            {% endblock %}
-        </div>
+        {% block footer %}
+            {% include 'layout/_footer.html.twig' %}
+        {% endblock %}
     </body>
 </html>
