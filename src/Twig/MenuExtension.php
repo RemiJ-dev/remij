@@ -7,7 +7,6 @@ namespace App\Twig;
 use App\Menu\MenuBuilder;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Twig\TwigFilter;
 
 class MenuExtension extends AbstractExtension
 {

@@ -38,7 +38,7 @@ readonly class MenuBuilder
             ];
         }
 
-        if (\in_array($currentRoute, ['article_show', 'article_list_by_tag', 'article_list'])) {
+        if (\in_array($currentRoute, ['article_show', 'article_list_by_tag', 'article_list'], true)) {
             $breadcrumb[] = [
                 'route' => 'article_list',
                 'routeParams' => [],
@@ -48,7 +48,7 @@ readonly class MenuBuilder
             ];
         }
 
-        if (\in_array($currentRoute, ['article_show', 'article_list_by_tag'])) {
+        if (\in_array($currentRoute, ['article_show', 'article_list_by_tag'], true)) {
             $breadcrumb[] = [
                 'route' => $currentRoute,
                 'routeParams' => $currentRouteParams,
@@ -68,7 +68,7 @@ readonly class MenuBuilder
             return '';
         }
 
-        return (string) $route;
+        return $route;
     }
 
     /**
