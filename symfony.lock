@@ -54,24 +54,6 @@
             ".php-cs-fixer.dist.php"
         ]
     },
-    "guzzlehttp/psr7": {
-        "version": "1.7.0"
-    },
-    "intervention/image": {
-        "version": "2.5.1"
-    },
-    "league/flysystem": {
-        "version": "1.1.3"
-    },
-    "league/glide": {
-        "version": "1.7.0"
-    },
-    "league/glide-symfony": {
-        "version": "1.0.4"
-    },
-    "league/mime-type-detection": {
-        "version": "1.7.0"
-    },
     "masterminds/html5": {
         "version": "2.7.5"
     },
@@ -120,20 +102,11 @@
     "psr/event-dispatcher": {
         "version": "1.0.0"
     },
-    "psr/http-factory": {
-        "version": "1.0.1"
-    },
-    "psr/http-message": {
-        "version": "1.0.1"
-    },
     "psr/link": {
         "version": "1.0.0"
     },
     "psr/log": {
         "version": "1.1.3"
-    },
-    "ralouphie/getallheaders": {
-        "version": "3.0.3"
     },
     "stenope/stenope": {
         "version": "v0.1.0"

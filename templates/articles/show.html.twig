@@ -14,7 +14,7 @@
         <header>
             {% if article.image %}
                 <div class="banner">
-                    <img src="{{ article.image|glide_image_preset('article_banner') }}" alt="{{ article.title }}" />
+                    <img src="{{ article.image }}" alt="{{ article.title }}" />
                 </div>
             {% endif %}
             <h1>{{ article.title }}</h1>

@@ -19,15 +19,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Model/'
             - '../src/Kernel.php'
-            - '../src/Bridge/Glide/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    # Custom processor allowing to resize automatically the images found inside contents:
-    resize_images_content_processor.article:
-        class: App\Bridge\Glide\Stenope\Processor\ResizeImagesContentProcessor
-        arguments:
-            $type: App\Model\Article
-            $preset: article_content
-            $projectDir: '%kernel.project_dir%'

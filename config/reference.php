@@ -981,44 +981,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         },
  *     },
  * }
- * @psalm-type GlideConfig = array{
- *     base_url?: scalar|Param|null, // You can choose the path to use for the glide controller. // Default: null
- *     sign_key?: scalar|Param|null, // Default: null
- *     source: scalar|Param|null,
- *     group_cache_in_folders?: bool|Param, // Whether to group cached images in folders // Default: true
- *     cache_with_file_extensions?: bool|Param, // Whether to reuse the original extension inside generated cache path // Default: true
- *     cache: scalar|Param|null, // Where the resized images files are cached.
- *     pre_generate?: bool|Param, // Calling the Twig filters will pre-generate the images in cache before the request is served and return the public cache path directly. Use it to warmup the images cache when generating a static version of your site for instance. // Default: false
- *     public_dir?: scalar|Param|null, // The path to the web public dir // Default: "%kernel.project_dir%/public"
- *     skipped_types?: list<scalar|Param|null>,
- *     presets?: array<string, array{ // Default: []
- *         or?: scalar|Param|null, // Default: null
- *         crop?: scalar|Param|null, // Default: null
- *         w?: int|Param, // width // Default: null
- *         h?: int|Param, // height // Default: null
- *         fit?: scalar|Param|null, // Default: null
- *         dpr?: int|Param, // Default: null
- *         bri?: int|Param, // Default: null
- *         con?: int|Param, // Default: null
- *         gam?: float|Param, // Default: null
- *         sharp?: int|Param, // Default: null
- *         blur?: int|Param, // Default: null
- *         pixel?: int|Param, // Default: null
- *         filt?: scalar|Param|null, // Default: null
- *         mark?: scalar|Param|null, // Default: null
- *         markw?: scalar|Param|null, // Default: null
- *         markh?: scalar|Param|null, // Default: null
- *         markx?: scalar|Param|null, // Default: null
- *         marky?: scalar|Param|null, // Default: null
- *         markpad?: scalar|Param|null, // Default: null
- *         markpos?: scalar|Param|null, // Default: null
- *         markalpha?: scalar|Param|null, // Default: null
- *         bg?: scalar|Param|null, // Default: null
- *         border?: scalar|Param|null, // Default: null
- *         q?: int|Param, // Default: null
- *         fm?: scalar|Param|null, // Default: null
- *     }>,
- * }
  * @psalm-type SymfonycastsSassConfig = array{
  *     root_sass?: list<scalar|Param|null>,
  *     binary?: scalar|Param|null, // The Sass binary to use // Default: null
@@ -1059,7 +1021,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     twig?: TwigConfig,
  *     monolog?: MonologConfig,
  *     stenope?: StenopeConfig,
- *     glide?: GlideConfig,
  *     symfonycasts_sass?: SymfonycastsSassConfig,
  *     stimulus?: StimulusConfig,
  *     turbo?: TurboConfig,
@@ -1074,7 +1035,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         debug?: DebugConfig,
  *         maker?: MakerConfig,
  *         stenope?: StenopeConfig,
- *         glide?: GlideConfig,
  *         symfonycasts_sass?: SymfonycastsSassConfig,
  *         stimulus?: StimulusConfig,
  *         turbo?: TurboConfig,
@@ -1087,7 +1047,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig?: TwigConfig,
  *         monolog?: MonologConfig,
  *         stenope?: StenopeConfig,
- *         glide?: GlideConfig,
  *         symfonycasts_sass?: SymfonycastsSassConfig,
  *         stimulus?: StimulusConfig,
  *         turbo?: TurboConfig,
@@ -1102,7 +1061,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         monolog?: MonologConfig,
  *         debug?: DebugConfig,
  *         stenope?: StenopeConfig,
- *         glide?: GlideConfig,
  *         symfonycasts_sass?: SymfonycastsSassConfig,
  *         stimulus?: StimulusConfig,
  *         turbo?: TurboConfig,

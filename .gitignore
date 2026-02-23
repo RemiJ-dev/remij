@@ -19,10 +19,6 @@
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
 
-###> glide ###
-/public/resized
-###< glide ###
-
 ###> symfony/asset-mapper ###
 /public/assets/
 /assets/vendor
