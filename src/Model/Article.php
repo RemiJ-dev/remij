@@ -11,9 +11,6 @@ use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[SuggestedDebugQuery('Scheduled', filters: 'not _.isPublished()', orders: 'desc:publishedAt')]
-#[SuggestedDebugQuery('By author', filters: "'tom32i' in keys(_.authors)", orders: 'desc:publishedAt')]
-#[SuggestedDebugQuery('By tag', filters: "'stenope' in _.tags", orders: 'desc:publishedAt')]
-#[SuggestedDebugQuery('Matching slug', filters: "_.slug matches '/symfony/'", orders: 'desc:publishedAt')]
 class Article
 {
     use MetaTrait;
