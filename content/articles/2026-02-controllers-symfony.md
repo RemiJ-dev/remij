@@ -141,10 +141,10 @@ Je vois plusieurs avantages à cette seconde méthode :
 - des fichiers plus courts
 - moins d'injection de services inutilisés
 - possibilité d'utiliser l'héritage pour me préparer les basiques pour chaque type d'actions
-- un rangement qui me semble plus clair
+- un rangement qui me semble plus clair (fichiers et dossiers reflètent l'url des pages).
 
 Mais aussi certains inconvénients qui me font penser à ne pas utiliser cette méthode pour tous les projets :
-- pour une application avec beaucoup de <abbr title="Create Read Update Delete">CRUD</abbr>, la répétition va être infernale (un héritage bien défini peut aider, peut être ?)
+- pour une application avec beaucoup de <abbr title="Create Read Update Delete">CRUD</abbr>, la répétition va être infernale (un héritage bien défini peut aider, peut être)
 - l'obligation d'écrire soit même les fichiers (et ne pas utiliser les commandes `make:controller` et surtout `make:crud` de Symfony)
 - on multiplie très vite les fichiers
 
