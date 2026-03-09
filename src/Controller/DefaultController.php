@@ -46,7 +46,7 @@ class DefaultController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $email = new Email()
-                ->from($data->email)
+                ->from('contact@remij.dev')
                 ->to('bonjour@remij.dev')
                 ->replyTo($data->email)
                 ->subject('[Contact] ' . $data->subject)
@@ -72,6 +72,10 @@ class DefaultController extends AbstractController
     #[Route('/{slug}', name: 'page_content', requirements: ['slug' => '[^\.]+'], priority: -500)]
     public function page(string $slug): Response
     {
+        if ('home' === $slug) {
+            return $this->redirectToRoute('page_home');
+        }
+
         try {
             $page = $this->contentManager->getContent(Page::class, $slug);
         } catch (ContentNotFoundException $exception) {
@@ -79,10 +83,6 @@ class DefaultController extends AbstractController
                 'Page not found. Did you forget to create a `content/pages/%s.md` file?',
                 $slug,
             ), $exception);
-        }
-
-        if ('home' === $slug) {
-            return $this->redirectToRoute('page_home');
         }
 
         // You can create a custom template for each page, named after its slug,

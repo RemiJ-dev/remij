@@ -1,5 +1,5 @@
 ---
-title:          "Mentions légales"
+title:          "Outils et partenaires"
 publishedAt:    "2025-08-15"
 lastModified:   ~
 tableOfContent: false

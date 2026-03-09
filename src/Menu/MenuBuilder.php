@@ -29,7 +29,7 @@ readonly class MenuBuilder
             'isActive' => 'page_home' === $currentRoute,
         ];
 
-        if ('page_content' === $currentRoute) {
+        if ('page_content' === $currentRoute || 'page_contact' === $currentRoute) {
             $breadcrumb[] = [
                 'route' => $currentRoute,
                 'routeParams' => $currentRouteParams,
