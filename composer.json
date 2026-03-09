@@ -14,24 +14,29 @@
         "stenope/stenope": "0.x-dev",
         "symfony/asset": "7.4.*",
         "symfony/asset-mapper": "7.4.*",
+        "symfony/brevo-mailer": "7.4.*",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",
         "symfony/expression-language": "7.4.*",
         "symfony/flex": "^2.10",
+        "symfony/form": "7.4.*",
         "symfony/framework-bundle": "7.4.*",
         "symfony/intl": "7.4.*",
+        "symfony/mailer": "7.4.*",
         "symfony/mime": "7.4.*",
         "symfony/monolog-bundle": "^3.11",
         "symfony/process": "7.4.*",
         "symfony/property-access": "7.4.*",
         "symfony/property-info": "7.4.*",
         "symfony/runtime": "7.4.*",
+        "symfony/security-csrf": "7.4.*",
         "symfony/serializer": "7.4.*",
         "symfony/stimulus-bundle": "^2.32",
         "symfony/string": "7.4.*",
         "symfony/translation": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
         "symfony/ux-turbo": "^2.32",
+        "symfony/validator": "7.4.*",
         "symfony/yaml": "7.4.*",
         "symfonycasts/sass-bundle": "^0.9",
         "twig/twig": "^3.23"
@@ -105,7 +110,8 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.4.*"
+            "require": "7.4.*",
+            "docker": true
         }
     },
     "prefer-stable": true,

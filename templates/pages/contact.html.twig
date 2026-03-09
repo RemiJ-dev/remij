@@ -1,0 +1,19 @@
+{% set pageTitle = page.title %}
+
+{% extends 'base.html.twig' %}
+
+{% block meta_title page.title ~ ' - ' ~ parent() %}
+
+{% block content %}
+
+    {{ page.content|raw }}
+
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.subject) }}
+        {{ form_row(form.message) }}
+        <button type="submit" class="btn btn-primary">Envoyer</button>
+    {{ form_end(form) }}
+
+{% endblock %}

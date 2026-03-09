@@ -3,7 +3,7 @@ twig:
     globals:
         site:
             title: "RémiJ"
-            description: "Développement web, spécialisé PHP et Symfony, basé à Champagne-en-Valromey"
+            description: "Développement web, spécialisé PHP et Symfony, basé à Champagne-en-Valromey (01260)"
 
             menu:
                 - { path: 'page_home', label: 'Accueil' }

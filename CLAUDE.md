@@ -72,8 +72,13 @@ Content types and their source directories are configured in `config/packages/st
 
 - **Article** — blog posts with `slug`, `title`, `description`, `content`, `authors[]`, `tags[]`, `publishedAt`, `image`, `lastModified`, optional `tableOfContent`. Has `isPublished()` (based on `publishedAt` date).
 - **Author** — contributor profiles with `slug`, `name`, `avatar`, `active`, `since`.
-- **Page** — generic static pages. `DefaultController` looks for a template named `{slug}.html.twig` first, then falls back to `page.html.twig`.
+- **Page** — generic static pages. `DefaultController` looks for a template named `pages/{slug}.html.twig` first, then falls back to `pages/page.html.twig`.
 - **MetaTrait** — shared SEO/meta fields used by Article and Page.
+
+### Forms (`src/Form/`)
+
+- **ContactType** — Symfony form type for the contact page, bound to `ContactDTO`.
+- **DTO/ContactDTO** — data transfer object for the contact form with validator constraints (`NotBlank`, `Email`, `Length`).
 
 ### Content Files Format
 
@@ -93,7 +98,7 @@ A future `publishedAt` date means the article is not yet published (draft).
 
 ### Controllers (`src/Controller/`)
 
-- **DefaultController** — handles `/` (home) and `/{slug}` (catch-all for pages, priority -500).
+- **DefaultController** — handles `/` (home), `/contact` (GET+POST, sends email via Brevo), and `/{slug}` (catch-all for pages, priority -500).
 - **ArticleController** — handles `/articles/` (list), `/articles/tag/{tag}` (filter), `/articles/{article}` (show). Uses `ContentManagerInterface::getContents()` with Symfony Expression Language filters/orders.
 
 ### Custom Stenope Processor (`src/Stenope/Processor/`)
@@ -103,8 +108,8 @@ A future `publishedAt` date means the article is not yet published (draft).
 ### Templates (`templates/`)
 
 - `base.html.twig` / layout partials in `templates/layout/` — global layout with header, footer, breadcrumb.
+- `templates/pages/` — page templates: `home.html.twig`, `page.html.twig` (generic fallback), `contact.html.twig`. Custom page templates go here, named after the content slug.
 - `templates/articles/` — list, show, tag-filtered list, table of contents partial.
-- `home.html.twig`, `page.html.twig` — generic page templates.
 
 ### Assets (`assets/`)
 
