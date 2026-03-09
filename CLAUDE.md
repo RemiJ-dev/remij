@@ -46,7 +46,9 @@ make lint.container            # Lint Symfony DI container
 
 ### Test
 ```shell
-make test    # Basic test: runs build.content.without-images
+make test              # Basic test: runs build.content.without-images
+bin/phpunit            # Run PHPUnit tests (functional controller tests)
+bin/phpunit --testdox  # Run with human-readable output
 ```
 
 ### Cache
@@ -122,6 +124,16 @@ A future `publishedAt` date means the article is not yet published (draft).
 ### Site Configuration (`config/site.yaml`)
 
 Global site metadata (title, description) and navigation menus (main + footer) are defined here and exposed to all Twig templates via `{{ site }}` global.
+
+### Tests (`tests/`)
+
+- **PHPUnit 13** is used for functional tests via `bin/phpunit`.
+- `phpunit.xml.dist` uses `Symfony\Bridge\PhpUnit\SymfonyExtension` (replaces the old `SymfonyTestsListener`).
+- Tests use `WebTestCase` for functional (HTTP) controller testing.
+- Data providers use `symfony/finder` (`Finder`) to scan `content/` directories dynamically — no hardcoded slugs.
+- `tests/Controller/ArticleControllerTest.php` — tests `/articles/` list (200), all slugs from `content/articles/` (200 each), and a non-existent slug (`ContentNotFoundException` via `catchExceptions(false)`).
+- `tests/Controller/DefaultControllerTest.php` — tests `/` home (200), all slugs from `content/pages/` except `home` (redirects) and `contact` (dedicated route), and a non-existent slug (`NotFoundHttpException`).
+- Adding a new file to `content/` automatically adds a test case — no code change needed.
 
 ### Code Style Rules
 
