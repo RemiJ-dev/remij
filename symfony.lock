@@ -51,9 +51,6 @@
             ".php-cs-fixer.dist.php"
         ]
     },
-    "masterminds/html5": {
-        "version": "2.7.5"
-    },
     "monolog/monolog": {
         "version": "2.1.1"
     },
