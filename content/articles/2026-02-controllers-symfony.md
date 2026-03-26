@@ -128,7 +128,7 @@ class BlogShowAction
     }
     
     #[Route(path: '/article/{slug:article}', name: 'blog_show')]
-    public function show(Article $article, Request $request): Response
+    public function __invoke(Article $article, Request $request): Response
     {
         // Contenu de l'action
     }

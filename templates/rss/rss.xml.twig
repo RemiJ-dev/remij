@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="fr">
+
+    <title>{{ site.title }}</title>
+    <subtitle>{{ site.description }}</subtitle>
+    <link href="{{ url('rss') }}" rel="self" type="application/atom+xml"/>
+    <link href="{{ url('page_home') }}" rel="alternate" type="text/html"/>
+    <id>{{ url('page_home') }}</id>
+    <updated>{{ lastModified|date('Y-m-d\\TH:i:s\\Z') }}</updated>
+
+    {% for article in articles %}
+        <entry>
+            <title>{{ article.title }}</title>
+            <link href="{{ url('article_show', { article: article.slug }) }}" rel="alternate" type="text/html"/>
+            <id>{{ url('article_show', { article: article.slug }) }}</id>
+            <published>{{ article.publishedAt|date('Y-m-d\\TH:i:s\\Z') }}</published>
+            <updated>{{ article.lastModifiedOrCreated|date('Y-m-d\\TH:i:s\\Z') }}</updated>
+            {% if article.description %}
+                <summary type="text">{{ article.description }}</summary>
+            {% endif %}
+            {% for author in article.authors %}
+            <author>
+                <name>{{ author }}</name>
+            </author>
+            {% endfor %}
+            {% for tag in article.tags %}
+                <category term="{{ tag }}"/>
+            {% endfor %}
+        </entry>
+    {% endfor %}
+</feed>
