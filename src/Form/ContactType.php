@@ -21,17 +21,21 @@ class ContactType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom',
                 'attr' => ['autocomplete' => 'name'],
+                'translation_domain' => false,
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
                 'attr' => ['autocomplete' => 'email'],
+                'translation_domain' => false,
             ])
             ->add('subject', TextType::class, [
                 'label' => 'Sujet',
+                'translation_domain' => false,
             ])
             ->add('message', TextareaType::class, [
                 'label' => 'Message',
                 'attr' => ['rows' => 6],
+                'translation_domain' => false,
             ])
         ;
     }

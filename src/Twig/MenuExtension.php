@@ -10,7 +10,7 @@ use Twig\TwigFunction;
 
 class MenuExtension extends AbstractExtension
 {
-    public function __construct(private MenuBuilder $menuBuilder)
+    public function __construct(private readonly MenuBuilder $menuBuilder)
     {
     }
 

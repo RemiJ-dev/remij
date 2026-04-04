@@ -46,7 +46,7 @@ make lint.container            # Lint Symfony DI container
 
 ### Test
 ```shell
-make test              # Basic test: runs build.content.without-images
+make test              # Basic test: runs build.content.without-images and PHPUnit tests
 bin/phpunit            # Run PHPUnit tests (functional controller tests)
 bin/phpunit --testdox  # Run with human-readable output
 ```
@@ -102,6 +102,11 @@ A future `publishedAt` date means the article is not yet published (draft).
 
 - **DefaultController** — handles `/` (home), `/contact` (GET+POST, sends email via Brevo), and `/{slug}` (catch-all for pages, priority -500).
 - **ArticleController** — handles `/articles/` (list), `/articles/tag/{tag}` (filter), `/articles/{article}` (show). Uses `ContentManagerInterface::getContents()` with Symfony Expression Language filters/orders.
+- **RssAction** — handles `/rss.xml` (GET), returns an Atom feed of published articles with `Content-Type: application/atom+xml`.
+
+### Services (`src/Menu/`)
+
+- **MenuBuilder** — builds the breadcrumb for the current request. Reads `_route` and `_route_params` from `RequestStack`. Handles routes: `page_home`, `page_contact`, `page_content`, `article_list`, `article_list_by_tag`, `article_show`. Unhandled routes (e.g. `rss`) return only the home entry.
 
 ### Custom Stenope Processor (`src/Stenope/Processor/`)
 
@@ -127,13 +132,16 @@ Global site metadata (title, description) and navigation menus (main + footer) a
 
 ### Tests (`tests/`)
 
-- **PHPUnit 13** is used for functional tests via `bin/phpunit`.
+- **PHPUnit 13** is used for tests via `bin/phpunit`.
 - `phpunit.xml.dist` uses `Symfony\Bridge\PhpUnit\SymfonyExtension` (replaces the old `SymfonyTestsListener`).
-- Tests use `WebTestCase` for functional (HTTP) controller testing.
-- Data providers use `symfony/finder` (`Finder`) to scan `content/` directories dynamically — no hardcoded slugs.
+- **Every new service** in `src/` must have a corresponding unit test in `tests/` (mirroring the `src/` directory structure). Use plain `PHPUnit\Framework\TestCase` for services with no kernel dependency.
+- Controller tests use `WebTestCase` for functional (HTTP) testing. Service tests use `TestCase` with `RequestStack`/`Request` objects directly (no mocks needed for lightweight Symfony value objects).
+- Data providers use `symfony/finder` (`Finder`) to scan directories dynamically — no hardcoded slugs or route names.
 - `tests/Controller/ArticleControllerTest.php` — tests `/articles/` list (200), all slugs from `content/articles/` (200 each), and a non-existent slug (`ContentNotFoundException` via `catchExceptions(false)`).
 - `tests/Controller/DefaultControllerTest.php` — tests `/` home (200), all slugs from `content/pages/` except `home` (redirects) and `contact` (dedicated route), and a non-existent slug (`NotFoundHttpException`).
-- Adding a new file to `content/` automatically adds a test case — no code change needed.
+- `tests/Controller/RssActionTest.php` — tests `/rss.xml` (200, correct Content-Type, valid Atom XML, article count, ordering, Last-Modified header).
+- `tests/Menu/MenuBuilderTest.php` — unit tests for `MenuBuilder::breadcrumb()`. Data provider discovers routes dynamically from controller `#[Route]` attributes via PHP Reflection; asserts exact breadcrumb item count per route. `EXPECTED_BREADCRUMB_COUNTS` must be updated when a new controller route is added.
+- Adding a new file to `content/` automatically adds a controller test case — no code change needed.
 
 ### Code Style Rules
 

@@ -4,6 +4,7 @@
     "description": "Site de la société RémiJ",
     "license": "MIT",
     "private": true,
+    "type": "module",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/RemiJ-dev/remij.git"
@@ -13,9 +14,10 @@
         "npm": ">=11"
     },
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
         "concurrently": "^6.2.0",
         "core-js": "^3.23.0",
-        "eslint": "^10.1",
-        "eslint-plugin-json": "^3.1"
+        "eslint": "^10.2.0",
+        "globals": "^17.4.0"
     }
 }

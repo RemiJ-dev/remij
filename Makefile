@@ -133,10 +133,10 @@ lint.phpstan@integration:
 	symfony php vendor/bin/phpstan --no-progress --no-interaction analyse
 
 lint.eslint:
-	npx eslint assets --ext .js,.json --fix
+	npx eslint assets --fix
 
 lint.eslint@integration:
-	npx eslint assets --ext .js,.json
+	npx eslint assets
 
 ########
 # Test #

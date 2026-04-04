@@ -28,6 +28,9 @@ class RssActionTest extends WebTestCase
         self::assertResponseHeaderSame('Content-Type', 'application/atom+xml; charset=utf-8');
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testRssIsValidXmlWithFeedRoot(): void
     {
         $client = static::createClient();
@@ -41,6 +44,10 @@ class RssActionTest extends WebTestCase
         self::assertSame(self::ATOM_NS, $xml->getNamespaces()[''] ?? '');
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws \Exception
+     */
     public function testRssArticleCountMatchesPublishedArticles(): void
     {
         $client = static::createClient();
@@ -54,6 +61,10 @@ class RssActionTest extends WebTestCase
         self::assertCount(self::countPublishedArticles(), $entries);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws \Exception
+     */
     public function testRssArticlesAreInReverseChronologicalOrder(): void
     {
         $client = static::createClient();

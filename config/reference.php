@@ -895,7 +895,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             depth?: scalar|Param|null, // The directory depth for "files" providers. See "Symfony\Component\Finder\Finder::depth()" https://symfony.com/doc/current/components/finder.html#directory-depth // Default: null
  *             patterns?: list<scalar|Param|null>,
  *             excludes?: list<scalar|Param|null>,
- *             ...<mixed>
+ *             ...<string, mixed>
  *         },
  *     }>,
  *     resolve_links?: array<string, array{ // Default: []
