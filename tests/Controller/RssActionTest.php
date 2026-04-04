@@ -1,0 +1,173 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Yaml;
+
+class RssActionTest extends WebTestCase
+{
+    private const string ATOM_NS = 'http://www.w3.org/2005/Atom';
+
+    public function testRssReturns200(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/rss.xml');
+
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testRssContentTypeIsAtomXml(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/rss.xml');
+
+        self::assertResponseHeaderSame('Content-Type', 'application/atom+xml; charset=utf-8');
+    }
+
+    public function testRssIsValidXmlWithFeedRoot(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/rss.xml');
+
+        $content = $client->getResponse()->getContent();
+        self::assertNotFalse($content);
+
+        $xml = new \SimpleXMLElement($content);
+        self::assertSame('feed', $xml->getName());
+        self::assertSame(self::ATOM_NS, $xml->getNamespaces()[''] ?? '');
+    }
+
+    public function testRssArticleCountMatchesPublishedArticles(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/rss.xml');
+
+        $content = $client->getResponse()->getContent();
+        self::assertNotFalse($content);
+
+        $entries = $this->getEntries(new \SimpleXMLElement($content));
+
+        self::assertCount(self::countPublishedArticles(), $entries);
+    }
+
+    public function testRssArticlesAreInReverseChronologicalOrder(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/rss.xml');
+
+        $content = $client->getResponse()->getContent();
+        self::assertNotFalse($content);
+
+        $entries = $this->getEntries(new \SimpleXMLElement($content));
+
+        if (\count($entries) < 2) {
+            self::markTestSkipped('Not enough articles to test ordering.');
+        }
+
+        $dates = array_map(
+            fn (\SimpleXMLElement $entry): \DateTimeImmutable => new \DateTimeImmutable(
+                (string) $entry->children(self::ATOM_NS)->published,
+            ),
+            $entries,
+        );
+
+        for ($i = 0; $i < \count($dates) - 1; ++$i) {
+            self::assertGreaterThanOrEqual(
+                $dates[$i + 1],
+                $dates[$i],
+                \sprintf(
+                    'Article %d (%s) should be more recent than article %d (%s)',
+                    $i,
+                    $dates[$i]->format('Y-m-d'),
+                    $i + 1,
+                    $dates[$i + 1]->format('Y-m-d'),
+                ),
+            );
+        }
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     * @throws \Exception
+     */
+    public function testRssLastModifiedMatchesMostRecentArticle(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/rss.xml');
+
+        $content = $client->getResponse()->getContent();
+        self::assertNotFalse($content);
+
+        $xml = new \SimpleXMLElement($content);
+
+        $feedUpdated = new \DateTimeImmutable(
+            (string) $xml->children(self::ATOM_NS)->updated,
+        );
+
+        $entries = $this->getEntries($xml);
+        self::assertNotEmpty($entries, 'Feed must contain at least one entry.');
+
+        $maxEntryDate = null;
+        foreach ($entries as $entry) {
+            $date = new \DateTimeImmutable((string) $entry->children(self::ATOM_NS)->updated);
+            if (null === $maxEntryDate || $date > $maxEntryDate) {
+                $maxEntryDate = $date;
+            }
+        }
+        self::assertNotNull($maxEntryDate);
+
+        self::assertEquals($maxEntryDate, $feedUpdated);
+    }
+
+    /** @return list<\SimpleXMLElement> */
+    private function getEntries(\SimpleXMLElement $xml): array
+    {
+        $entries = [];
+
+        foreach ($xml->children(self::ATOM_NS) as $child) {
+            if ('entry' === $child->getName()) {
+                $entries[] = $child;
+            }
+        }
+
+        return $entries;
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    private static function countPublishedArticles(): int
+    {
+        $now = new \DateTimeImmutable();
+        $count = 0;
+
+        $files = new Finder()->files()->name('*.md')->in(__DIR__ . '/../../content/articles/');
+
+        foreach ($files as $file) {
+            $rawContent = $file->getContents();
+
+            if (1 !== preg_match('/^---\n(.*?)\n---/s', $rawContent, $matches)) {
+                continue;
+            }
+
+            /** @var array{publishedAt?: string} $frontMatter */
+            $frontMatter = Yaml::parse($matches[1]);
+
+            if (!isset($frontMatter['publishedAt'])) {
+                continue;
+            }
+
+            $publishedAt = new \DateTimeImmutable($frontMatter['publishedAt']);
+
+            if ($now >= $publishedAt) {
+                ++$count;
+            }
+        }
+
+        return $count;
+    }
+}
