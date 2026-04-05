@@ -4,7 +4,6 @@
     "description": "Site de la société RémiJ",
     "license": "MIT",
     "private": true,
-    "type": "module",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/RemiJ-dev/remij.git"
