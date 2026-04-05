@@ -18,14 +18,14 @@
 
                 <div class="column content">
                     <h2 class="article_header">
-                        <a href="{{ path('article_show', { article: article.slug }) }}">{{ article.title }}</a>
+                        <a href="{{ path('article_show', { slug: article.slug }) }}">{{ article.title }}</a>
                     </h2>
                     <aside>{{ article.lastModifiedOrCreated|date('d/m/Y') }}</aside>
 
                     <p>{{ article.description }}</p>
 
                     <div>
-                        <a href="{{ path('article_show', { article: article.slug }) }}" class="button button-outline">
+                        <a href="{{ path('article_show', { slug: article.slug }) }}" class="button button-outline">
                             Lire l'article "{{ article.title }}"
                         </a>
 

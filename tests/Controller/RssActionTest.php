@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
+use App\Model\Article;
+use Stenope\Bundle\ContentManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Yaml\Yaml;
 
 class RssActionTest extends WebTestCase
 {
@@ -45,7 +45,6 @@ class RssActionTest extends WebTestCase
     }
 
     /**
-     * @throws \DateMalformedStringException
      * @throws \Exception
      */
     public function testRssArticleCountMatchesPublishedArticles(): void
@@ -58,7 +57,11 @@ class RssActionTest extends WebTestCase
 
         $entries = $this->getEntries(new \SimpleXMLElement($content));
 
-        self::assertCount(self::countPublishedArticles(), $entries);
+        $manager = static::getContainer()->get(ContentManagerInterface::class);
+
+        $publishedArticles = $manager->getContents(Article::class, ['publishedAt' => false], '_.isPublished()');
+
+        self::assertCount(\count($publishedArticles), $entries);
     }
 
     /**
@@ -146,39 +149,5 @@ class RssActionTest extends WebTestCase
         }
 
         return $entries;
-    }
-
-    /**
-     * @throws \DateMalformedStringException
-     */
-    private static function countPublishedArticles(): int
-    {
-        $now = new \DateTimeImmutable();
-        $count = 0;
-
-        $files = new Finder()->files()->name('*.md')->in(__DIR__ . '/../../content/articles/');
-
-        foreach ($files as $file) {
-            $rawContent = $file->getContents();
-
-            if (1 !== preg_match('/^---\n(.*?)\n---/s', $rawContent, $matches)) {
-                continue;
-            }
-
-            /** @var array{publishedAt?: string} $frontMatter */
-            $frontMatter = Yaml::parse($matches[1]);
-
-            if (!isset($frontMatter['publishedAt'])) {
-                continue;
-            }
-
-            $publishedAt = new \DateTimeImmutable($frontMatter['publishedAt']);
-
-            if ($now >= $publishedAt) {
-                ++$count;
-            }
-        }
-
-        return $count;
     }
 }

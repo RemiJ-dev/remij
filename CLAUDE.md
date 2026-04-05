@@ -74,7 +74,7 @@ Content types and their source directories are configured in `config/packages/st
 
 - **Article** — blog posts with `slug`, `title`, `description`, `content`, `authors[]`, `tags[]`, `publishedAt`, `image`, `lastModified`, optional `tableOfContent`. Has `isPublished()` (based on `publishedAt` date).
 - **Author** — contributor profiles with `slug`, `name`, `avatar`, `active`, `since`.
-- **Page** — generic static pages. `DefaultController` looks for a template named `pages/{slug}.html.twig` first, then falls back to `pages/page.html.twig`.
+- **Page** — generic static pages. `Page/ContentAction` looks for a template named `pages/{slug}.html.twig` first, then falls back to `pages/page.html.twig`.
 - **MetaTrait** — shared SEO/meta fields used by Article and Page.
 
 ### Forms (`src/Form/`)
@@ -100,13 +100,23 @@ A future `publishedAt` date means the article is not yet published (draft).
 
 ### Controllers (`src/Controller/`)
 
-- **DefaultController** — handles `/` (home), `/contact` (GET+POST, sends email via Brevo), and `/{slug}` (catch-all for pages, priority -500).
-- **ArticleController** — handles `/articles/` (list), `/articles/tag/{tag}` (filter), `/articles/{article}` (show). Uses `ContentManagerInterface::getContents()` with Symfony Expression Language filters/orders.
-- **RssAction** — handles `/rss.xml` (GET), returns an Atom feed of published articles with `Content-Type: application/atom+xml`.
+One file per action, organized in subdirectories. Each action is a `readonly class` with a single `__invoke()` method, except `ContactAction` which extends `AbstractController` (for form/flash/redirect helpers).
+
+**Route naming convention:** routes are prefixed by their subdirectory name (e.g. `seo_robots`, `seo_sitemap`). Top-level actions (e.g. `RssAction`) have no prefix.
+
+- **`Page/HomeAction`** — `GET /` → `page_home`
+- **`Page/ContactAction`** — `GET|POST /contact` → `page_contact` (sends email via Brevo)
+- **`Page/ContentAction`** — `GET /{slug}` → `page_content` (catch-all, priority -500; redirects `home` slug to `page_home`)
+- **`Article/ListAction`** — `GET /articles/` → `article_list`
+- **`Article/ListByTagAction`** — `GET /articles/tag/{tag}` → `article_list_by_tag`
+- **`Article/ShowAction`** — `GET /articles/{slug:article}` → `article_show`
+- **`RssAction`** — `GET /rss.xml` → `rss`, returns Atom feed with `Content-Type: application/atom+xml`
+- **`Seo/RobotsAction`** — `GET /robots.txt` → `seo_robots`
+- **`Seo/SitemapAction`** — `GET /sitemap.xml` → `seo_sitemap`, lists all public URLs (articles, pages, tags) except `seo_robots` and `seo_sitemap` themselves
 
 ### Services (`src/Menu/`)
 
-- **MenuBuilder** — builds the breadcrumb for the current request. Reads `_route` and `_route_params` from `RequestStack`. Handles routes: `page_home`, `page_contact`, `page_content`, `article_list`, `article_list_by_tag`, `article_show`. Unhandled routes (e.g. `rss`) return only the home entry.
+- **MenuBuilder** — builds the breadcrumb for the current request. Reads `_route` and `_route_params` from `RequestStack`. Handles routes: `page_home`, `page_contact`, `page_content`, `article_list`, `article_list_by_tag`, `article_show`. Unhandled routes (e.g. `rss`, `seo_robots`, `seo_sitemap`) return only the home entry.
 
 ### Custom Stenope Processor (`src/Stenope/Processor/`)
 
@@ -117,6 +127,7 @@ A future `publishedAt` date means the article is not yet published (draft).
 - `base.html.twig` / layout partials in `templates/layout/` — global layout with header, footer, breadcrumb.
 - `templates/pages/` — page templates: `home.html.twig`, `page.html.twig` (generic fallback), `contact.html.twig`. Custom page templates go here, named after the content slug.
 - `templates/articles/` — list, show, tag-filtered list, table of contents partial.
+- `templates/seo/` — `robots.txt.twig`, `sitemap.xml.twig`.
 
 ### Assets (`assets/`)
 
@@ -140,7 +151,10 @@ Global site metadata (title, description) and navigation menus (main + footer) a
 - `tests/Controller/ArticleControllerTest.php` — tests `/articles/` list (200), all slugs from `content/articles/` (200 each), and a non-existent slug (`ContentNotFoundException` via `catchExceptions(false)`).
 - `tests/Controller/DefaultControllerTest.php` — tests `/` home (200), all slugs from `content/pages/` except `home` (redirects) and `contact` (dedicated route), and a non-existent slug (`NotFoundHttpException`).
 - `tests/Controller/RssActionTest.php` — tests `/rss.xml` (200, correct Content-Type, valid Atom XML, article count, ordering, Last-Modified header).
-- `tests/Menu/MenuBuilderTest.php` — unit tests for `MenuBuilder::breadcrumb()`. Data provider discovers routes dynamically from controller `#[Route]` attributes via PHP Reflection; asserts exact breadcrumb item count per route. `EXPECTED_BREADCRUMB_COUNTS` must be updated when a new controller route is added.
+- `tests/Controller/RobotsActionTest.php` — tests `/robots.txt` (200).
+- `tests/Controller/SitemapActionTest.php` — tests `/sitemap.xml` (200) and verifies every expected URL is present: static routes discovered via `#[Route]` attributes (excluding `Seo/` controllers and non-HTML routes), plus one URL per published article, tag, and page.
+- `tests/Menu/MenuBuilderTest.php` — unit tests for `MenuBuilder::breadcrumb()`. Data provider discovers routes dynamically from controller `#[Route]` attributes via PHP Reflection (using `RouteDiscoveryTrait`); asserts exact breadcrumb item count per route. `EXPECTED_BREADCRUMB_COUNTS` must be updated when a new controller route is added.
+- `tests/Helper/RouteDiscoveryTrait.php` — shared trait that scans `src/Controller/` via Reflection to extract route names, paths, and parameter names. Supports excluding subdirectories and handles `{param:mapping}` syntax.
 - Adding a new file to `content/` automatically adds a controller test case — no code change needed.
 
 ### Code Style Rules

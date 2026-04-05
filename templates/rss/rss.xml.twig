@@ -11,8 +11,8 @@
     {% for article in articles %}
         <entry>
             <title>{{ article.title }}</title>
-            <link href="{{ url('article_show', { article: article.slug }) }}" rel="alternate" type="text/html"/>
-            <id>{{ url('article_show', { article: article.slug }) }}</id>
+            <link href="{{ url('article_show', { slug: article.slug }) }}" rel="alternate" type="text/html"/>
+            <id>{{ url('article_show', { slug: article.slug }) }}</id>
             <published>{{ article.publishedAt|date('Y-m-d\\TH:i:s\\Z') }}</published>
             <updated>{{ article.lastModifiedOrCreated|date('Y-m-d\\TH:i:s\\Z') }}</updated>
             {% if article.description %}

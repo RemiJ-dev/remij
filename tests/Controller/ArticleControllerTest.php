@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
+use App\Model\Article;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Stenope\Bundle\ContentManagerInterface;
 use Stenope\Bundle\Exception\ContentNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Finder\Finder;
 
 class ArticleControllerTest extends WebTestCase
 {
@@ -22,13 +23,17 @@ class ArticleControllerTest extends WebTestCase
     /** @return array<string, array{string}> */
     public static function existingArticleSlugs(): array
     {
+        self::bootKernel();
+
+        $manager = static::getContainer()->get(ContentManagerInterface::class);
+
+        $articles = $manager->getContents(Article::class);
+
+        self::ensureKernelShutdown();
+
         $slugs = [];
-
-        $files = new Finder()->files()->name('*.md')->in(__DIR__ . '/../../content/articles/');
-
-        foreach ($files as $file) {
-            $slug = $file->getFilenameWithoutExtension();
-            $slugs[$slug] = [$slug];
+        foreach ($articles as $article) {
+            $slugs[$article->slug] = [$article->slug];
         }
 
         return $slugs;

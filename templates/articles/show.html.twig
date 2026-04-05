@@ -48,7 +48,7 @@
             <div class="column">
                 {% if article.nextArticle %}
                     {% set nextArticle = content_get('App\\Model\\Article', article.nextArticle) %}
-                    <a href="{{ path('article_show', { article: nextArticle.slug }) }}">
+                    <a href="{{ path('article_show', { slug: nextArticle.slug }) }}">
                         ➜ Article suivant : « {{ nextArticle.title }} »
                     </a>
                 {% endif %}

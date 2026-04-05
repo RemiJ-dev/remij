@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Tests\Menu;
 
 use App\Menu\MenuBuilder;
+use App\Tests\Helper\RouteDiscoveryTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Attribute\Route;
 
 #[CoversClass(MenuBuilder::class)]
 class MenuBuilderTest extends TestCase
 {
+    use RouteDiscoveryTrait;
     /** @var array<string, int> */
     private const array EXPECTED_BREADCRUMB_COUNTS = [
         'page_home' => 1,
@@ -25,6 +25,8 @@ class MenuBuilderTest extends TestCase
         'article_list_by_tag' => 3,
         'article_show' => 3,
         'rss' => 1,
+        'seo_robots' => 1,
+        'seo_sitemap' => 1,
     ];
 
     /**
@@ -32,63 +34,21 @@ class MenuBuilderTest extends TestCase
      */
     public static function routeBreadcrumbData(): array
     {
-        $controllerDir = \dirname(__DIR__, 2) . '/src/Controller';
-        $finder = new Finder()->files()->in($controllerDir)->name('*.php');
+        $routes = self::discoverControllerRoutes(\dirname(__DIR__, 2) . '/src/Controller');
 
         $cases = [];
 
-        foreach ($finder as $file) {
-            $content = $file->getContents();
+        foreach ($routes as $route) {
+            $routeParams = array_fill_keys($route['params'], 'test-value');
 
-            preg_match('/^namespace\s+(\S+);/m', $content, $nsMatch);
-            preg_match('/^(?:readonly\s+)?class\s+(\w+)/m', $content, $classMatch);
-
-            if (!isset($nsMatch[1], $classMatch[1])) {
-                continue;
+            if (!\array_key_exists($route['name'], self::EXPECTED_BREADCRUMB_COUNTS)) {
+                throw new \LogicException(\sprintf(
+                    'Route "%s" is missing from EXPECTED_BREADCRUMB_COUNTS. Please update the test.',
+                    $route['name'],
+                ));
             }
 
-            $className = $nsMatch[1] . '\\' . $classMatch[1];
-            if (!class_exists($className)) {
-                continue;
-            }
-
-            $refClass = new \ReflectionClass($className);
-
-            $classNamePrefix = '';
-            $classPathPrefix = '';
-            foreach ($refClass->getAttributes(Route::class) as $classAttr) {
-                $instance = $classAttr->newInstance();
-                $classNamePrefix = $instance->name ?? '';
-                $classPathPrefix = \is_string($instance->path) ? $instance->path : '';
-            }
-
-            foreach ($refClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-                if ($method->getDeclaringClass()->getName() !== $className) {
-                    continue;
-                }
-
-                foreach ($method->getAttributes(Route::class) as $methodAttr) {
-                    $instance = $methodAttr->newInstance();
-                    if (!\is_string($instance->path)) {
-                        continue;
-                    }
-
-                    $routeName = $classNamePrefix . ($instance->name ?? '');
-                    $fullPath = $classPathPrefix . $instance->path;
-
-                    preg_match_all('/\{(\w+)}/', $fullPath, $matches);
-                    $routeParams = array_fill_keys($matches[1], 'test-value');
-
-                    if (!\array_key_exists($routeName, self::EXPECTED_BREADCRUMB_COUNTS)) {
-                        throw new \LogicException(\sprintf(
-                            'Route "%s" is missing from EXPECTED_BREADCRUMB_COUNTS. Please update the test.',
-                            $routeName,
-                        ));
-                    }
-
-                    $cases[$routeName] = [$routeName, $routeParams, self::EXPECTED_BREADCRUMB_COUNTS[$routeName]];
-                }
-            }
+            $cases[$route['name']] = [$route['name'], $routeParams, self::EXPECTED_BREADCRUMB_COUNTS[$route['name']]];
         }
 
         return $cases;

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>{{ url('page_home') }}</loc>
+    </url>
+
+    <url>
+        <loc>{{ url('page_contact') }}</loc>
+    </url>
+
+    <url>
+        <loc>{{ url('article_list') }}</loc>
+        {% if articlesLastModified %}<lastmod>{{ articlesLastModified|date('Y-m-d') }}</lastmod>{% endif %}
+    </url>
+
+    {% for article in articles %}
+    <url>
+        <loc>{{ url('article_show', { slug: article.slug }) }}</loc>
+        <lastmod>{{ article.lastModifiedOrCreated|date('Y-m-d') }}</lastmod>
+    </url>
+    {% endfor %}
+
+    {% for page in pages %}
+    <url>
+        <loc>{{ url('page_content', { slug: page.slug }) }}</loc>
+        <lastmod>{{ (page.lastModified ?? page.publishedAt)|date('Y-m-d') }}</lastmod>
+    </url>
+    {% endfor %}
+
+    {% for tag, lastmod in tags %}
+    <url>
+        <loc>{{ url('article_list_by_tag', { tag: tag }) }}</loc>
+        <lastmod>{{ lastmod|date('Y-m-d') }}</lastmod>
+    </url>
+    {% endfor %}
+
+</urlset>

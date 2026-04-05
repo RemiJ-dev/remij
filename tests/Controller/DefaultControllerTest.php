@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
+use App\Model\Page;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Stenope\Bundle\ContentManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DefaultControllerTest extends WebTestCase
@@ -29,18 +30,21 @@ class DefaultControllerTest extends WebTestCase
     public static function existingPageSlugs(): array
     {
         $excluded = ['home', 'contact'];
+
+        self::bootKernel();
+
+        $manager = static::getContainer()->get(ContentManagerInterface::class);
+
+        $pages = $manager->getContents(Page::class);
+
+        self::ensureKernelShutdown();
+
         $slugs = [];
-
-        $files = new Finder()->files()->name('*.md')->in(__DIR__ . '/../../content/pages/');
-
-        foreach ($files as $file) {
-            $slug = $file->getFilenameWithoutExtension();
-
-            if (\in_array($slug, $excluded, true)) {
+        foreach ($pages as $page) {
+            if (\in_array($page->slug, $excluded, true)) {
                 continue;
             }
-
-            $slugs[$slug] = [$slug];
+            $slugs[$page->slug] = [$page->slug];
         }
 
         return $slugs;
