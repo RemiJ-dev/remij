@@ -23,10 +23,10 @@ return [
         'version' => '3.2.2',
     ],
     'path-to-regexp' => [
-        'version' => '6.3.0',
+        'version' => '8.4.2',
     ],
     '@hotwired/turbo' => [
-        'version' => '7.3.0',
+        'version' => '8.0.23',
     ],
     'bootstrap' => [
         'version' => '5.3.8',

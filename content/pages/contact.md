@@ -8,4 +8,4 @@ authors:        ["remij"]
 
 # Me contacter
 
-Pour me contacter, vous pouvez [m'envoyer un email](mailto:bonjour@remij.dev) ou remplir le formulaire de contact suivant. Rien n'est stocké sur ce site, le formulaire m'envoie un email directement.
+Pour me contacter, vous pouvez [m'envoyer un e-mail](mailto:bonjour@remij.dev) ou remplir le formulaire de contact suivant. Rien n'est stocké sur ce site, le formulaire m'envoie un e-mail directement.

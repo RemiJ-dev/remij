@@ -10,7 +10,7 @@ tags:           ["Symfony","technique","tutoriel","réflexion"]
 
 Voilà quelques années que j'utilise Symfony (juillet 2011, ça ne me rajeunit pas) et, ces derniers mois, je me rends compte que je n'ai presque jamais remis en cause certaines pratiques.
 
-Dans cette série d'articles, je vais revenir sur différemment points du framework, ma manière de l'utiliser et vous présenter quelques idées de changements. Comme c'est un espace de réflexion et d'analyse, les retours sont bienvenus, que ce soit [par email](mailto:contact@remij.dev) ou sur [mon Mattermost](https://chat.remij.dev/signup_user_complete/?id=croru1qgqtgauy8z36yjqc835y).
+Dans cette série d'articles, je vais revenir sur différents points du framework, ma manière de l'utiliser et vous présenter quelques idées de changements. Comme c'est un espace de réflexion et d'analyse, les retours sont bienvenus, que ce soit [par e-mail](mailto:contact@remij.dev) ou sur [mon Mattermost](https://chat.remij.dev/signup_user_complete/?id=croru1qgqtgauy8z36yjqc835y).
 
 ## Utilisation des controllers aujourd'hui
 
@@ -27,14 +27,14 @@ Le but d'un controller restant, pour moi, de recevoir une requête et de renvoye
 
 Historiquement, j'ai mis beaucoup de choses dans mes actions (méthodes de controller) et me suis régulièrement retrouvé avec des controllers de plusieurs centaines de lignes (voir un bon millier), ce qui les rend très difficiles à relire et manipuler. En tant que services (parce que je les considère comme tels), ces controllers se retrouvent donc à faire nettement plus que leur travail initial de chef d'orchestre !
 
-Une "astuce" que j'ai pu utiliser est la présence d'un "méga-service", très volumineux et contenant toute la logique pour un controller, mais ça n'est pas une solution qui me semble plus viable sur le long terme, mais c'est un autre sujet ;).
+Une « astuce » que j'ai pu utiliser est la présence d'un « méga-service », très volumineux et contenant toute la logique pour un controller, mais ça n'est pas une solution qui me semble plus viable sur le long terme, mais c'est un autre sujet ;).
 
 
 ### Routing intégré
 
 Ayant utilisé la configuration des routes au format `.yaml` pendant longtemps, je reviens aujourd'hui à la définition des routes par attributs et... c'est un soulagement pour moi !
 
-C'est [ce que recommande la documentation de Symfony sur le routing](https://symfony.com/doc/current/routing.html) pour, justement, éviter d'avoir à gérer plusieurs fichiers lors de la mise en place d'une nouvelle url pour le site. Combiné avec un controller léger, ça permet d'avoir tous les éléments de gestion d'une requête et de construction de la réponse au même endroit, de manière assez synthétique.
+C'est [ce que recommande la documentation de Symfony sur le routing](https://symfony.com/doc/current/routing.html) pour, justement, éviter d'avoir à gérer plusieurs fichiers lors de la mise en place d'une nouvelle URL pour le site. Combiné avec un controller léger, ça permet d'avoir tous les éléments de gestion d'une requête et de construction de la réponse au même endroit, de manière assez synthétique.
 
 Pour ne pas me répéter, j'ai tendance à [utiliser les préfixes, tant pour le chemin que pour les noms de route](https://symfony.com/doc/current/routing.html#route-groups-and-prefixes) sur la déclaration de la classe. Au moins, je ne répète pas d'informations et mon <abbr title="Integrated Development Environment ou Environnement de Développement Intégré en français">IDE</abbr> comprend ça très bien. Par contre, je trouve qu'on perd un peu en clarté : être obligé de regarder la définition de la classe pour voir les préfixes utilisés et avoir les informations complètes, ça n'est pas toujours idéal et peut mener à des confusions (dans les situations de stress, par exemple).
 
@@ -80,7 +80,7 @@ class BlogController extends AbstractController
 }
 ```
 
-Bien sûr, plusieurs éléments sont tout à fait discutables ici, je ne dis pas que c'est le controller "parfait", mais il résume plutôt bien ce vers quoi j'ai tendu ces dernières années en termes de concision et des questions que je me pose. 
+Bien sûr, plusieurs éléments sont tout à fait discutables ici, je ne dis pas que c'est le controller « parfait », mais il résume plutôt bien ce vers quoi j'ai tendu ces dernières années en termes de concision et des questions que je me pose. 
 
 En voici quelques-unes :
 
@@ -95,7 +95,7 @@ En voici quelques-unes :
 
 Ayant très souvent sous les yeux des controllers interminables (je parlais d'un millier de lignes tout à l'heure), je me dis qu'avoir chaque action dans son propre fichier ne ferait pas de mal. Ce qui est actuellement dans un seul controller se retrouverait alors dans un dossier (`src/Controller/Blog/` dans mon exemple ci-dessus) et j'aurais un fichier par action (`BlogIndexAction.php`, `BlogShowAction.php` et `BlogByTagAction.php` par exemple). Voir la [documentation sur les invokable controllers](https://symfony.com/doc/current/controller/service.html#invokable-controllers).
 
-Le nom du dossier (et des sous-dossiers) permettraient de montrer le nom des routes plutôt clairement, à mes yeux (voir une bonne idée du chemin également).
+Le nom du dossier (et des sous-dossiers) permettrait de montrer le nom des routes plutôt clairement, à mes yeux (voir une bonne idée du chemin également).
 
 ### Un service presque comme un autre
 
@@ -144,7 +144,7 @@ Je vois plusieurs avantages à cette seconde méthode :
 - un rangement qui me semble plus clair (fichiers et dossiers reflètent l'url des pages).
 
 Mais aussi certains inconvénients qui me font penser à ne pas utiliser cette méthode pour tous les projets :
-- pour une application avec beaucoup de <abbr title="Create Read Update Delete">CRUD</abbr>, la répétition va être infernale (un héritage bien défini peut aider, peut être)
+- pour une application avec beaucoup de <abbr title="Create Read Update Delete">CRUD</abbr>, la répétition va être infernale (un héritage bien défini peut aider, peut-être)
 - l'obligation d'écrire soit même les fichiers (et ne pas utiliser les commandes `make:controller` et surtout `make:crud` de Symfony)
 - on multiplie très vite les fichiers
 
