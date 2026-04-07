@@ -179,4 +179,23 @@
 
 .main {
   min-height: calc(100vh - 7rem);
+  padding-bottom: var(--bs-gutter-x);
+  padding-top: var(--bs-gutter-x);
+}
+
+.h1:not(.card-header),
+.h2:not(.card-header),
+.h3:not(.card-header),
+.h4:not(.card-header),
+.h5:not(.card-header),
+.h6:not(.card-header),
+h1:not(.card-header),
+h2:not(.card-header),
+h3:not(.card-header),
+h4:not(.card-header),
+h5:not(.card-header),
+h6:not(.card-header) {
+  color: var(--bs-emphasis-color);
+  margin-bottom: 1em;
+  margin-top: 0.75em;
 }

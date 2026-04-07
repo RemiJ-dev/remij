@@ -1,0 +1,21 @@
+{% if toc is not empty %}
+    <nav class="bg-body-secondary p-2 mb-3 border-start border-5 border-primary-subtle" data-aos="fade-up">
+        <ol>
+            {% for headline in toc %}
+                <li class="">
+                    <a href="#{{ headline.id }}">{{ headline.content }}</a>
+
+                    {% if headline.children is not empty %}
+                        <ol class="">
+                            {% for child in headline.children %}
+                                <li>
+                                    <a href="#{{ child.id }}">{{ child.content }}</a>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </nav>
+{% endif %}

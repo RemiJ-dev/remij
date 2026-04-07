@@ -1,0 +1,29 @@
+{% macro show(article) %}
+    <article class="card my-4">
+        {% if article.image %}
+            <img src="{{ article.image }}" alt="{{ article.title }}" class="card-img-top" />
+        {% endif %}
+
+        <h2 class="card-header">
+            <a href="{{ path('article_show', { slug: article.slug }) }}">{{ article.title }}</a>
+        </h2>
+        <div class="card-body">
+
+            <p class="card-text">{{ article.description }}</p>
+        </div>
+        <aside class="text-body-secondary d-flex justify-content-between border-top px-3 py-2">
+            <aside>{{ article.lastModifiedOrCreated|date('d/m/Y') }}</aside>
+            <div>
+                {% for tag in article.tags %}
+                    <a class="chip" href="{{ path('article_list_by_tag', { "tag": tag }) }}">#{{ tag|lower }}</a>
+                {% endfor %}
+            </div>
+        </aside>
+    </article>
+{% endmacro %}
+
+{% macro list(articles) %}
+    {% for article in articles %}
+        {{ _self.show(article) }}
+    {% endfor %}
+{% endmacro %}

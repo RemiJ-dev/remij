@@ -1,11 +1,11 @@
 ---
-title:          "Les controllers Symfony"
-description:    "Où l'on réfléchit sur l'implémentation des controllers et des routes dans une application Symfony"
-publishedAt:    "2026-02-23"
-lastModified:   ~
+title: "Les controllers Symfony"
+description: "Où l'on réfléchit sur l'implémentation des controllers et des routes dans une application Symfony"
+publishedAt: "2026-02-23"
+lastModified: ~
 tableOfContent: true
-authors:        ["remij"]
-tags:           ["Symfony","technique","tutoriel","réflexion"]
+authors: ["remij"]
+tags: ["Symfony","technique","tutoriel","réflexions"]
 ---
 
 Voilà quelques années que j'utilise Symfony (juillet 2011, ça ne me rajeunit pas) et, ces derniers mois, je me rends compte que je n'ai presque jamais remis en cause certaines pratiques.
@@ -25,7 +25,7 @@ Ma question là autour est : ai-je vraiment besoin d'injecter plein de services 
 
 Le but d'un controller restant, pour moi, de recevoir une requête et de renvoyer une réponse, tous les traitements réalisés au milieu doivent être gérés par un ou plusieurs autres services. Un controller est là pour orchestrer le tout, mais doit rester léger et lisible. Du coup, mes controllers se basent beaucoup sur l'injection de dépendances (que ce soit du niveau du constructeur ou directement de la méthode) pour fonctionner et rester léger.
 
-Historiquement, j'ai mis beaucoup de choses dans mes actions (méthodes de controller) et me suis régulièrement retrouvé avec des controllers de plusieurs centaines de lignes (voir un bon millier), ce qui les rend très difficiles à relire et manipuler. En tant que services (parce que je les considère comme tels), ces controllers se retrouvent donc à faire nettement plus que leur travail initial de chef d'orchestre !
+Historiquement, j'ai mis beaucoup de choses dans mes actions (méthodes de controller) et me suis régulièrement retrouvé avec des controllers de plusieurs centaines de lignes (voire un bon millier), ce qui les rend très difficiles à relire et manipuler. En tant que services (parce que je les considère comme tels), ces controllers se retrouvent donc à faire nettement plus que leur travail initial de chef d'orchestre !
 
 Une « astuce » que j'ai pu utiliser est la présence d'un « méga-service », très volumineux et contenant toute la logique pour un controller, mais ça n'est pas une solution qui me semble plus viable sur le long terme, mais c'est un autre sujet ;).
 
@@ -85,7 +85,7 @@ Bien sûr, plusieurs éléments sont tout à fait discutables ici, je ne dis pas
 En voici quelques-unes :
 
 - Faut-il injecter `ArticleRepository` dans les deux actions qui en ont besoin ou au niveau du constructeur ? Dans un cas, je me répète, dans l'autre, j'ajoute un service inutile lorsque l'action `show()` est appelée.
-- La lecture des routes est-elle assez claire ? Et si mon controller grandi ? Par exemple parce que j'ai beaucoup de [paramètres à mapper](https://symfony.com/doc/current/controller.html#automatic-mapping-of-the-request).
+- La lecture des routes est-elle assez claire ? Et si mon controller grandit ? Par exemple parce que j'ai beaucoup de [paramètres à mapper](https://symfony.com/doc/current/controller.html#automatic-mapping-of-the-request).
 - Je profite de Doctrine pour récupérer automatiquement mes articles ou tags à partir de leur slug. Est-ce trop de magie ? Je fais ça depuis des années, mais si quelqu'un d'autre reprend le projet, est-ce suffisamment clair ? L'utilisation d'une [conversion plus explicite des paramètres](https://symfony.com/doc/current/routing.html#parameter-conversion) me semble plus appropriée.
 
 
@@ -95,7 +95,7 @@ En voici quelques-unes :
 
 Ayant très souvent sous les yeux des controllers interminables (je parlais d'un millier de lignes tout à l'heure), je me dis qu'avoir chaque action dans son propre fichier ne ferait pas de mal. Ce qui est actuellement dans un seul controller se retrouverait alors dans un dossier (`src/Controller/Blog/` dans mon exemple ci-dessus) et j'aurais un fichier par action (`BlogIndexAction.php`, `BlogShowAction.php` et `BlogByTagAction.php` par exemple). Voir la [documentation sur les invokable controllers](https://symfony.com/doc/current/controller/service.html#invokable-controllers).
 
-Le nom du dossier (et des sous-dossiers) permettrait de montrer le nom des routes plutôt clairement, à mes yeux (voir une bonne idée du chemin également).
+Le nom du dossier (et des sous-dossiers) permettrait de montrer le nom des routes plutôt clairement, à mes yeux (voire une bonne idée du chemin également).
 
 ### Un service presque comme un autre
 
