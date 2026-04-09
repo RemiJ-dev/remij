@@ -22,6 +22,7 @@ class MenuBuilderTest extends TestCase
         'page_contact' => 2,
         'page_content' => 2,
         'article_list' => 2,
+        'article_list_by_author' => 3,
         'article_list_by_tag' => 3,
         'article_show' => 3,
         'rss' => 1,

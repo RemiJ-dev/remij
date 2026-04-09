@@ -7,6 +7,6 @@ stenope:
         App\Model\Page: '%kernel.project_dir%/content/pages'
 
     resolve_links:
-        #App\Model\Author: { route: 'author_show', slug: 'author' }
+        App\Model\Author: { route: 'article_list_by_author', slug: 'author' }
         App\Model\Article: { route: 'article_show', slug: 'slug' }
         App\Model\Page: { route: 'page_content', slug: 'slug' }

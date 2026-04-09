@@ -28,10 +28,10 @@
                 par
                 {% for authorSlug in article.authors %}
                     {% set author = content_get('App\\Model\\Author', authorSlug) %}
-                    {{ author.name -}}
+                    <a href="{{ path('article_list_by_author', { slug: author.slug }) }}">{{ author.name }}</a>
                     {%- if loop.length > 1 -%}
                         {{ loop.revindex0 > 1 ? ', ' : '' }}
-                        {{ loop.revindex0 == 1 ? 'et ' : '' }}
+                        {{ loop.revindex0 == 1 ? ' et ' : '' }}
                     {% endif %}
                 {% endfor %}
             </small>

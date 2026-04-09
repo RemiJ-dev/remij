@@ -9,3 +9,15 @@ authors:        ["remij"]
 
 # RémiJ - Développement Symfony
 
+## Que fais-je ?
+
+### Développement Symfony
+
+### Formation
+
+## L'équipe
+
+### Rémi Jarjat
+
+### Amis / collègues
+

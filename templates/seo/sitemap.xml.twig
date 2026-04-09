@@ -35,4 +35,11 @@
     </url>
     {% endfor %}
 
+    {% for authorSlug, lastmod in authors %}
+    <url>
+        <loc>{{ url('article_list_by_author', { slug: authorSlug }) }}</loc>
+        <lastmod>{{ lastmod|date('Y-m-d') }}</lastmod>
+    </url>
+    {% endfor %}
+
 </urlset>

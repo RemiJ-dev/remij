@@ -16,6 +16,7 @@ class Author
         public string $name,
         public ?string $avatar = null,
         public bool $active = true,
+        public ?string $description = null,
         #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
         public ?\DateTimeInterface $since = null,
         public ?\DateTimeInterface $lastModified = null,

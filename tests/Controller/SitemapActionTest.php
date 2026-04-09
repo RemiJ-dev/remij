@@ -84,6 +84,18 @@ class SitemapActionTest extends WebTestCase
             self::assertContains($url, $locs, \sprintf('Tag "%s" is missing from sitemap.', $tag));
         }
 
+        // One URL per unique author from published articles
+        $authorSlugs = [];
+        foreach ($articles as $article) {
+            foreach ($article->authors as $authorSlug) {
+                $authorSlugs[$authorSlug] = true;
+            }
+        }
+        foreach (array_keys($authorSlugs) as $authorSlug) {
+            $url = $router->generate('article_list_by_author', ['slug' => $authorSlug], UrlGeneratorInterface::ABSOLUTE_URL);
+            self::assertContains($url, $locs, \sprintf('Author "%s" is missing from sitemap.', $authorSlug));
+        }
+
         // One URL per page, excluding "home" (which redirects to /)
         foreach ($pages as $page) {
             if ('home' === $page->slug) {

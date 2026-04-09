@@ -39,11 +39,18 @@ readonly class SitemapAction
 
         /** @var array<string, \DateTimeInterface> $tags */
         $tags = [];
+        /** @var array<string, \DateTimeInterface> $authors */
+        $authors = [];
         foreach ($articles as $article) {
             $date = $article->getLastModifiedOrCreated();
             foreach ($article->tags as $tag) {
                 if (!isset($tags[$tag]) || $date > $tags[$tag]) {
                     $tags[$tag] = $date;
+                }
+            }
+            foreach ($article->authors as $authorSlug) {
+                if (!isset($authors[$authorSlug]) || $date > $authors[$authorSlug]) {
+                    $authors[$authorSlug] = $date;
                 }
             }
         }
@@ -56,6 +63,7 @@ readonly class SitemapAction
             'articlesLastModified' => $articlesLastModified,
             'pages' => array_filter($pages, static fn (Page $page): bool => 'home' !== $page->slug),
             'tags' => $tags,
+            'authors' => $authors,
         ]));
         $response->headers->set('Content-Type', 'application/xml; charset=utf-8');
 
