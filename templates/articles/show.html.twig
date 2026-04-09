@@ -14,6 +14,7 @@
                 </div>
             {% endif %}
             <h1>{{ article.title }}</h1>
+            <small class="text-body-secondary">{{ 'article.show.published_at'|trans({'date': article.publishedAt|date('d/m/Y')}) }}</small>
         </header>
 
         {% include 'articles/_toc.html.twig' with { toc: article.tableOfContent } only %}
@@ -22,27 +23,19 @@
             {{ article.content|raw }}
         </article>
 
-        <footer class="text-end">
-            <small>
-                Publié le {{ article.publishedAt|date('d/m/Y') }}
-                par
-                {% for authorSlug in article.authors %}
-                    {% set author = content_get('App\\Model\\Author', authorSlug) %}
-                    <a href="{{ path('article_list_by_author', { slug: author.slug }) }}">{{ author.name }}</a>
-                    {%- if loop.length > 1 -%}
-                        {{ loop.revindex0 > 1 ? ', ' : '' }}
-                        {{ loop.revindex0 == 1 ? ' et ' : '' }}
-                    {% endif %}
-                {% endfor %}
-            </small>
+        <footer>
+            {% for authorSlug in article.authors %}
+                {% set author = content_get('App\\Model\\Author', authorSlug) %}
+                {% include 'articles/_author_card.html.twig' with { author: author } only %}
+            {% endfor %}
         </footer>
 
         <nav class="d-flex justify-content-between">
-            <a href="{{ path('article_list') }}" class="btn btn-outline-primary">← Retour à la liste des articles</a>
+            <a href="{{ path('article_list') }}" class="btn btn-outline-primary">{{ 'article.show.back_to_list'|trans }}</a>
             {% if article.nextArticle %}
                 {% set nextArticle = content_get('App\\Model\\Article', article.nextArticle) %}
-                <a href="{{ path('article_show', { slug: nextArticle.slug }) }}" class="btn btn-outline">
-                    ➜ Article suivant : « {{ nextArticle.title }} »
+                <a href="{{ path('article_show', { slug: nextArticle.slug }) }}" class="btn btn-outline-primary">
+                    {{ 'article.show.next_article'|trans({'title': nextArticle.title}) }}
                 </a>
             {% endif %}
         </nav>

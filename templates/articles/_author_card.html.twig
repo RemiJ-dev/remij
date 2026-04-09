@@ -1,0 +1,18 @@
+<div class="card mb-3">
+    {% if author.avatar %}
+        <img src="{{ author.avatar }}" class="card-img-top" alt="{{ author.name }}" />
+    {% endif %}
+    <div class="card-body">
+        <h5 class="card-title">
+            <a href="{{ path('article_list_by_author', { slug: author.slug }) }}">{{ author.name }}</a>
+        </h5>
+        {% if author.description %}
+            <p class="card-text">{{ author.description }}</p>
+        {% endif %}
+        {% if author.since %}
+            <p class="card-text">
+                <small class="text-body-secondary">{{ 'article.author.since'|trans({'year': author.since|date('Y')}) }}</small>
+            </p>
+        {% endif %}
+    </div>
+</div>

@@ -1,4 +1,4 @@
-{% set pageTitle = pageTitle|default("Articles") %}
+{% set pageTitle = pageTitle|default('article.list.title'|trans) %}
 
 {% extends 'base.html.twig' %}
 
@@ -8,6 +8,8 @@
 
 {% block content %}
     <h1>{{ pageTitle }}</h1>
+
+    {% block before_content %}{% endblock before_content %}
 
     <main class="articles">
         {{ list(articles) }}

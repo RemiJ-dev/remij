@@ -1,0 +1,51 @@
+layout:
+    breadcrumb:
+        aria_label: "Fil d'Ariane"
+    header:
+        toggle_navigation: "Ouvrir la navigation"
+        theme:
+            toggle: "Couleurs"
+            light: "Claires"
+            dark: "Sombres"
+            auto: "Auto"
+    flashes:
+        close: "Fermer"
+
+menu:
+    home: "Accueil"
+    blog: "Blog"
+
+error:
+    not_found:
+        title: "Page non trouvée"
+        message: "La page que vous cherchez n'existe pas ou plus."
+
+page:
+    back_to_home: "< Retour à l'accueil"
+
+article:
+    list:
+        title: "Articles"
+    list_by_tag:
+        title: "Articles pour le tag #{tag}"
+    list_by_author:
+        title: "Articles de {name}"
+    show:
+        published_at: "Publié le {date}"
+        back_to_list: "← Retour à la liste des articles"
+        next_article: "Article suivant : « {title} » ➜"
+    author:
+        since: "Auteur depuis {year}"
+
+contact:
+    form:
+        name: "Nom"
+        email: "Email"
+        subject: "Sujet"
+        message: "Message"
+        submit: "Envoyer"
+    email:
+        subject: "[Contact] {subject}"
+        body: "De : {name} <{email}>\n\n{message}"
+    flash:
+        success: "Votre message a bien été envoyé. Je vous répondrai dès que possible !"

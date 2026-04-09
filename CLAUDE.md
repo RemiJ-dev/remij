@@ -59,6 +59,17 @@ make clear.build     # Remove build/ and public/assets/
 make clear.images    # Remove public/resized/ (Glide image cache)
 ```
 
+## Verification workflow
+
+After any code change, always verify in this order:
+
+```shell
+make lint      # Must pass before running tests
+make test      # Run after lint passes
+```
+
+Never use `bin/phpunit` directly — always go through `make test`.
+
 ## Architecture
 
 ### How Stenope Works

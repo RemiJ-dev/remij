@@ -1,3 +1,7 @@
-{% set pageTitle = 'Articles de ' ~ author.name %}
+{% set pageTitle = 'article.list_by_author.title'|trans({'name': author.name}) %}
 
 {% extends 'articles/list.html.twig' %}
+
+{% block before_content %}
+    {% include 'articles/_author_card.html.twig' with { author: author } only %}
+{% endblock before_content %}

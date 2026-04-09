@@ -24,7 +24,7 @@ readonly class MenuBuilder
         $breadcrumb[] = [
             'route' => 'page_home',
             'routeParams' => [],
-            'label' => 'Accueil',
+            'label' => 'menu.home',
             'currentRoute' => $currentRoute,
             'isActive' => 'page_home' === $currentRoute,
         ];
@@ -42,7 +42,7 @@ readonly class MenuBuilder
             $breadcrumb[] = [
                 'route' => 'article_list',
                 'routeParams' => [],
-                'label' => 'Blog',
+                'label' => 'menu.blog',
                 'currentRoute' => $currentRoute,
                 'isActive' => 'article_list' === $currentRoute,
             ];

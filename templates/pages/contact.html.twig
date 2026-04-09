@@ -9,11 +9,11 @@
     {{ page.content|raw }}
 
     {{ form_start(form) }}
-        {{ form_row(form.name) }}
-        {{ form_row(form.email) }}
-        {{ form_row(form.subject) }}
-        {{ form_row(form.message) }}
-        <button type="submit" class="btn btn-primary">Envoyer</button>
+        {{ form_row(form.name, { label: 'contact.form.name', attr: { autocomplete: 'name' } }) }}
+        {{ form_row(form.email, { label: 'contact.form.email', attr: { autocomplete: 'email' } }) }}
+        {{ form_row(form.subject, { label: 'contact.form.subject' }) }}
+        {{ form_row(form.message, { label: 'contact.form.message', attr: { rows: 6 } }) }}
+        <button type="submit" class="btn btn-primary">{{ 'contact.form.submit'|trans }}</button>
     {{ form_end(form) }}
 
 {% endblock %}

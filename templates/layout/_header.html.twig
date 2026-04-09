@@ -2,7 +2,7 @@
     <nav class="container-fluid">
         <a class="navbar-brand" href="{{ path('page_home') }}">{{ site.title }}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                aria-controls="navbarNav" aria-expanded="false" aria-label="{{ 'layout.header.toggle_navigation'|trans }}">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
@@ -32,9 +32,9 @@
                         aria-expanded="false"
                         data-bs-toggle="dropdown"
                         data-bs-display="static"
-                        aria-label="Couleurs"
+                        aria-label="{{ 'layout.header.theme.toggle'|trans }}"
                     >
-                        <span class="ms-2">Couleurs</span>
+                        <span class="ms-2">{{ 'layout.header.theme.toggle'|trans }}</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
@@ -45,7 +45,7 @@
                                 data-theme-value="light"
                                 data-action="click->theme#switch"
                             >
-                                Claires
+                                {{ 'layout.header.theme.light'|trans }}
                             </button>
                         </li>
                         <li>
@@ -56,7 +56,7 @@
                                 data-theme-value="dark"
                                 data-action="click->theme#switch"
                             >
-                                Sombres
+                                {{ 'layout.header.theme.dark'|trans }}
                             </button>
                         </li>
                         <li>
@@ -67,7 +67,7 @@
                                 data-theme-value="auto"
                                 data-action="click->theme#switch"
                             >
-                                Auto
+                                {{ 'layout.header.theme.auto'|trans }}
                             </button>
                         </li>
                     </ul>

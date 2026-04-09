@@ -15,6 +15,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContactAction extends AbstractController
 {
@@ -26,7 +27,7 @@ class ContactAction extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route('/contact', name: 'page_contact', methods: ['GET', 'POST'])]
-    public function __invoke(Request $request, MailerInterface $mailer): Response
+    public function __invoke(Request $request, MailerInterface $mailer, TranslatorInterface $translator): Response
     {
         $page = $this->manager->getContent(Page::class, 'contact');
 
@@ -39,12 +40,12 @@ class ContactAction extends AbstractController
                 ->from('contact@remij.dev')
                 ->to('bonjour@remij.dev')
                 ->replyTo($data->email)
-                ->subject('[Contact] ' . $data->subject)
-                ->text(\sprintf("De : %s <%s>\n\n%s", $data->name, $data->email, $data->message));
+                ->subject($translator->trans('contact.email.subject', ['subject' => $data->subject]))
+                ->text($translator->trans('contact.email.body', ['name' => $data->name, 'email' => $data->email, 'message' => $data->message]));
 
             $mailer->send($email);
 
-            $this->addFlash('success', 'Votre message a bien été envoyé. Je vous répondrai dès que possible !');
+            $this->addFlash('success', $translator->trans('contact.flash.success'));
 
             return $this->redirectToRoute('page_contact');
         }
