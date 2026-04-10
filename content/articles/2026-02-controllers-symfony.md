@@ -1,6 +1,6 @@
 ---
 title: "Les controllers Symfony"
-description: "Où l'on réfléchit sur l'implémentation des controllers et des routes dans une application Symfony"
+description: "Bientôt 15 ans que j'utilise Symfony et je commence (enfin) à remettre en cause certains réflexes. Une réflexion sur les controllers, l'héritage d'AbstractController et le pattern « une action = un fichier »."
 publishedAt: "2026-02-23"
 lastModified: ~
 tableOfContent: true

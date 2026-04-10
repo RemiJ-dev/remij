@@ -1,6 +1,6 @@
 ---
 title: "La formation"
-description: "RémiJ va proposer des prestations de formation. Voilà comment je vois les choses et mes espérances pour l'avenir."
+description: "Former, c'est aussi une façon de contribuer à l'Open Source, à ma manière. Retour sur mon expérience de formateur PHP/Symfony et réflexions sur ce que j'en veux faire chez RémiJ."
 publishedAt: "2025-10-24"
 lastModified: ~
 tableOfContent: true
