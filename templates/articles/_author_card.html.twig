@@ -3,9 +3,9 @@
         <img src="{{ author.avatar }}" class="card-img-top" alt="{{ author.name }}" />
     {% endif %}
     <div class="card-body">
-        <h5 class="card-title">
+        <div class="card-title">
             <a href="{{ path('article_list_by_author', { slug: author.slug }) }}">{{ author.name }}</a>
-        </h5>
+        </div>
         {% if author.description %}
             <p class="card-text">{{ author.description }}</p>
         {% endif %}

@@ -168,6 +168,10 @@ Global site metadata (title, description) and navigation menus (main + footer) a
 - `tests/Helper/RouteDiscoveryTrait.php` — shared trait that scans `src/Controller/` via Reflection to extract route names, paths, and parameter names. Supports excluding subdirectories and handles `{param:mapping}` syntax.
 - Adding a new file to `content/` automatically adds a controller test case — no code change needed.
 
+### Git Commit Style
+
+- Always start commit messages with the 🤖 emoji.
+
 ### Code Style Rules
 
 - All PHP files must have `declare(strict_types=1)`.

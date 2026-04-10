@@ -183,6 +183,30 @@
   padding-top: var(--bs-gutter-x);
 }
 
+h1:not(.card-header) {
+  border-left: 6px solid rgba(var(--bs-primary-rgb), 1);
+}
+
+h2:not(.card-header) {
+  border-left: 4px solid rgba(var(--bs-primary-rgb), 1);
+}
+
+h3:not(.card-header) {
+  border-left: 3px solid rgba(var(--bs-primary-rgb), .7);
+}
+
+h4:not(.card-header) {
+  border-left: 2px solid rgba(var(--bs-primary-rgb), .5);
+}
+
+h5:not(.card-header) {
+  border-left: 2px solid rgba(var(--bs-primary-rgb), .35);
+}
+
+h6:not(.card-header) {
+  border-left: 2px solid rgba(var(--bs-primary-rgb), .2);
+}
+
 .h1:not(.card-header),
 .h2:not(.card-header),
 .h3:not(.card-header),
@@ -196,6 +220,7 @@ h4:not(.card-header),
 h5:not(.card-header),
 h6:not(.card-header) {
   color: var(--bs-emphasis-color);
-  margin-bottom: 1em;
-  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+  margin-top: 0.5em;
+  padding-left: .75rem;
 }
