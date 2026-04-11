@@ -28,6 +28,7 @@ class MenuBuilderTest extends TestCase
         'rss' => 1,
         'seo_robots' => 1,
         'seo_sitemap' => 1,
+        'trello_webhook' => 1,
     ];
 
     /**

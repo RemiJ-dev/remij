@@ -23,3 +23,20 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    App\Trello\ConnectionRepository:
+        arguments:
+            $storageDir: '%kernel.project_dir%/var/trello/connections'
+
+    App\Trello\TrelloApiClient:
+        arguments:
+            $apiKey: '%env(TRELLO_API_KEY)%'
+            $apiToken: '%env(TRELLO_API_TOKEN)%'
+
+    App\Controller\Trello\WebhookAction:
+        arguments:
+            $trelloAppSecret: '%env(TRELLO_APP_SECRET)%'
+            $webhookCallbackUrl: '%env(ROUTER_DEFAULT_URI)%/trello/webhook'
+
+    App\Command\Trello\CreateConnectionCommand:
+        arguments:
+            $webhookCallbackUrl: '%env(ROUTER_DEFAULT_URI)%/trello/webhook'

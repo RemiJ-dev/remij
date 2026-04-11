@@ -1,0 +1,6 @@
+framework:
+    notifier:
+        chatter_transports:
+            mattermost: '%env(MATTERMOST_DSN)%'
+        channel_policy:
+            chat: ['chat/mattermost']
