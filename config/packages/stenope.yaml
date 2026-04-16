@@ -2,11 +2,11 @@ stenope:
     shared_html_crawlers: true
 
     providers:
-        App\Model\Article: '%kernel.project_dir%/content/articles'
-        App\Model\Author: '%kernel.project_dir%/content/authors'
-        App\Model\Page: '%kernel.project_dir%/content/pages'
+        App\Domain\Article\Model\Article: '%kernel.project_dir%/content/articles'
+        App\Domain\Article\Model\Author: '%kernel.project_dir%/content/authors'
+        App\Domain\Page\Model\Page: '%kernel.project_dir%/content/pages'
 
     resolve_links:
-        App\Model\Author: { route: 'article_list_by_author', slug: 'author' }
-        App\Model\Article: { route: 'article_show', slug: 'slug' }
-        App\Model\Page: { route: 'page_content', slug: 'slug' }
+        App\Domain\Article\Model\Author: { route: 'article_list_by_author', slug: 'author' }
+        App\Domain\Article\Model\Article: { route: 'article_show', slug: 'slug' }
+        App\Domain\Page\Model\Page: { route: 'page_content', slug: 'slug' }

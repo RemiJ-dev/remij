@@ -149,3 +149,5 @@ Mais aussi certains inconvénients qui me font penser à ne pas utiliser cette m
 - on multiplie très vite les fichiers
 
 Cette réflexion ne répond pas vraiment à la question "quelle méthode est la meilleure ?". Comme d'habitude, je dirais que ça va dépendre des projets ! En tout cas, je pense que j'éviterai de mélanger des controllers étendant `AbstractController` et des services `Action`, pour conserver une logique un peu constante.
+
+En tout cas, tout cela ouvre la question d'utiliser le [pattern ADR (Action / Domain / Responder)](https://wendelladriel.com/blog/using-the-adr-action-domain-responder-pattern-in-laravel) dans une application Symfony !

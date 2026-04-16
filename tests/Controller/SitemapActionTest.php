@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use App\Model\Article;
-use App\Model\Page;
+use App\Domain\Article\Model\Article;
+use App\Domain\Page\Model\Page;
 use App\Tests\Helper\RouteDiscoveryTrait;
 use Stenope\Bundle\ContentManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -60,11 +60,11 @@ class SitemapActionTest extends WebTestCase
             }
         }
 
-        $controllerDir = \dirname(__DIR__, 2) . '/src/Controller';
+        $actionsDir = \dirname(__DIR__, 2) . '/src/Action';
         $excludedRoutes = ['rss', 'seo_robots', 'seo_sitemap'];
 
         // Static routes (no parameters), excluding Seo controllers and non-HTML routes
-        foreach (self::discoverControllerRoutes($controllerDir, ['Seo']) as $route) {
+        foreach (self::discoverControllerRoutes($actionsDir, ['Seo']) as $route) {
             if ([] !== $route['params'] || \in_array($route['name'], $excludedRoutes, true)) {
                 continue;
             }

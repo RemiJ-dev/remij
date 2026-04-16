@@ -17,7 +17,10 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            - '../src/Model/'
+            - '../src/Domain/Article/Model'
+            - '../src/Domain/Contact/DTO'
+            - '../src/Domain/Page/Model'
+            - '../src/Domain/Seo/Model'
             - '../src/Kernel.php'
 
     # add more service definitions when explicit configuration is needed

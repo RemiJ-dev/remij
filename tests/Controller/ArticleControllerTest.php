@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use App\Model\Article;
+use App\Domain\Article\Model\Article;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Stenope\Bundle\ContentManagerInterface;
 use Stenope\Bundle\Exception\ContentNotFoundException;

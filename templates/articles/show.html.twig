@@ -25,7 +25,7 @@
 
         <footer>
             {% for authorSlug in article.authors %}
-                {% set author = content_get('App\\Model\\Author', authorSlug) %}
+                {% set author = content_get('App\\Domain\\Article\\Model\\Author', authorSlug) %}
                 {% include 'articles/_author_card.html.twig' with { author: author } only %}
             {% endfor %}
         </footer>
@@ -33,7 +33,7 @@
         <nav class="d-flex justify-content-between">
             <a href="{{ path('article_list') }}" class="btn btn-outline-primary">{{ 'article.show.back_to_list'|trans }}</a>
             {% if article.nextArticle %}
-                {% set nextArticle = content_get('App\\Model\\Article', article.nextArticle) %}
+                {% set nextArticle = content_get('App\\Domain\\Article\\Model\\Article', article.nextArticle) %}
                 <a href="{{ path('article_show', { slug: nextArticle.slug }) }}" class="btn btn-outline-primary">
                     {{ 'article.show.next_article'|trans({'title': nextArticle.title}) }}
                 </a>

@@ -26,6 +26,11 @@ update: update.composer
 update.composer:
 	symfony composer update
 
+install@dist:
+	composer install
+	npm install
+	php bin/console importmap:install
+
 ###############
 # Development #
 ###############
@@ -87,6 +92,14 @@ serve.static:
 	open http://localhost:8000
 	symfony php -S localhost:8000 -t build
 
+build@dist:
+	php bin/console cache:clear
+	rm -rf public/assets
+	php bin/console asset-map:compile
+	rm -rf public/resized
+	rm -rf build
+	php bin/console stenope:build
+
 ########
 # Lint #
 ########
@@ -146,3 +159,11 @@ lint.eslint@integration:
 test: build.content.without-images
 test:
 	symfony php bin/phpunit
+
+##########
+# Deploy #
+##########
+
+## Deploy - Deploy to production server
+deploy:
+	symfony php vendor/bin/dep deploy

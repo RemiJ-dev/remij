@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use App\Model\Page;
+use App\Domain\Page\Model\Page;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Stenope\Bundle\ContentManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

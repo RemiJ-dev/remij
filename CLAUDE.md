@@ -77,21 +77,46 @@ Never use `bin/phpunit` directly — always go through `make test`.
 Stenope reads content files (Markdown with YAML front matter) from `content/`, deserializes them into PHP model objects, and then renders static HTML pages via Symfony controllers and Twig templates. The `ContentManagerInterface` is the main entry point for fetching content in controllers.
 
 Content types and their source directories are configured in `config/packages/stenope.yaml`:
-- `App\Model\Article` ← `content/articles/`
-- `App\Model\Author` ← `content/authors/`
-- `App\Model\Page` ← `content/pages/`
+- `App\Domain\Article\Model\Article` ← `content/articles/`
+- `App\Domain\Article\Model\Author` ← `content/authors/`
+- `App\Domain\Page\Model\Page` ← `content/pages/`
 
-### Content Models (`src/Model/`)
+### Architecture ADR
 
-- **Article** — blog posts with `slug`, `title`, `description`, `content`, `authors[]`, `tags[]`, `publishedAt`, `image`, `lastModified`, optional `tableOfContent`. Has `isPublished()` (based on `publishedAt` date).
-- **Author** — contributor profiles with `slug`, `name`, `avatar`, `active`, `since`.
-- **Page** — generic static pages. `Page/ContentAction` looks for a template named `pages/{slug}.html.twig` first, then falls back to `pages/page.html.twig`.
-- **MetaTrait** — shared SEO/meta fields used by Article and Page.
+Le projet suit le pattern **Action–Domain–Responder** :
 
-### Forms (`src/Form/`)
+```
+src/
+├── Action/          ← reçoit la requête HTTP, orchestre Domain + Responder
+├── Domain/          ← modèles métier, DTOs et repositories
+├── Responder/       ← construit la Response HTTP (rendu Twig, headers)
+└── Infrastructure/  ← adaptateurs framework (Form, Twig, Stenope)
+```
 
-- **ContactType** — Symfony form type for the contact page, bound to `ContactDTO`.
-- **DTO/ContactDTO** — data transfer object for the contact form with validator constraints (`NotBlank`, `Email`, `Length`).
+**Responsabilités :**
+- L'**Action** fait le minimum : récupère les données via le Repository, passe au Responder.
+- Le **Responder** construit entièrement la `Response` : rendu Twig, headers (`Content-Type`, `Last-Modified`), calcul du `lastModified` via `ContentUtils`.
+- Le **Domain** contient les value objects (Models, DTOs) et les Repositories.
+
+### Domain (`src/Domain/`)
+
+**Modèles (value objects, exclus du container Symfony) :**
+- **`Domain/Article/Model/Article`** — articles de blog : `slug`, `title`, `description`, `content`, `authors[]`, `tags[]`, `publishedAt`, `image`, `lastModified`, `tableOfContent`. Méthodes `isPublished()` et `getLastModifiedOrCreated()`.
+- **`Domain/Article/Model/Author`** — profils auteurs : `slug`, `name`, `avatar`, `active`, `since`.
+- **`Domain/Page/Model/Page`** — pages statiques génériques.
+- **`Domain/Seo/Model/MetaTrait`** — champs SEO/réseaux sociaux partagés (`metaTitle`, `metaDescription`), utilisé par `Article` et `Page`.
+- **`Domain/Contact/DTO/ContactDTO`** — DTO du formulaire de contact avec contraintes de validation (`NotBlank`, `Email`, `Length`).
+
+**Repositories (services autowirés) :**
+- **`Domain/Article/Repository/ArticleRepository`** — `findPublished()`, `findByTag(string $tag)`, `findByAuthor(Author $author)`. Wraps `ContentManagerInterface`.
+- **`Domain/Page/Repository/PageRepository`** — `findBySlug(string $slug)` (peut lever `ContentNotFoundException`), `findAll()`. Wraps `ContentManagerInterface`.
+
+### Infrastructure (`src/Infrastructure/`)
+
+- **`Infrastructure/Form/ContactType`** — Symfony Form type pour la page contact, lié à `ContactDTO`.
+- **`Infrastructure/Twig/MenuBuilder`** — construit le fil d'Ariane pour la requête courante. Lit `_route` et `_route_params` depuis `RequestStack`. Gère : `page_home`, `page_contact`, `page_content`, `article_list`, `article_list_by_tag`, `article_list_by_author`, `article_show`. Les routes non gérées (ex: `rss`, `seo_robots`, `seo_sitemap`) retournent uniquement l'entrée home.
+- **`Infrastructure/Twig/MenuExtension`** — expose `MenuBuilder::breadcrumb()` via la fonction Twig `breadcrumb()`.
+- **`Infrastructure/Stenope/Processor/AssetsProcessor`** — post-traite le HTML des articles pour résoudre les URLs d'assets locaux pour les éléments `<source>` et `<video>` via le composant Asset de Symfony.
 
 ### Content Files Format
 
@@ -109,29 +134,43 @@ tags:           ["tag1", "tag2"]
 ```
 A future `publishedAt` date means the article is not yet published (draft).
 
-### Controllers (`src/Controller/`)
+### Responders (`src/Responder/`)
 
-One file per action, organized in subdirectories. Each action is a `readonly class` with a single `__invoke()` method, except `ContactAction` which extends `AbstractController` (for form/flash/redirect helpers).
+Hiérarchie des classes de base :
+```
+AbstractTwigResponder              ← injecte Environment, expose render()
+├── AbstractArticleResponder       ← ajoute lastModified(array) via ContentUtils
+│   ├── ListResponder
+│   ├── ListByTagResponder
+│   ├── ListByAuthorResponder
+│   ├── ShowResponder              ← utilise $article->getLastModifiedOrCreated() directement
+│   └── RssResponder              ← Content-Type: application/atom+xml
+└── (direct)
+    ├── Page/HomeResponder
+    ├── Page/ContactResponder      ← @param FormInterface<ContactDTO>
+    ├── Page/ContentResponder      ← sélection template custom vs fallback via twig loader
+    ├── Seo/RobotsResponder       ← Content-Type: text/plain
+    └── Seo/SitemapResponder      ← agrège tags/authors, Content-Type: application/xml
+```
 
-**Route naming convention:** routes are prefixed by their subdirectory name (e.g. `seo_robots`, `seo_sitemap`). Top-level actions (e.g. `RssAction`) have no prefix.
+**Règle :** le `Last-Modified` et les headers de Content-Type sont calculés et posés dans le Responder, pas dans l'Action.
+
+### Actions (`src/Action/`)
+
+Un fichier par action, organisé en sous-dossiers. Chaque action est une `readonly class` avec une seule méthode `__invoke()`, sauf `ContactAction` qui étend `AbstractController` (pour `createForm`, `addFlash`, `redirectToRoute`). Les actions se limitent à : récupérer les données via le Repository, appeler `($this->responder)(...)`.
+
+**Convention de nommage des routes :** préfixées par le sous-dossier (ex: `seo_robots`, `seo_sitemap`). Les actions à la racine (ex: `RssAction`) n'ont pas de préfixe.
 
 - **`Page/HomeAction`** — `GET /` → `page_home`
-- **`Page/ContactAction`** — `GET|POST /contact` → `page_contact` (sends email via Brevo)
-- **`Page/ContentAction`** — `GET /{slug}` → `page_content` (catch-all, priority -500; redirects `home` slug to `page_home`)
+- **`Page/ContactAction`** — `GET|POST /contact` → `page_contact` (envoie un email via Brevo ; redirect on success reste dans l'Action)
+- **`Page/ContentAction`** — `GET /{slug}` → `page_content` (catch-all, priority -500 ; redirige le slug `home` vers `page_home` ; convertit `ContentNotFoundException` en `NotFoundHttpException`)
 - **`Article/ListAction`** — `GET /articles/` → `article_list`
 - **`Article/ListByTagAction`** — `GET /articles/tag/{tag}` → `article_list_by_tag`
+- **`Article/ListByAuthorAction`** — `GET /articles/auteur/{slug}` → `article_list_by_author`
 - **`Article/ShowAction`** — `GET /articles/{slug:article}` → `article_show`
-- **`RssAction`** — `GET /rss.xml` → `rss`, returns Atom feed with `Content-Type: application/atom+xml`
+- **`RssAction`** — `GET /rss.xml` → `rss`, retourne un flux Atom avec `Content-Type: application/atom+xml`
 - **`Seo/RobotsAction`** — `GET /robots.txt` → `seo_robots`
-- **`Seo/SitemapAction`** — `GET /sitemap.xml` → `seo_sitemap`, lists all public URLs (articles, pages, tags) except `seo_robots` and `seo_sitemap` themselves
-
-### Services (`src/Menu/`)
-
-- **MenuBuilder** — builds the breadcrumb for the current request. Reads `_route` and `_route_params` from `RequestStack`. Handles routes: `page_home`, `page_contact`, `page_content`, `article_list`, `article_list_by_tag`, `article_show`. Unhandled routes (e.g. `rss`, `seo_robots`, `seo_sitemap`) return only the home entry.
-
-### Custom Stenope Processor (`src/Stenope/Processor/`)
-
-- **AssetsProcessor** — post-processes article HTML to resolve local asset URLs for `<source>` and `<video>` elements using Symfony's Asset component.
+- **`Seo/SitemapAction`** — `GET /sitemap.xml` → `seo_sitemap`, liste toutes les URLs publiques (articles, pages, tags, auteurs) sauf `seo_robots` et `seo_sitemap`
 
 ### Templates (`templates/`)
 
@@ -157,15 +196,26 @@ Global site metadata (title, description) and navigation menus (main + footer) a
 - **PHPUnit 13** is used for tests via `bin/phpunit`.
 - `phpunit.xml.dist` uses `Symfony\Bridge\PhpUnit\SymfonyExtension` (replaces the old `SymfonyTestsListener`).
 - **Every new service** in `src/` must have a corresponding unit test in `tests/` (mirroring the `src/` directory structure). Use plain `PHPUnit\Framework\TestCase` for services with no kernel dependency.
-- Controller tests use `WebTestCase` for functional (HTTP) testing. Service tests use `TestCase` with `RequestStack`/`Request` objects directly (no mocks needed for lightweight Symfony value objects).
 - Data providers use `symfony/finder` (`Finder`) to scan directories dynamically — no hardcoded slugs or route names.
+
+**Mock vs Stub (règle PHPUnit 13) :**
+- `$this->createMock()` uniquement quand on pose un `expects(...)` dessus.
+- `self::createStub()` pour tout ce qui est juste configuré avec `method()->willReturn()` sans expectation.
+- Les Domain Models (`Article`, `Page`, `Author`) ne se mockent pas — ce sont des value objects, instancier directement.
+- Ne pas utiliser `$this->createMock()` / `$this->createStub()` — préférer la forme statique `self::createMock()` / `self::createStub()` (PHPStan niveau max).
+- Ne pas utiliser `$this->callback()` dans `->with()` — préférer `self::callback()` (idem).
+
+**Tests fonctionnels (WebTestCase) :**
 - `tests/Controller/ArticleControllerTest.php` — tests `/articles/` list (200), all slugs from `content/articles/` (200 each), and a non-existent slug (`ContentNotFoundException` via `catchExceptions(false)`).
 - `tests/Controller/DefaultControllerTest.php` — tests `/` home (200), all slugs from `content/pages/` except `home` (redirects) and `contact` (dedicated route), and a non-existent slug (`NotFoundHttpException`).
 - `tests/Controller/RssActionTest.php` — tests `/rss.xml` (200, correct Content-Type, valid Atom XML, article count, ordering, Last-Modified header).
 - `tests/Controller/RobotsActionTest.php` — tests `/robots.txt` (200).
-- `tests/Controller/SitemapActionTest.php` — tests `/sitemap.xml` (200) and verifies every expected URL is present: static routes discovered via `#[Route]` attributes (excluding `Seo/` controllers and non-HTML routes), plus one URL per published article, tag, and page.
-- `tests/Menu/MenuBuilderTest.php` — unit tests for `MenuBuilder::breadcrumb()`. Data provider discovers routes dynamically from controller `#[Route]` attributes via PHP Reflection (using `RouteDiscoveryTrait`); asserts exact breadcrumb item count per route. `EXPECTED_BREADCRUMB_COUNTS` must be updated when a new controller route is added.
-- `tests/Helper/RouteDiscoveryTrait.php` — shared trait that scans `src/Controller/` via Reflection to extract route names, paths, and parameter names. Supports excluding subdirectories and handles `{param:mapping}` syntax.
+- `tests/Controller/SitemapActionTest.php` — tests `/sitemap.xml` (200) and verifies every expected URL is present: static routes discovered via `#[Route]` attributes (excluding `Seo/` actions and non-HTML routes), plus one URL per published article, tag, author, and page.
+
+**Tests unitaires (TestCase) :**
+- `tests/Menu/MenuBuilderTest.php` — unit tests for `MenuBuilder::breadcrumb()`. Data provider discovers routes dynamically from action `#[Route]` attributes via PHP Reflection (using `RouteDiscoveryTrait`); asserts exact breadcrumb item count per route. `EXPECTED_BREADCRUMB_COUNTS` must be updated when a new action route is added.
+- `tests/Responder/` — un test par Responder, miroir de `src/Responder/`. Chaque test couvre : le bon template appelé, les headers HTTP spécifiques (Content-Type, Last-Modified), et les cas limites (liste vide, template fallback). Utilise de vraies instances de Domain Models plutôt que des mocks.
+- `tests/Helper/RouteDiscoveryTrait.php` — shared trait that scans `src/Action/` via Reflection to extract route names, paths, and parameter names. Supports excluding subdirectories and handles `{param:mapping}` syntax.
 - Adding a new file to `content/` automatically adds a controller test case — no code change needed.
 
 ### Git Commit Style
