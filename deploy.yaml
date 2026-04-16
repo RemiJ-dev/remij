@@ -1,0 +1,66 @@
+import:
+  - recipe/symfony.php
+
+config:
+  repository: 'git@github.com:RemiJ-dev/remij.git'
+  remote_user: debian
+  http_user: www-data
+  writable_mode: chmod
+  ssh_multiplexing: true
+  forward_agent: true
+  keep_releases: 5
+  branch: main
+  deploy_path: '/var/www/remij.dev'
+  shared_files:
+    - .env.local
+  shared_dirs:
+    - var/log
+    - var/sass
+    - var/dart-sass
+    - public/images
+    - public/resized
+    - public/.well-known
+  writable_dirs:
+    - var
+    - var/log
+    - var/sass
+    - var/dart-sass
+    - public/images
+    - public/resized
+    - public/.well-known
+  webhook_url: "https://chat.remij.dev/hooks/b4p5zkguef8kzc5fbubys7ujoy"
+
+hosts:
+  prod:
+    hostname: 193.70.90.143
+    real_url: "https://remij.dev"
+    stage: prod
+    branch: main
+    labels:
+      stage: prod
+
+tasks:
+  update:
+    - cd: '{{release_path}}'
+    - run: 'make install@dist'
+    - run: 'make build@dist'
+  notify:success:
+    - run: "curl -H \"Content-Type: application/json\" -X POST -d '{\"text\": \"🎉 **Succès** du déploiement de RémiJ, version **{{ release_name }}** sur le serveur **{{ stage }}** ! Testez sur {{ real_url }} !\"}' {{webhook_url}}"
+  notify:fail:
+    - run: "curl -H \"Content-Type: application/json\" -X POST -d '{\"text\": \"❌ **Échec** du déploiement de RémiJ, version **{{ release_name }}** sur le serveur **{{ stage }}** !\"}' {{webhook_url}}"
+  notify:start:
+    - run: "curl -H \"Content-Type: application/json\" -X POST -d '{\"text\": \"🏁 **Démarrage** du déploiement de RémiJ, version **{{ release_name }}** sur le serveur **{{ stage }}** !\"}' {{webhook_url}}"
+  deploy:
+    - deploy:prepare
+    - update
+    - deploy:publish
+
+before:
+  deploy:
+    - notify:start
+after:
+  deploy:failed:
+    - deploy:unlock
+    - notify:fail
+  deploy:publish:
+    - notify:success

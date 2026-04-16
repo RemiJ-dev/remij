@@ -8,10 +8,15 @@ authors: ["remij"]
 tags: ["reflexions","IA","outil"]
 ---
 
+## Table ronde autour de l'IA
+
+Le 10 avril 2026, dans la salle polyvalente de Belmont, nous avons organisé une soirée autour de l'IA
+
 ## "Quelques" articles traitant du sujet
 
 ### Bases
 
+- [L’histoire de l’intelligence artificielle : des origines à aujourd’hui](https://www.ia-insights.fr/histoire-de-l-intelligence-artificielle/)
 - [intelligence artificielle (IA) – information, recherche et analyse – The Conversation France, page 1](https://theconversation.com/topics/intelligence-artificielle-ia-22176)
 - [Dans les algorithmes | Archives](https://danslesalgorithmes.net/archives/?_tags=intelligence-artificielle)
 - [AI - 404 Media](https://www.404media.co/tag/ai/)
@@ -20,6 +25,9 @@ tags: ["reflexions","IA","outil"]
 
 ### Société
 
+- [Les ratés de l'IA : racisme, misogynie et fascisme.](https://cobbai.com/blog/intelligence-artificielle-racisme-misogynie-fascisme)
+- [L’IA serait-elle raciste ? C’est ce qu’affirme une étude ](https://www.futura-sciences.com/tech/actualites/intelligence-artificielle-ia-serait-elle-raciste-cest-ce-quaffirme-etude-108931/)
+- [IA : le piège d’un langage statistique qui ressemble au nôtre](https://theconversation.com/ia-le-piege-dun-langage-statistique-qui-ressemble-au-notre-276544)
 - [Dans les algorithmes | Pour une IA coopérative](https://danslesalgorithmes.net/2026/04/07/pour-une-ia-cooperative/)
 - [L'humain est facile à manipuler 😡. Une étude sur l'influence de l'IA en révèle l'ampleur - YouTube](https://www.youtube.com/watch?v=osOWroq6jaM)
 - [Biased AI writing assistants shift users’ attitudes on societal issues | Science Advances](https://www.science.org/doi/10.1126/sciadv.adw5578)
@@ -38,6 +46,7 @@ tags: ["reflexions","IA","outil"]
 - [D’ici 2050, les émissions carbone du numérique pourraient être multipliées par cinq](https://reporterre.net/D-ici-2050-les-emissions-carbone-du-numerique-pourraient-etre-multipliees-par-cinq)
 - [Réchauffement climatique : l’IA générative consommerait quotidiennement autant d’énergie que 1,5 million de foyers - L'Humanité](https://www.humanite.fr/social-et-economie/chatgpt/rechauffement-climatique-lia-generative-consommerait-quotidiennement-autant-denergie-que-15-million-de-foyers)
 - [Non, l’intelligence artificielle n’est pas une alliée de la lutte climatique, confirme une étude](https://reporterre.net/L-intelligence-artificielle-favorable-a-l-ecologie-est-un-canular-selon-une-etude)
+- [Pour les besoins de l’IA, les data centers veulent tourner au gaz fossile](https://reporterre.net/C-est-une-aberration-pour-les-besoins-de-l-IA-les-data-centers-veulent-tourner-au-gaz)
 
 ### Propriété intellectuelle
 
@@ -46,6 +55,7 @@ tags: ["reflexions","IA","outil"]
 - [Les traducteurs d’Arte dénoncent la destruction de leur métier par l’IA | Mediapart](https://www.mediapart.fr/journal/economie-et-social/230326/les-traducteurs-d-arte-denoncent-la-destruction-de-leur-metier-par-l-ia)
 - [4 000 comédiens français alertent les pouvoirs publics sur le «pillage en règle» de leur métier par les intelligences artificielles – Libération](https://www.liberation.fr/culture/cinema/4-000-comediens-francais-alertent-les-pouvoirs-publics-sur-le-pillage-en-regle-de-leur-metier-par-les-intelligences-artificielles-20260222_YGN2VJEUSVH23AFUXRA6WPCW4I/?redirected=5322)
 - [Quand l’IA trahit les identités professionnelles](https://theconversation.com/quand-lia-trahit-les-identites-professionnelles-277639)
+- [Une intelligence artificielle capable d’imiter n'importe quelle voix provoque déjà des dérapages](https://www.bfmtv.com/tech/intelligence-artificielle/cette-intelligence-artificielle-vous-permet-de-copier-la-voix-de-n-importe-qui-en-quelques-secondes_AN-202301310513.html)
 
 ### Économie
 
@@ -72,13 +82,14 @@ tags: ["reflexions","IA","outil"]
 - [AI fatigue is real and nobody talks about it | Siddhant Khare](https://siddhantkhare.com/writing/ai-fatigue-is-real)
 - [Dans les algorithmes | Le tournant agentique… des machines à défaillances ](https://danslesalgorithmes.net/2026/04/09/le-tournant-agentique-des-machines-a-defaillances/)
 - [Bloquer les crawlers IA qui pillent votre site - Korben](https://korben.info/bloquer-crawlers-ia-robots-txt-htaccess-nginx.html)
+- [L’IA Agentique : La Nouvelle Frontière de l’automatisation](https://www.ia-insights.fr/lia-agentique-la-nouvelle-frontiere-de-lautomatisation/)
 
 ### Education
 
 - [Dans les algorithmes | IA et éducation (1/2) : plongée dans l'IApocalypse éducative](https://danslesalgorithmes.net/2025/06/24/ia-et-education-1-2-plongee-dans-liapocalypse-educative/)
 - [Dans les algorithmes | IA et éducation (2/2) : du dilemme moral au malaise social](https://danslesalgorithmes.net/2025/07/01/ia-et-education-2-2-du-dilemme-moral-au-malaise-social/)
 - [IA : pourquoi former une « tête bien faite » n’a jamais été aussi crucial](https://theconversation.com/ia-pourquoi-former-une-tete-bien-faite-na-jamais-ete-aussi-crucial-278556)
-- [Le plus grand danger de l’IA à l’université n’est pas la triche, c’est l’érosion de l’apprentissage lui-même](https://theconversation.com/le-plus-grand-danger-de-lia-a-luniversite-nest-pas-la-triche-cest-lerosion-de-lapprentissage-lui-meme-276480)
+- [Le plus grand danger de l’IA à l’université n’est pas la triche, c’est l’érosion de l’apprentissage lui-même](https://theconversation.com/le-plus-grand-danger-de-lia-a-luniversite-nest-pas-la-triche-cest-lerosion-de-lapprentissage-lui-meme-276480)
 
 ### Santé
 

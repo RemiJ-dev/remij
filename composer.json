@@ -44,6 +44,7 @@
     },
     "require-dev": {
         "ext-simplexml": "*",
+        "deployer/deployer": "^7.5",
         "ekino/phpstan-banned-code": "^3.0",
         "friendsofphp/php-cs-fixer": "^3.94",
         "phpstan/phpstan": "^2.1",
