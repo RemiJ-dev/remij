@@ -18,13 +18,6 @@ use Twig\Error\SyntaxError;
 
 readonly class ContentAction
 {
-    public function __construct(
-        private PageRepository $pageRepository,
-        private ContentResponder $responder,
-        private UrlGeneratorInterface $urlGenerator,
-    ) {
-    }
-
     /**
      * @throws RuntimeError
      * @throws SyntaxError
@@ -34,14 +27,18 @@ readonly class ContentAction
      * Since this is a catch-all route, it has a very low priority.
      */
     #[Route('/{slug}', name: 'page_content', requirements: ['slug' => '[^\.]+'], priority: -500)]
-    public function __invoke(string $slug): Response
-    {
+    public function __invoke(
+        string $slug,
+        PageRepository $pageRepository,
+        ContentResponder $responder,
+        UrlGeneratorInterface $urlGenerator,
+    ): Response {
         if ('home' === $slug) {
-            return new RedirectResponse($this->urlGenerator->generate('page_home'));
+            return new RedirectResponse($urlGenerator->generate('page_home'));
         }
 
         try {
-            $page = $this->pageRepository->findBySlug($slug);
+            $page = $pageRepository->findBySlug($slug);
         } catch (ContentNotFoundException $exception) {
             throw new NotFoundHttpException(\sprintf(
                 'Page not found. Did you forget to create a `content/pages/%s.md` file?',
@@ -49,6 +46,6 @@ readonly class ContentAction
             ), $exception);
         }
 
-        return ($this->responder)($slug, $page);
+        return ($responder)($slug, $page);
     }
 }

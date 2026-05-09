@@ -8,17 +8,16 @@ use App\Domain\Article\Model\Article;
 use App\Responder\Seo\SitemapResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Twig\Environment;
+use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(SitemapResponder::class)]
 class SitemapResponderTest extends TestCase
 {
     public function testInvokeSetsXmlContentType(): void
     {
-        $twig = self::createStub(Environment::class);
-        $twig->method('render')->willReturn('');
+        $render = static fn (string $template, array $parameters): Response => new Response('');
 
-        $response = (new SitemapResponder($twig))([], []);
+        $response = new SitemapResponder($render)([], []);
 
         self::assertSame('application/xml; charset=utf-8', $response->headers->get('Content-Type'));
     }
@@ -39,16 +38,13 @@ class SitemapResponderTest extends TestCase
 
         /** @var array<string, mixed> $capturedContext */
         $capturedContext = [];
-        $twig = self::createStub(Environment::class);
-        $twig->method('render')->willReturnCallback(
-            function (string $template, array $context) use (&$capturedContext): string {
-                $capturedContext = $context;
+        $render = static function (string $template, array $parameters) use (&$capturedContext): Response {
+            $capturedContext = $parameters;
 
-                return '';
-            }
-        );
+            return new Response('');
+        };
 
-        (new SitemapResponder($twig))([$article1->slug => $article1, $article2->slug => $article2], []);
+        new SitemapResponder($render)([$article1->slug => $article1, $article2->slug => $article2], []);
 
         /** @var array<string, \DateTimeInterface> $tags */
         $tags = $capturedContext['tags'];

@@ -15,22 +15,19 @@ use Twig\Error\SyntaxError;
 
 readonly class ListByAuthorAction
 {
-    public function __construct(
-        private ArticleRepository $repository,
-        private ListByAuthorResponder $responder,
-    ) {
-    }
-
     /**
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws LoaderError
      */
     #[Route('/articles/auteur/{slug:author}', name: 'article_list_by_author')]
-    public function __invoke(Author $author): Response
-    {
-        $articles = $this->repository->findByAuthor($author);
+    public function __invoke(
+        Author $author,
+        ArticleRepository $repository,
+        ListByAuthorResponder $responder,
+    ): Response {
+        $articles = $repository->findByAuthor($author);
 
-        return ($this->responder)($author, $articles);
+        return ($responder)($author, $articles);
     }
 }

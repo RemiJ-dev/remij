@@ -25,6 +25,6 @@ class ListByAuthorResponder extends AbstractArticleResponder
         return $this->render('articles/list_by_author.html.twig', [
             'articles' => $articles,
             'author' => $author,
-        ])->setLastModified($this->lastModified($articles));
+        ])->setLastModified($this->getLastModified($articles));
     }
 }

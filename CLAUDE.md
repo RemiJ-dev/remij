@@ -47,7 +47,7 @@ make lint.container            # Lint Symfony DI container
 ### Test
 ```shell
 make test              # Basic test: runs build.content.without-images and PHPUnit tests
-bin/phpunit            # Run PHPUnit tests (functional controller tests)
+bin/phpunit            # Run PHPUnit tests (functional and unit tests)
 bin/phpunit --testdox  # Run with human-readable output
 ```
 
@@ -74,7 +74,7 @@ Never use `bin/phpunit` directly — always go through `make test`.
 
 ### How Stenope Works
 
-Stenope reads content files (Markdown with YAML front matter) from `content/`, deserializes them into PHP model objects, and then renders static HTML pages via Symfony controllers and Twig templates. The `ContentManagerInterface` is the main entry point for fetching content in controllers.
+Stenope reads content files (Markdown with YAML front matter) from `content/`, deserializes them into PHP model objects, and then renders static HTML pages via Symfony controllers and Twig templates. The `ContentManagerInterface` is the main entry point for fetching content in actions.
 
 Content types and their source directories are configured in `config/packages/stenope.yaml`:
 - `App\Domain\Article\Model\Article` ← `content/articles/`
@@ -105,7 +105,7 @@ src/
 - **`Domain/Article/Model/Author`** — profils auteurs : `slug`, `name`, `avatar`, `active`, `since`.
 - **`Domain/Page/Model/Page`** — pages statiques génériques.
 - **`Domain/Seo/Model/MetaTrait`** — champs SEO/réseaux sociaux partagés (`metaTitle`, `metaDescription`), utilisé par `Article` et `Page`.
-- **`Domain/Contact/DTO/ContactDTO`** — DTO du formulaire de contact avec contraintes de validation (`NotBlank`, `Email`, `Length`).
+- **`Domain/Page/DTO/ContactDTO`** — DTO du formulaire de contact avec contraintes de validation (`NotBlank`, `Email`, `Length`).
 
 **Repositories (services autowirés) :**
 - **`Domain/Article/Repository/ArticleRepository`** — `findPublished()`, `findByTag(string $tag)`, `findByAuthor(Author $author)`. Wraps `ContentManagerInterface`.
@@ -114,6 +114,8 @@ src/
 ### Infrastructure (`src/Infrastructure/`)
 
 - **`Infrastructure/Form/ContactType`** — Symfony Form type pour la page contact, lié à `ContactDTO`.
+- **`Infrastructure/Form/Handler/ContactFormHandler`** — gère la soumission du formulaire de contact (validation + envoi).
+- **`Infrastructure/Mailer/ContactMailer`** — envoie l'email de contact via Brevo.
 - **`Infrastructure/Twig/MenuBuilder`** — construit le fil d'Ariane pour la requête courante. Lit `_route` et `_route_params` depuis `RequestStack`. Gère : `page_home`, `page_contact`, `page_content`, `article_list`, `article_list_by_tag`, `article_list_by_author`, `article_show`. Les routes non gérées (ex: `rss`, `seo_robots`, `seo_sitemap`) retournent uniquement l'entrée home.
 - **`Infrastructure/Twig/MenuExtension`** — expose `MenuBuilder::breadcrumb()` via la fonction Twig `breadcrumb()`.
 - **`Infrastructure/Stenope/Processor/AssetsProcessor`** — post-traite le HTML des articles pour résoudre les URLs d'assets locaux pour les éléments `<source>` et `<video>` via le composant Asset de Symfony.
@@ -138,7 +140,7 @@ A future `publishedAt` date means the article is not yet published (draft).
 
 Hiérarchie des classes de base :
 ```
-AbstractTwigResponder              ← injecte Environment, expose render()
+AbstractTwigResponder              ← injecte ControllerHelper::render() via #[AutowireMethodOf] comme \Closure, expose render(): Response
 ├── AbstractArticleResponder       ← ajoute lastModified(array) via ContentUtils
 │   ├── ListResponder
 │   ├── ListByTagResponder
@@ -148,7 +150,7 @@ AbstractTwigResponder              ← injecte Environment, expose render()
 └── (direct)
     ├── Page/HomeResponder
     ├── Page/ContactResponder      ← @param FormInterface<ContactDTO>
-    ├── Page/ContentResponder      ← sélection template custom vs fallback via twig loader
+    ├── Page/ContentResponder      ← sélection template custom vs fallback via twig loader ; surcharge le constructeur pour injecter Twig\Environment séparément
     ├── Seo/RobotsResponder       ← Content-Type: text/plain
     └── Seo/SitemapResponder      ← agrège tags/authors, Content-Type: application/xml
 ```
@@ -157,9 +159,9 @@ AbstractTwigResponder              ← injecte Environment, expose render()
 
 ### Actions (`src/Action/`)
 
-Un fichier par action, organisé en sous-dossiers. Chaque action est une `readonly class` avec une seule méthode `__invoke()`, sauf `ContactAction` qui étend `AbstractController` (pour `createForm`, `addFlash`, `redirectToRoute`). Les actions se limitent à : récupérer les données via le Repository, appeler `($this->responder)(...)`.
+Un fichier par action, organisé en sous-dossiers. Chaque action est une `readonly class` avec une seule méthode `__invoke()`. Les actions se limitent à : récupérer les données via le Repository, appeler `($this->responder)(...)`. `ContactAction` injecte `addFlash` et `redirectToRoute` via `#[AutowireMethodOf(ControllerHelper::class)]` plutôt qu'en étendant `AbstractController`.
 
-**Convention de nommage des routes :** préfixées par le sous-dossier (ex: `seo_robots`, `seo_sitemap`). Les actions à la racine (ex: `RssAction`) n'ont pas de préfixe.
+**Convention de nommage des routes :** préfixées par le sous-dossier (ex: `seo_robots`, `seo_sitemap`). Exception explicite : `Article/RssAction` conserve le nom `rss` (pas de préfixe `article_`).
 
 - **`Page/HomeAction`** — `GET /` → `page_home`
 - **`Page/ContactAction`** — `GET|POST /contact` → `page_contact` (envoie un email via Brevo ; redirect on success reste dans l'Action)
@@ -168,7 +170,7 @@ Un fichier par action, organisé en sous-dossiers. Chaque action est une `readon
 - **`Article/ListByTagAction`** — `GET /articles/tag/{tag}` → `article_list_by_tag`
 - **`Article/ListByAuthorAction`** — `GET /articles/auteur/{slug}` → `article_list_by_author`
 - **`Article/ShowAction`** — `GET /articles/{slug:article}` → `article_show`
-- **`RssAction`** — `GET /rss.xml` → `rss`, retourne un flux Atom avec `Content-Type: application/atom+xml`
+- **`Article/RssAction`** — `GET /rss.xml` → `rss`, retourne un flux Atom avec `Content-Type: application/atom+xml`
 - **`Seo/RobotsAction`** — `GET /robots.txt` → `seo_robots`
 - **`Seo/SitemapAction`** — `GET /sitemap.xml` → `seo_sitemap`, liste toutes les URLs publiques (articles, pages, tags, auteurs) sauf `seo_robots` et `seo_sitemap`
 
@@ -206,17 +208,20 @@ Global site metadata (title, description) and navigation menus (main + footer) a
 - Ne pas utiliser `$this->callback()` dans `->with()` — préférer `self::callback()` (idem).
 
 **Tests fonctionnels (WebTestCase) :**
-- `tests/Controller/ArticleControllerTest.php` — tests `/articles/` list (200), all slugs from `content/articles/` (200 each), and a non-existent slug (`ContentNotFoundException` via `catchExceptions(false)`).
-- `tests/Controller/DefaultControllerTest.php` — tests `/` home (200), all slugs from `content/pages/` except `home` (redirects) and `contact` (dedicated route), and a non-existent slug (`NotFoundHttpException`).
-- `tests/Controller/RssActionTest.php` — tests `/rss.xml` (200, correct Content-Type, valid Atom XML, article count, ordering, Last-Modified header).
-- `tests/Controller/RobotsActionTest.php` — tests `/robots.txt` (200).
-- `tests/Controller/SitemapActionTest.php` — tests `/sitemap.xml` (200) and verifies every expected URL is present: static routes discovered via `#[Route]` attributes (excluding `Seo/` actions and non-HTML routes), plus one URL per published article, tag, author, and page.
+- `tests/Action/ArticleActionsTest.php` — tests `/articles/` list (200), all slugs from `content/articles/` (200 each), and a non-existent slug (`ContentNotFoundException` via `catchExceptions(false)`).
+- `tests/Action/DefaultActionsTest.php` — tests `/` home (200), all slugs from `content/pages/` except `home` (redirects) and `contact` (dedicated route), and a non-existent slug (`NotFoundHttpException`).
+- `tests/Action/RssActionTest.php` — tests `/rss.xml` (200, correct Content-Type, valid Atom XML, article count, ordering, Last-Modified header).
+- `tests/Action/RobotsActionTest.php` — tests `/robots.txt` (200).
+- `tests/Action/SitemapActionTest.php` — tests `/sitemap.xml` (200) and verifies every expected URL is present: static routes discovered via `#[Route]` attributes (excluding `Seo/` actions and non-HTML routes), plus one URL per published article, tag, author, and page.
 
 **Tests unitaires (TestCase) :**
-- `tests/Menu/MenuBuilderTest.php` — unit tests for `MenuBuilder::breadcrumb()`. Data provider discovers routes dynamically from action `#[Route]` attributes via PHP Reflection (using `RouteDiscoveryTrait`); asserts exact breadcrumb item count per route. `EXPECTED_BREADCRUMB_COUNTS` must be updated when a new action route is added.
-- `tests/Responder/` — un test par Responder, miroir de `src/Responder/`. Chaque test couvre : le bon template appelé, les headers HTTP spécifiques (Content-Type, Last-Modified), et les cas limites (liste vide, template fallback). Utilise de vraies instances de Domain Models plutôt que des mocks.
+- `tests/Infrastructure/Twig/MenuBuilderTest.php` — unit tests for `MenuBuilder::breadcrumb()`. Data provider discovers routes dynamically from action `#[Route]` attributes via PHP Reflection (using `RouteDiscoveryTrait`); asserts exact breadcrumb item count per route. `EXPECTED_BREADCRUMB_COUNTS` must be updated when a new action route is added.
+- `tests/Infrastructure/Form/ContactFormHandlerTest.php` — unit tests for `ContactFormHandler`.
+- `tests/Infrastructure/Mailer/ContactMailerTest.php` — unit tests for `ContactMailer`.
+- `tests/Domain/Article/Repository/ArticleRepositoryTest.php` — unit tests for `ArticleRepository`: vérifie les expressions de filtrage transmises à `ContentManagerInterface` et le filtrage effectif des résultats.
+- `tests/Responder/` — un test par Responder, miroir de `src/Responder/`. Chaque test couvre : le bon template appelé, les headers HTTP spécifiques (Content-Type, Last-Modified), et les cas limites (liste vide, template fallback). Utilise de vraies instances de Domain Models plutôt que des mocks. Le constructeur reçoit une `\Closure(string, array): Response` à la place d'un `Twig\Environment` (car `AbstractTwigResponder` utilise `AutowireMethodOf`). `ContentResponder` reçoit en plus un `Twig\Environment` stub pour le check du loader.
 - `tests/Helper/RouteDiscoveryTrait.php` — shared trait that scans `src/Action/` via Reflection to extract route names, paths, and parameter names. Supports excluding subdirectories and handles `{param:mapping}` syntax.
-- Adding a new file to `content/` automatically adds a controller test case — no code change needed.
+- Adding a new file to `content/` automatically adds an action test case — no code change needed.
 
 ### Git Commit Style
 

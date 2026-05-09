@@ -15,24 +15,20 @@ use Twig\Error\SyntaxError;
 
 readonly class SitemapAction
 {
-    public function __construct(
-        private ArticleRepository $articleRepository,
-        private PageRepository $pageRepository,
-        private SitemapResponder $responder,
-    ) {
-    }
-
     /**
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws LoaderError
      */
     #[Route('/sitemap.xml', name: 'seo_sitemap')]
-    public function __invoke(): Response
-    {
-        return ($this->responder)(
-            $this->articleRepository->findPublished(),
-            $this->pageRepository->findAll(),
+    public function __invoke(
+        ArticleRepository $articleRepository,
+        PageRepository $pageRepository,
+        SitemapResponder $responder,
+    ): Response {
+        return ($responder)(
+            $articleRepository->findPublished(),
+            $pageRepository->findAll(),
         );
     }
 }

@@ -8,22 +8,24 @@ use App\Responder\Page\HomeResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
-use Twig\Environment;
 
 #[CoversClass(HomeResponder::class)]
 class HomeResponderTest extends TestCase
 {
     public function testInvokeRendersExpectedTemplate(): void
     {
-        $twig = $this->createMock(Environment::class);
-        $twig
-            ->expects($this->once())
-            ->method('render')
-            ->with('pages/home.html.twig', [])
-            ->willReturn('<html>home</html>');
+        $renderCalled = 0;
+        $render = function (string $template, array $parameters) use (&$renderCalled): Response {
+            ++$renderCalled;
+            self::assertSame('pages/home.html.twig', $template);
+            self::assertSame([], $parameters);
 
-        $response = (new HomeResponder($twig))();
+            return new Response('<html>home</html>');
+        };
 
+        $response = new HomeResponder($render)();
+
+        self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('<html>home</html>', $response->getContent());
     }

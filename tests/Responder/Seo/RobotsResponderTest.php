@@ -8,22 +8,24 @@ use App\Responder\Seo\RobotsResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
-use Twig\Environment;
 
 #[CoversClass(RobotsResponder::class)]
 class RobotsResponderTest extends TestCase
 {
     public function testInvokeRendersExpectedTemplateWithTextPlainContentType(): void
     {
-        $twig = $this->createMock(Environment::class);
-        $twig
-            ->expects($this->once())
-            ->method('render')
-            ->with('seo/robots.txt.twig', [])
-            ->willReturn('User-agent: *');
+        $renderCalled = 0;
+        $render = function (string $template, array $parameters) use (&$renderCalled): Response {
+            ++$renderCalled;
+            self::assertSame('seo/robots.txt.twig', $template);
+            self::assertSame([], $parameters);
 
-        $response = (new RobotsResponder($twig))();
+            return new Response('User-agent: *');
+        };
 
+        $response = new RobotsResponder($render)();
+
+        self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('User-agent: *', $response->getContent());
         self::assertSame('text/plain', $response->headers->get('Content-Type'));

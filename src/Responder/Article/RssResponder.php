@@ -21,7 +21,7 @@ class RssResponder extends AbstractArticleResponder
      */
     public function __invoke(array $articles): Response
     {
-        $lastModified = $this->lastModified($articles);
+        $lastModified = $this->getLastModified($articles);
 
         $response = $this->render('rss/rss.xml.twig', [
             'articles' => $articles,

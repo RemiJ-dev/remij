@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Menu;
+namespace App\Tests\Infrastructure\Twig;
 
 use App\Infrastructure\Twig\MenuBuilder;
 use App\Tests\Helper\RouteDiscoveryTrait;
@@ -35,7 +35,7 @@ class MenuBuilderTest extends TestCase
      */
     public static function routeBreadcrumbData(): array
     {
-        $routes = self::discoverControllerRoutes(\dirname(__DIR__, 2) . '/src/Action');
+        $routes = self::discoverControllerRoutes(\dirname(__DIR__, 3) . '/src/Action');
 
         $cases = [];
 

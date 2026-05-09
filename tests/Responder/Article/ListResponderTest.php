@@ -9,22 +9,24 @@ use App\Responder\Article\ListResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
-use Twig\Environment;
 
 #[CoversClass(ListResponder::class)]
 class ListResponderTest extends TestCase
 {
     public function testInvokeRendersExpectedTemplate(): void
     {
-        $twig = $this->createMock(Environment::class);
-        $twig
-            ->expects($this->once())
-            ->method('render')
-            ->with('articles/list.html.twig', self::callback(fn (array $context): bool => isset($context['articles'])))
-            ->willReturn('<html>list</html>');
+        $renderCalled = 0;
+        $render = function (string $template, array $parameters) use (&$renderCalled): Response {
+            ++$renderCalled;
+            self::assertSame('articles/list.html.twig', $template);
+            self::assertArrayHasKey('articles', $parameters);
 
-        $response = (new ListResponder($twig))([]);
+            return new Response('<html>list</html>');
+        };
 
+        $response = new ListResponder($render)([]);
+
+        self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('<html>list</html>', $response->getContent());
         self::assertNull($response->getLastModified());
@@ -32,8 +34,7 @@ class ListResponderTest extends TestCase
 
     public function testInvokeSetsLastModifiedFromArticles(): void
     {
-        $twig = self::createStub(Environment::class);
-        $twig->method('render')->willReturn('');
+        $render = static fn (string $template, array $parameters): Response => new Response('');
 
         $lastModified = new \DateTimeImmutable('2025-03-01 09:00:00');
         $article = new Article(
@@ -48,7 +49,7 @@ class ListResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = (new ListResponder($twig))(['2025-03-article' => $article]);
+        $response = new ListResponder($render)(['2025-03-article' => $article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

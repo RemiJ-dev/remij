@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Responder\Page;
 
-use App\Domain\Contact\DTO\ContactDTO;
+use App\Domain\Page\DTO\ContactDTO;
 use App\Domain\Page\Model\Page;
 use App\Responder\AbstractTwigResponder;
 use Symfony\Component\Form\FormInterface;

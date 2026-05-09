@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Result;
 
-use App\Domain\Contact\DTO\ContactDTO;
+use App\Domain\Page\DTO\ContactDTO;
 use Symfony\Component\Form\FormInterface;
 
 readonly class ContactFormResult

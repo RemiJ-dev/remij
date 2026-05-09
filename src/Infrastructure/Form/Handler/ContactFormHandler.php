@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Handler;
 
-use App\Domain\Contact\DTO\ContactDTO;
+use App\Domain\Page\DTO\ContactDTO;
 use App\Infrastructure\Form\ContactType;
 use App\Infrastructure\Form\Result\ContactFormResult;
 use App\Infrastructure\Mailer\ContactMailer;

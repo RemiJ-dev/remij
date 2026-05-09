@@ -7,7 +7,9 @@ namespace App\Action\Page;
 use App\Domain\Page\Repository\PageRepository;
 use App\Infrastructure\Form\Handler\ContactFormHandler;
 use App\Responder\Page\ContactResponder;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
+use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -17,12 +19,16 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class ContactAction extends AbstractController
+readonly class ContactAction
 {
+    /**
+     * @param \Closure(string, array<string, mixed>=, int=): RedirectResponse $redirectToRoute
+     */
     public function __construct(
-        private readonly PageRepository $pageRepository,
-        private readonly ContactFormHandler $formHandler,
-        private readonly ContactResponder $responder,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private \Closure $addFlash,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private \Closure $redirectToRoute,
     ) {
     }
 
@@ -33,17 +39,22 @@ class ContactAction extends AbstractController
      * @throws SyntaxError
      */
     #[Route('/contact', name: 'page_contact', methods: ['GET', 'POST'])]
-    public function __invoke(Request $request, TranslatorInterface $translator): Response
-    {
-        $page = $this->pageRepository->findBySlug('contact');
-        $result = $this->formHandler->handle($request);
+    public function __invoke(
+        Request $request,
+        TranslatorInterface $translator,
+        PageRepository $pageRepository,
+        ContactFormHandler $formHandler,
+        ContactResponder $responder,
+    ): Response {
+        $page = $pageRepository->findBySlug('contact');
+        $result = $formHandler->handle($request);
 
         if ($result->sent) {
-            $this->addFlash('success', $translator->trans('contact.flash.success'));
+            ($this->addFlash)('success', $translator->trans('contact.flash.success'));
 
-            return $this->redirectToRoute('page_contact');
+            return ($this->redirectToRoute)('page_contact');
         }
 
-        return ($this->responder)($page, $result->form);
+        return ($responder)($page, $result->form);
     }
 }

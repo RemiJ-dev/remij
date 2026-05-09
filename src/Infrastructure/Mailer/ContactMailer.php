@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Mailer;
 
-use App\Domain\Contact\DTO\ContactDTO;
+use App\Domain\Page\DTO\ContactDTO;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -23,7 +23,7 @@ readonly class ContactMailer
      */
     public function send(ContactDTO $data): void
     {
-        $email = (new Email())
+        $email = new Email()
             ->from('contact@remij.dev')
             ->to('bonjour@remij.dev')
             ->replyTo($data->email)

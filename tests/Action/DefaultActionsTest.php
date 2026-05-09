@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Controller;
+namespace App\Tests\Action;
 
 use App\Domain\Page\Model\Page;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -10,7 +10,7 @@ use Stenope\Bundle\ContentManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class DefaultControllerTest extends WebTestCase
+class DefaultActionsTest extends WebTestCase
 {
     public function testHomeReturns200(): void
     {

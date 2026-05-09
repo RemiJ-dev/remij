@@ -24,6 +24,6 @@ class ListByTagResponder extends AbstractArticleResponder
         return $this->render('articles/list_by_tag.html.twig', [
             'articles' => $articles,
             'tag' => $tag,
-        ])->setLastModified($this->lastModified($articles));
+        ])->setLastModified($this->getLastModified($articles));
     }
 }

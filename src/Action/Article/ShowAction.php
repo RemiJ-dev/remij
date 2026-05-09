@@ -14,18 +14,16 @@ use Twig\Error\SyntaxError;
 
 readonly class ShowAction
 {
-    public function __construct(private ShowResponder $responder)
-    {
-    }
-
     /**
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
      */
     #[Route('/articles/{slug:article}', name: 'article_show', requirements: ['slug' => '.+'])]
-    public function __invoke(Article $article): Response
-    {
-        return ($this->responder)($article);
+    public function __invoke(
+        Article $article,
+        ShowResponder $responder,
+    ): Response {
+        return ($responder)($article);
     }
 }

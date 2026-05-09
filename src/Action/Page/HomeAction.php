@@ -13,18 +13,15 @@ use Twig\Error\SyntaxError;
 
 readonly class HomeAction
 {
-    public function __construct(private HomeResponder $responder)
-    {
-    }
-
     /**
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws LoaderError
      */
     #[Route('/', name: 'page_home')]
-    public function __invoke(): Response
-    {
-        return ($this->responder)();
+    public function __invoke(
+        HomeResponder $responder,
+    ): Response {
+        return ($responder)();
     }
 }

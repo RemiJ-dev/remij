@@ -13,18 +13,14 @@ use Twig\Error\SyntaxError;
 
 readonly class RobotsAction
 {
-    public function __construct(private RobotsResponder $responder)
-    {
-    }
-
     /**
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws LoaderError
      */
     #[Route('/robots.txt', name: 'seo_robots')]
-    public function __invoke(): Response
+    public function __invoke(RobotsResponder $responder): Response
     {
-        return ($this->responder)();
+        return ($responder)();
     }
 }

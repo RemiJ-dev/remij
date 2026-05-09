@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Controller;
+namespace App\Tests\Action;
 
 use App\Domain\Article\Model\Article;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -10,7 +10,7 @@ use Stenope\Bundle\ContentManagerInterface;
 use Stenope\Bundle\Exception\ContentNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ArticleControllerTest extends WebTestCase
+class ArticleActionsTest extends WebTestCase
 {
     public function testListReturns200(): void
     {

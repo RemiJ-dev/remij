@@ -20,18 +20,23 @@ class ContentResponderTest extends TestCase
         $loader = self::createStub(LoaderInterface::class);
         $loader->method('exists')->willReturn(true);
 
-        $twig = $this->createMock(Environment::class);
+        $twig = self::createStub(Environment::class);
         $twig->method('getLoader')->willReturn($loader);
-        $twig
-            ->expects($this->once())
-            ->method('render')
-            ->with('pages/about.html.twig', self::callback(fn (array $c): bool => isset($c['page'])))
-            ->willReturn('<html>about custom</html>');
+
+        $renderCalled = 0;
+        $render = function (string $template, array $parameters) use (&$renderCalled): Response {
+            ++$renderCalled;
+            self::assertSame('pages/about.html.twig', $template);
+            self::assertArrayHasKey('page', $parameters);
+
+            return new Response('<html>about custom</html>');
+        };
 
         $page = new Page(slug: 'about', title: 'About', content: '', publishedAt: new \DateTimeImmutable());
 
-        $response = (new ContentResponder($twig))('about', $page);
+        $response = new ContentResponder($render, $twig)('about', $page);
 
+        self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('<html>about custom</html>', $response->getContent());
     }
@@ -41,18 +46,23 @@ class ContentResponderTest extends TestCase
         $loader = self::createStub(LoaderInterface::class);
         $loader->method('exists')->willReturn(false);
 
-        $twig = $this->createMock(Environment::class);
+        $twig = self::createStub(Environment::class);
         $twig->method('getLoader')->willReturn($loader);
-        $twig
-            ->expects($this->once())
-            ->method('render')
-            ->with('pages/page.html.twig', self::callback(fn (array $c): bool => isset($c['page'])))
-            ->willReturn('<html>generic</html>');
+
+        $renderCalled = 0;
+        $render = function (string $template, array $parameters) use (&$renderCalled): Response {
+            ++$renderCalled;
+            self::assertSame('pages/page.html.twig', $template);
+            self::assertArrayHasKey('page', $parameters);
+
+            return new Response('<html>generic</html>');
+        };
 
         $page = new Page(slug: 'unknown', title: 'Unknown', content: '', publishedAt: new \DateTimeImmutable());
 
-        $response = (new ContentResponder($twig))('unknown', $page);
+        $response = new ContentResponder($render, $twig)('unknown', $page);
 
+        self::assertSame(1, $renderCalled);
         self::assertSame('<html>generic</html>', $response->getContent());
     }
 }

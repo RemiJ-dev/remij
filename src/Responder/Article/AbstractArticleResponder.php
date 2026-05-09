@@ -12,7 +12,7 @@ abstract class AbstractArticleResponder extends AbstractTwigResponder
     /**
      * @param array<string, object> $articles
      */
-    protected function lastModified(array $articles): ?\DateTimeInterface
+    protected function getLastModified(array $articles): ?\DateTimeInterface
     {
         if (0 === \count($articles)) {
             return null;

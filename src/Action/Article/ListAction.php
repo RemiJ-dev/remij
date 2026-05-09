@@ -14,20 +14,16 @@ use Twig\Error\SyntaxError;
 
 readonly class ListAction
 {
-    public function __construct(
-        private ArticleRepository $repository,
-        private ListResponder $responder,
-    ) {
-    }
-
     /**
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws LoaderError
      */
     #[Route('/articles/', name: 'article_list')]
-    public function __invoke(): Response
-    {
-        return ($this->responder)($this->repository->findPublished());
+    public function __invoke(
+        ArticleRepository $repository,
+        ListResponder $responder,
+    ): Response {
+        return ($responder)($repository->findPublished());
     }
 }

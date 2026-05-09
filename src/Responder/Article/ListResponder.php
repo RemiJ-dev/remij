@@ -23,6 +23,6 @@ class ListResponder extends AbstractArticleResponder
     {
         return $this->render('articles/list.html.twig', [
             'articles' => $articles,
-        ])->setLastModified($this->lastModified($articles));
+        ])->setLastModified($this->getLastModified($articles));
     }
 }

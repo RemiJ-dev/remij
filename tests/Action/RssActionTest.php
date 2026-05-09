@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Controller;
+namespace App\Tests\Action;
 
 use App\Domain\Article\Model\Article;
 use Stenope\Bundle\ContentManagerInterface;

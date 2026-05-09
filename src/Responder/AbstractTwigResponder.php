@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace App\Responder;
 
+use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
+use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\Response;
-use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 abstract class AbstractTwigResponder
 {
-    public function __construct(protected readonly Environment $twig)
-    {
+    /**
+     * @param \Closure(string, array<string, mixed>, Response|null=): Response $render
+     */
+    public function __construct(
+        #[AutowireMethodOf(ControllerHelper::class)]
+        private readonly \Closure $render,
+    ) {
     }
 
     /**
@@ -25,6 +31,6 @@ abstract class AbstractTwigResponder
      */
     protected function render(string $template, array $parameters = []): Response
     {
-        return new Response($this->twig->render($template, $parameters));
+        return ($this->render)($template, $parameters);
     }
 }
