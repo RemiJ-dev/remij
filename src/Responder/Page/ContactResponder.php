@@ -22,11 +22,11 @@ class ContactResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function __invoke(Page $page, FormInterface $form): Response
+    public function __invoke(Page $page, FormInterface $form, int $status = Response::HTTP_OK): Response
     {
         return $this->render('pages/contact.html.twig', [
             'page' => $page,
             'form' => $form->createView(),
-        ]);
+        ], $status);
     }
 }

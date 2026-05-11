@@ -29,12 +29,17 @@ readonly class ContactFormHandler
         $form = $this->formFactory->create(ContactType::class, $data);
         $form->handleRequest($request);
         $sent = false;
+        $success = false;
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->mailer->send($data);
+        if ($form->isSubmitted()) {
             $sent = true;
+
+            if ($form->isValid()) {
+                $this->mailer->send($data);
+                $success = true;
+            }
         }
 
-        return new ContactFormResult(form: $form, sent: $sent);
+        return new ContactFormResult(form: $form, sent: $sent, success: $success);
     }
 }

@@ -37,7 +37,7 @@ class ContactFormHandlerTest extends TestCase
         self::assertFalse($result->sent);
     }
 
-    public function testHandleReturnsNotSentWhenFormIsInvalid(): void
+    public function testHandleReturnsSentButNotSuccessWhenFormIsInvalid(): void
     {
         $form = self::createStub(FormInterface::class);
         $form->method('isSubmitted')->willReturn(true);
@@ -51,7 +51,8 @@ class ContactFormHandlerTest extends TestCase
 
         $result = new ContactFormHandler($formFactory, $mailer)->handle(new Request());
 
-        self::assertFalse($result->sent);
+        self::assertTrue($result->sent);
+        self::assertFalse($result->success);
     }
 
     public function testHandleSendsEmailAndReturnsSentWhenFormIsValid(): void

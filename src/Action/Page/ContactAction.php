@@ -50,9 +50,13 @@ readonly class ContactAction
         $result = $formHandler->handle($request);
 
         if ($result->sent) {
-            ($this->addFlash)('success', $translator->trans('contact.flash.success'));
+            if ($result->success) {
+                ($this->addFlash)('success', $translator->trans('contact.flash.success'));
 
-            return ($this->redirectToRoute)('page_contact');
+                return ($this->redirectToRoute)('page_contact');
+            }
+
+            return ($responder)($page, $result->form, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         return ($responder)($page, $result->form);

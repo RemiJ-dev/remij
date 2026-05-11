@@ -29,8 +29,8 @@ abstract class AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    protected function render(string $template, array $parameters = []): Response
+    protected function render(string $template, array $parameters = [], int $status = Response::HTTP_OK): Response
     {
-        return ($this->render)($template, $parameters);
+        return ($this->render)($template, $parameters, new Response(status: $status));
     }
 }

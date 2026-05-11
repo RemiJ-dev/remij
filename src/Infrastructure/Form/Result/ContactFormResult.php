@@ -15,6 +15,7 @@ readonly class ContactFormResult
     public function __construct(
         public FormInterface $form,
         public bool $sent,
+        public bool $success,
     ) {
     }
 }
