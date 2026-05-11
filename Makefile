@@ -28,6 +28,7 @@ update.composer:
 
 install@dist:
 	composer install
+	composer dump-env prod
 	npm install
 	php bin/console importmap:install
 
@@ -92,6 +93,7 @@ serve.static:
 	open http://localhost:8000
 	symfony php -S localhost:8000 -t build
 
+build@dist: export APP_ENV = prod
 build@dist:
 	php bin/console cache:clear
 	rm -rf public/assets
