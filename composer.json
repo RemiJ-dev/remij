@@ -11,6 +11,7 @@
         "ext-json": "*",
         "composer/package-versions-deprecated": "^1.11",
         "phpdocumentor/reflection-docblock": "^5.6",
+        "sentry/sentry-symfony": "^5.10",
         "stenope/stenope": "dev-update-to-sf-80-php-85",
         "symfony/asset": "8.0.*",
         "symfony/asset-mapper": "8.0.*",
