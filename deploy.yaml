@@ -5,7 +5,7 @@ config:
   repository: 'git@github.com:RemiJ-dev/remij.git'
   remote_user: debian
   http_user: www-data
-  writable_mode: chmod
+  writable_recursive: true
   ssh_multiplexing: true
   forward_agent: true
   keep_releases: 5
@@ -23,6 +23,7 @@ config:
   writable_dirs:
     - var
     - var/log
+    - var/cache
     - var/sass
     - var/dart-sass
     - public/images

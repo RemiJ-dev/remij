@@ -46,6 +46,6 @@ contact:
         submit: "Envoyer"
     email:
         subject: "[Contact] {subject}"
-        body: "De : {name} <{email}>\n\n{message}"
+        body: "De : {name} ({email})\n\n{message}"
     flash:
         success: "Votre message a bien été envoyé. Je vous répondrai dès que possible !"
