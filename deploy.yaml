@@ -8,7 +8,7 @@ config:
   writable_recursive: true
   ssh_multiplexing: true
   forward_agent: true
-  keep_releases: 5
+  keep_releases: 2
   branch: main
   deploy_path: '/var/www/remij.dev'
   shared_files:
@@ -52,16 +52,13 @@ tasks:
   notify:start:
     - run: "curl -H \"Content-Type: application/json\" -X POST -d '{\"text\": \"🏁 **Démarrage** du déploiement de RémiJ, version **{{ release_name }}** sur le serveur **{{ stage }}** !\"}' {{webhook_url}}"
   deploy:
+    - notify:start
     - deploy:prepare
     - update
     - deploy:publish
+    - notify:success
 
-before:
-  deploy:
-    - notify:start
 after:
   deploy:failed:
     - deploy:unlock
     - notify:fail
-  deploy:publish:
-    - notify:success
