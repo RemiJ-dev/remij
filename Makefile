@@ -39,7 +39,7 @@ install@dist:
 ## Dev - Start the whole application for development purposes (local only)
 serve: clear.assets
 	# https://www.npmjs.com/package/concurrently
-	npx concurrently "make serve.php" "make serve.assets" --names="Symfony,Assets" --prefix=name --kill-others --kill-others-on-fail
+	npx concurrently "make serve.php" "make serve.assets" "make serve.slides" --names="Symfony,Assets,Slides" --prefix=name --kill-others --kill-others-on-fail
 
 ## Dev - Start Symfony server
 serve.php:
@@ -48,6 +48,10 @@ serve.php:
 ## Dev - Build Saas files
 serve.assets:
 	symfony console sass:build --watch
+
+## Dev - Build Saas files
+serve.slides:
+	npm run watch
 
 ## Clear - Clear the assets
 clear.assets:
@@ -86,7 +90,12 @@ build.content.without-images: clear.cache
 
 ## Build - Build static site with assets
 build.static: export APP_ENV = prod
-build.static: clear.cache build.assets build.content
+build.static: clear.cache build.assets build.content build.slides
+
+## Build - Build slides with assets
+build.slides:
+	cp -r ./content/slides/images/* ./slides/images/
+	npm run build
 
 ## Serve - Serve the static version
 serve.static:
@@ -101,6 +110,7 @@ build@dist:
 	rm -rf public/resized
 	rm -rf build
 	php bin/console stenope:build
+	npm run build
 
 ########
 # Lint #

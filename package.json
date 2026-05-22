@@ -1,22 +1,36 @@
 {
-    "name": "remij",
-    "version": "1.0.0",
-    "description": "Site de la société RémiJ",
-    "license": "MIT",
-    "private": true,
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/RemiJ-dev/remij.git"
-    },
-    "engines": {
-        "node": ">=24",
-        "npm": ">=11"
-    },
-    "devDependencies": {
-        "@eslint/js": "^10.0.1",
-        "concurrently": "^6.2.0",
-        "core-js": "^3.23.0",
-        "eslint": "^10.2.0",
-        "globals": "^17.4.0"
-    }
+  "name": "remij",
+  "author": "Rémi Jarjat",
+  "version": "1.0.0",
+  "description": "Site de la société RémiJ",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:RemiJ-dev/remij.git"
+  },
+  "engines": {
+    "node": ">=24",
+    "npm": ">=11"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@marp-team/marp-cli": "^4.4.0",
+    "concurrently": "^6.2.0",
+    "core-js": "^3.23.0",
+    "eslint": "^10.2.0",
+    "globals": "^17.4.0"
+  },
+  "scripts": {
+    "watch": "docker run --rm --init -v $PWD:/home/marp/app -e LANG=$LANG -p 8080:8080 -p 37717:37717 marpteam/marp-cli:v4.4.0 -s -w .",
+    "build": "npx marp"
+  },
+  "marp": {
+    "inputDir": "./content/slides",
+    "output": "./slides",
+    "html": true,
+    "lang": "fr",
+    "theme": "remij",
+    "class": "invert"
+  }
 }
