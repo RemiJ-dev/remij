@@ -26,8 +26,10 @@
     "build": "npx marp"
   },
   "marp": {
-    "inputDir": "./content/slides",
+    "inputDir": "./content/videos",
     "output": "./slides",
+    "glob": "**/slides.md",
+    "themeSet": "./assets/styles/slides",
     "html": true,
     "lang": "fr",
     "theme": "remij",

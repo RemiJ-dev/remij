@@ -21,10 +21,13 @@ install.assets:
 	symfony console importmap:install
 
 ## Update dependencies
-update: update.composer
+update: update.composer update.npm
 
 update.composer:
 	symfony composer update
+
+update.npm:
+	npm update
 
 install@dist:
 	composer install
@@ -94,7 +97,8 @@ build.static: clear.cache build.assets build.content build.slides
 
 ## Build - Build slides with assets
 build.slides:
-	cp -r ./content/slides/images/* ./slides/images/
+	mkdir -p ./slides/images
+	cp -r ./assets/images/slides/* ./slides/images/
 	npm run build
 
 ## Serve - Serve the static version
