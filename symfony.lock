@@ -481,6 +481,9 @@
     "symfonycasts/sass-bundle": {
         "version": "v0.2.4"
     },
+    "twig/extra-bundle": {
+        "version": "v3.24.0"
+    },
     "twig/intl-extra": {
         "version": "v3.3.0"
     },

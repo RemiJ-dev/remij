@@ -25,7 +25,7 @@ Une première chose importante qui est ressortie de mes réflexions était : je 
 
 De là découlent plein de questions, bien sûr. D'autant plus que ça n'est pas la seule valeur qui m'importe.
 
-Depuis longtemps, à peu près depuis que je fais du développement, le côté [Open Source](https://fr.wikipedia.org/wiki/Open_source) me fascine. Entre autres par le côté "mise en commun" et ouverture aux autres, mais aussi dans une certaine horizontalité des relations que le modèle implique souvent. Tout le monde peut critiquer et, surtout, tout le monde peut contribuer. Les communs (en général, pas que numériques) me passionnent en ce moment et c'est quelque chose que j'ai envie d'explorer de plus en plus. On en reparlera dans un [article sur les outils](./2025-09-outils.md), mais j'essaie, autant que possible, d'utiliser des outils Open Source pour le travail.
+Depuis longtemps, à peu près depuis que je fais du développement, le côté [Open Source](https://fr.wikipedia.org/wiki/Open_source) me fascine. Entre autres par le côté "mise en commun" et ouverture aux autres, mais aussi dans une certaine horizontalité des relations que le modèle implique souvent. Tout le monde peut critiquer et, surtout, tout le monde peut contribuer. Les communs (en général, pas que numériques) me passionnent en ce moment et c'est quelque chose que j'ai envie d'explorer de plus en plus. On en reparlera dans un [article sur les outils](09-outils.md), mais j'essaie, autant que possible, d'utiliser des outils Open Source pour le travail.
 
 Oui, il y a paradoxe, mais voilà comment je vois les choses : je veux décider par moi-même, mais participer à des projets collectifs, utiles et, si possible, pour le bien commun.
 
@@ -35,7 +35,7 @@ Oui, il y a paradoxe, mais voilà comment je vois les choses : je veux décider 
 
 ### Rester local
 
-Depuis que je vis à la campagne, je suis de plus en plus touché par des problématiques "locales", à chercher à consommer au plus près de chez moi, travailler avec des [partenaires proches géographiquement](../pages/outils-et-partenaires.md), m'investir dans des associations, etc. Le but est aussi de créer et entretenir des rapports humains, bien sûr, dans un métier très virtuel et pouvant être solitaire.
+Depuis que je vis à la campagne, je suis de plus en plus touché par des problématiques "locales", à chercher à consommer au plus près de chez moi, travailler avec des [partenaires proches géographiquement](../../pages/outils-et-partenaires.md), m'investir dans des associations, etc. Le but est aussi de créer et entretenir des rapports humains, bien sûr, dans un métier très virtuel et pouvant être solitaire.
 
 En fait, je pense surtout que j'ai besoin, comme tout le monde, d'un projet qui a du sens pour moi, mais aspire à participer à des choses plus grandes. Pas évident en ce moment, mais j'y travaille !
 

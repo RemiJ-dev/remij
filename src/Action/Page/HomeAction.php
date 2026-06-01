@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Action\Page;
 
+use App\Domain\Page\Repository\SectionRepository;
 use App\Responder\Page\HomeResponder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,7 +22,10 @@ readonly class HomeAction
     #[Route('/', name: 'page_home')]
     public function __invoke(
         HomeResponder $responder,
+        SectionRepository $sectionRepository,
     ): Response {
-        return ($responder)();
+        $sections = $sectionRepository->findByPage('home');
+
+        return ($responder)($sections);
     }
 }

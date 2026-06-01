@@ -5,6 +5,7 @@ stenope:
         App\Domain\Article\Model\Article: '%kernel.project_dir%/content/articles'
         App\Domain\Article\Model\Author: '%kernel.project_dir%/content/authors'
         App\Domain\Page\Model\Page: '%kernel.project_dir%/content/pages'
+        App\Domain\Page\Model\Section: '%kernel.project_dir%/content/sections'
 
     resolve_links:
         App\Domain\Article\Model\Author: { route: 'article_list_by_author', slug: 'author' }

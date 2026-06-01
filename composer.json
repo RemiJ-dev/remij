@@ -40,6 +40,8 @@
         "symfony/validator": "8.1.*",
         "symfony/yaml": "8.1.*",
         "symfonycasts/sass-bundle": "^0.10",
+        "twig/extra-bundle": "^3.24",
+        "twig/intl-extra": "^3.26",
         "twig/twig": "^3.27"
     },
     "require-dev": {
