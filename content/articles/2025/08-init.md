@@ -6,7 +6,7 @@ lastModified: ~
 tableOfContent: true
 authors: ["remij"]
 tags: ["entreprise","administratif","réflexions"]
-nextArticle: 2025-09-outils
+nextArticle: 2025/09-outils
 ---
 
 Bonjour le monde !
