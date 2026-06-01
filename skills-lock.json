@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "raam-audit": {
+      "source": "geoffreycrofte/luxembourg-accessibility-skillset",
+      "sourceType": "github",
+      "skillPath": "raam-audit/SKILL.md",
+      "computedHash": "4f5d5d7265dc5b1af78a4350ff70a6db447c6f00fe511ab9e3ec83081bc09070"
+    },
+    "raam-code": {
+      "source": "geoffreycrofte/luxembourg-accessibility-skillset",
+      "sourceType": "github",
+      "skillPath": "raam-code/SKILL.md",
+      "computedHash": "d94ae59895988c58998a8f6825b4a1532a0aed578b7c0a800a724a3f99100c75"
+    },
+    "raweb-audit": {
+      "source": "geoffreycrofte/luxembourg-accessibility-skillset",
+      "sourceType": "github",
+      "skillPath": "raweb-audit/SKILL.md",
+      "computedHash": "c447dd6dccd217f5c30ad43fd523b9d0baead4a78b8b6893c5c385420919d7cf"
+    },
+    "raweb-code": {
+      "source": "geoffreycrofte/luxembourg-accessibility-skillset",
+      "sourceType": "github",
+      "skillPath": "raweb-code/SKILL.md",
+      "computedHash": "9ec531443dcbae64cf4b7d6120676bd60a621730e62f5d548593e372e800c93e"
+    }
+  }
+}
