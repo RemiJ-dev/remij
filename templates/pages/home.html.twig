@@ -14,4 +14,11 @@
 
     {{ page.content|raw }}
 
+    {% for section in sections %}
+        {{ include('pages/sections/' ~ section.type.value ~ '.html.twig', {
+            section: section,
+            page: page,
+        }, with_context=false) }}
+    {% endfor %}
+
 {% endblock %}

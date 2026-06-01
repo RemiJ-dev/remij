@@ -12,7 +12,6 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
-/build/
 
 ###> friendsofphp/php-cs-fixer ###
 /.php-cs-fixer.php
@@ -24,15 +23,16 @@
 /assets/vendor
 ###< symfony/asset-mapper ###
 
-/node_modules/
-
 ###> phpstan/phpstan ###
 phpstan.neon
 ###< phpstan/phpstan ###
-
-.idea
 
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
+
+/build/
+/slides/
+.idea
+/node_modules/

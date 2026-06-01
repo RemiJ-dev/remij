@@ -1,7 +1,4 @@
 {
-    "composer/package-versions-deprecated": {
-        "version": "1.11.99"
-    },
     "composer/pcre": {
         "version": "1.0.0"
     },
@@ -483,6 +480,9 @@
     },
     "symfonycasts/sass-bundle": {
         "version": "v0.2.4"
+    },
+    "twig/extra-bundle": {
+        "version": "v3.24.0"
     },
     "twig/intl-extra": {
         "version": "v3.3.0"

@@ -14,7 +14,7 @@
                 </div>
             {% endif %}
             <h1>{{ article.title }}</h1>
-            <small class="text-body-secondary">{{ 'article.show.published_at'|trans({'date': article.publishedAt|date('d/m/Y')}) }}</small>
+            <small class="text-body-secondary">{{ 'article.show.published_at'|trans({'date': article.publishedAt|format_date('long')}) }}</small>
         </header>
 
         {% include 'articles/_toc.html.twig' with { toc: article.tableOfContent } only %}

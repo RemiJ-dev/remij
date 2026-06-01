@@ -8,7 +8,7 @@ authors: ["remij"]
 tags: ["outil","administratif","code"]
 ---
 
-[Commencer une nouvelle société](2025-08-init.md) est l'occasion de réfléchir à nouveau aux outils qu'on utilise. Pour le coup, je suis content de faire ce tour des outils dont j'ai l'habitude, mais aussi de la longue liste qui traine dans ma veille depuis longtemps ! Tellement longtemps que certains sont même abandonnés depuis... 
+[Commencer une nouvelle société](08-init.md) est l'occasion de réfléchir à nouveau aux outils qu'on utilise. Pour le coup, je suis content de faire ce tour des outils dont j'ai l'habitude, mais aussi de la longue liste qui traine dans ma veille depuis longtemps ! Tellement longtemps que certains sont même abandonnés depuis... 
 
 ## Gestion de la société
 

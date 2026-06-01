@@ -8,7 +8,7 @@ authors: ["remij"]
 tags: ["Symfony","technique","tutoriel","réflexions","pattern"]
 ---
 
-Dans [le précédent article sur les controllers](./2026-02-controllers-symfony.md), je mentionne à la toute fin le pattern ADR (Action Domain Responder). Figurez-vous que je me suis mis en tête de faire quelques essais et, même si je n'irais peut-être pas m'en servir sur tous les projets (mes projets clients, notamment, qui seraient bien trop massifs à transformer), ça m'a bien plu ! Je me suis beaucoup basé sur un article sur [l'utilisation de ADR avec Laravel](https://wendelladriel.com/blog/using-the-adr-action-domain-responder-pattern-in-laravel) et je vais beaucoup le paraphraser. Du coup, si vous utilisez Laravel, je vous recommande surtout l'article mentionné !
+Dans [le précédent article sur les controllers](02-controllers-symfony.md), je mentionne à la toute fin le pattern ADR (Action Domain Responder). Figurez-vous que je me suis mis en tête de faire quelques essais et, même si je n'irais peut-être pas m'en servir sur tous les projets (mes projets clients, notamment, qui seraient bien trop massifs à transformer), ça m'a bien plu ! Je me suis beaucoup basé sur un article sur [l'utilisation de ADR avec Laravel](https://wendelladriel.com/blog/using-the-adr-action-domain-responder-pattern-in-laravel) et je vais beaucoup le paraphraser. Du coup, si vous utilisez Laravel, je vous recommande surtout l'article mentionné !
 
 Je reviendrai sur les pours et les contres vers [la fin de cet article](#conclusion). Pour l'heure, voyons un peu la démarche et ce que j'en ai fait.
 

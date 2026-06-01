@@ -12,7 +12,7 @@
             <p class="card-text">{{ article.description }}</p>
         </div>
         <aside class="text-body-secondary d-flex justify-content-between border-top px-3 py-2">
-            <aside>{{ article.lastModifiedOrCreated|date('d/m/Y') }}</aside>
+            <aside>{{ article.lastModifiedOrCreated|format_date('long') }}</aside>
             <div>
                 {% for tag in article.tags %}
                     <a class="chip" href="{{ path('article_list_by_tag', { "tag": tag }) }}">#{{ tag|lower }}</a>

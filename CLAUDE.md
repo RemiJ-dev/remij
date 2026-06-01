@@ -136,6 +136,49 @@ tags:           ["tag1", "tag2"]
 ```
 A future `publishedAt` date means the article is not yet published (draft).
 
+### Video Content (`content/videos/`)
+
+All content related to video productions (YouTube, conferences, workshops) lives under `content/videos/`. Each video gets its own subdirectory containing up to three files:
+- `slides.md` — Marp presentation source
+- `script.md` — spoken script for the recording
+- `textes.md` — supporting texts (YouTube description, social media posts)
+
+Videos are organized by theme:
+```
+content/videos/
+├── general/          ← channel-level videos
+├── cours/            ← course series (e.g. cours/Symfony/, cours/hb/)
+├── outils/           ← tool-focused videos
+├── ateliers/         ← workshop videos
+├── projets/          ← project series (e.g. projets/recettes/)
+└── interne/          ← internal notes (not published)
+```
+
+A series can nest: `cours/Symfony/5-doctrine/` contains both `slides.md` (the top-level episode) and subdirectories for sub-episodes (`5-1-install/`, `5-2-entite/`, …).
+
+**Slides front matter** uses Marp directives (not Stenope YAML):
+```yaml
+---
+headingDivider: 2
+paginate: true
+auto-scaling: true
+header: "Slide header"
+---
+```
+
+**Assets for slides:**
+- Theme CSS: `assets/styles/slides/theme.css` (registered as custom Marp theme `remij`)
+- Shared images: `assets/images/slides/` (copied to `slides/images/` during build)
+
+#### Slides compilation
+
+Slides are compiled with [Marp CLI](https://github.com/marp-team/marp-cli) (configured in `package.json`):
+```shell
+make serve.slides   # Watch mode via Docker (marpteam/marp-cli image, port 8080)
+make build.slides   # Copy images to slides/images/, then npx marp
+```
+The `marp` config in `package.json`: `inputDir: ./content/videos`, `glob: **/slides.md`, `output: ./slides`, `themeSet: ./assets/styles/slides`, theme `remij`, lang `fr`.
+
 ### Responders (`src/Responder/`)
 
 Hiérarchie des classes de base :
