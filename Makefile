@@ -4,6 +4,29 @@
 include ./.make/text.mk
 include ./.make/help.mk
 
+HAS_DOCKER:=$(shell command -v docker 2> /dev/null)
+# Executables (local)
+DOCKER_COMP = docker compose
+
+# Docker containers
+# Check if docker is present, allow usage of this makefile inside the containers
+ifdef HAS_DOCKER
+	PHP_CONT = $(DOCKER_COMP) exec php
+	SLIDES_CONT = $(DOCKER_COMP) exec slides
+else
+	PHP_CONT =
+	SLIDES_CONT =
+endif
+
+# Executables
+PHP = $(PHP_CONT) php
+COMPOSER = $(PHP_CONT) composer
+SYMFONY = $(PHP_CONT) bin/console
+NPM = $(PHP_CONT) npm
+NPX = $(PHP_CONT) npx
+
+.DEFAULT_GOAL = help # make without any arguments will exec help task
+
 ###########
 # Install #
 ###########
@@ -12,22 +35,22 @@ include ./.make/help.mk
 install: install.composer install.npm install.assets
 
 install.composer:
-	symfony composer install
+	$(COMPOSER) install
 
 install.npm:
-	npm install
+	$(NPM) install
 
 install.assets:
-	symfony console importmap:install
+	$(SYMFONY) importmap:install
 
 ## Update dependencies
 update: update.composer update.npm
 
 update.composer:
-	symfony composer update
+	$(COMPOSER) update
 
 update.npm:
-	npm update
+	$(NPM) update
 
 install@dist:
 	composer install
@@ -41,20 +64,16 @@ install@dist:
 
 ## Dev - Start the whole application for development purposes (local only)
 serve: clear.assets
-	# https://www.npmjs.com/package/concurrently
-	npx concurrently "make serve.php" "make serve.assets" "make serve.slides" --names="Symfony,Assets,Slides" --prefix=name --kill-others --kill-others-on-fail
-
-## Dev - Start Symfony server
-serve.php:
-	symfony server:start --no-tls
+	$(DOCKER_COMP) up --remove-orphans php nginx mailhog
+.PHONY: serve
 
 ## Dev - Build Saas files
 serve.assets:
-	symfony console sass:build --watch
+	$(SYMFONY) sass:build --watch
 
 ## Dev - Build Saas files
 serve.slides:
-	npm run watch
+	$(DOCKER_COMP) up --remove-orphans slides
 
 ## Clear - Clear the assets
 clear.assets:
@@ -70,7 +89,7 @@ clear.images:
 
 ## Clear - Clear symfony cache
 clear.cache:
-	symfony console cache:clear
+	$(SYMFONY) cache:clear
 
 #########
 # Build #
@@ -79,17 +98,17 @@ clear.cache:
 ## Build - Build assets
 build.assets: export APP_ENV = prod
 build.assets:
-	symfony console asset-map:compile
+	$(SYMFONY) asset-map:compile
 
 ## Build - Build static site
 build.content: export APP_ENV = prod
 build.content: clear.images clear.cache
-	symfony console stenope:build
+	$(SYMFONY) stenope:build
 
 ## Build - Build static site without resizing images, for moar speed
 build.content.without-images: export APP_ENV = prod
 build.content.without-images: clear.cache
-	symfony console stenope:build
+	$(SYMFONY) stenope:build
 
 ## Build - Build static site with assets
 build.static: export APP_ENV = prod
@@ -99,12 +118,7 @@ build.static: clear.cache build.assets build.content build.slides
 build.slides:
 	mkdir -p ./slides/images
 	cp -r ./assets/images/slides/* ./slides/images/
-	npm run build
-
-## Serve - Serve the static version
-serve.static:
-	open http://localhost:8000
-	symfony php -S localhost:8000 -t build
+	$(NPM) run build
 
 build@dist: export APP_ENV = prod
 build@dist:
@@ -124,48 +138,48 @@ build@dist:
 lint: lint.php-cs-fixer lint.phpstan lint.twig lint.yaml lint.eslint lint.container lint.composer
 
 lint.composer:
-	symfony composer validate --no-check-publish
+	$(COMPOSER) validate --no-check-publish
 
 lint.composer@integration:
-	symfony composer validate --no-check-publish --ansi --no-interaction
+	$(COMPOSER) validate --no-check-publish --ansi --no-interaction
 
 lint.container:
-	symfony console lint:container
+	$(SYMFONY) lint:container
 
 lint.container@integration:
-	symfony console lint:container --ansi --no-interaction
+	$(SYMFONY) lint:container --ansi --no-interaction
 
 lint.php-cs-fixer:
-	symfony php vendor/bin/php-cs-fixer fix
+	$(PHP) vendor/bin/php-cs-fixer fix
 
 lint.php-cs-fixer@integration:
-	symfony php vendor/bin/php-cs-fixer fix --dry-run --diff
+	$(PHP) vendor/bin/php-cs-fixer fix --dry-run --diff
 
 lint.twig: lint.twig@integration
 
 lint.twig@integration:
-	symfony console lint:twig templates --show-deprecations --ansi --no-interaction
+	$(SYMFONY) lint:twig templates --show-deprecations --ansi --no-interaction
 
 lint.yaml: lint.yaml@integration
 
 lint.yaml@integration:
-	symfony console lint:yaml config content --parse-tags --ansi --no-interaction
+	$(SYMFONY) lint:yaml config content --parse-tags --ansi --no-interaction
 
 lint.phpstan: export APP_ENV = test
 lint.phpstan:
-	symfony console cache:clear --ansi
-	symfony console cache:warmup --ansi
-	symfony php vendor/bin/phpstan analyse --memory-limit=-1
+	$(SYMFONY) cache:clear --ansi
+	$(SYMFONY) cache:warmup --ansi
+	$(PHP) vendor/bin/phpstan analyse --memory-limit=-1
 
 lint.phpstan@integration: export APP_ENV = test
 lint.phpstan@integration:
-	symfony php vendor/bin/phpstan --no-progress --no-interaction analyse
+	$(PHP) vendor/bin/phpstan --no-progress --no-interaction analyse
 
 lint.eslint:
-	npx eslint assets --fix
+	$(NPX) eslint assets --fix
 
 lint.eslint@integration:
-	npx eslint assets
+	$(NPX) eslint assets
 
 ########
 # Test #
@@ -174,7 +188,7 @@ lint.eslint@integration:
 ## Test - Most basic test: check the build command, without images
 test: build.content.without-images
 test:
-	symfony php bin/phpunit
+	$(PHP) bin/phpunit
 
 ##########
 # Deploy #
@@ -182,4 +196,4 @@ test:
 
 ## Deploy - Deploy to production server
 deploy:
-	symfony php vendor/bin/dep deploy
+	$(PHP) vendor/bin/dep deploy
