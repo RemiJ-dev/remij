@@ -102,6 +102,21 @@ make test      # Run after lint passes
 
 Never use `bin/phpunit` directly — always go through `make test`.
 
+## Continuous integration & deployment (GitHub Actions)
+
+Two workflows under `.github/workflows/`, both running **without Docker**. GitHub runners ship the `docker` binary, so the Docker-aware Makefile would otherwise route through `docker compose exec php`; every `make` call in CI therefore passes **`PHP_CONT=`** to force the direct, non-container path. **When editing or adding a `make` step in a workflow, always append `PHP_CONT=`** — forgetting it makes the step try to exec into a non-existent container.
+
+**`tests.yaml` (« Tests »)** — on push to `main`, pull requests, and manual dispatch. Sets up PHP 8.4 + Node 24 via `shivammathur/setup-php` and `actions/setup-node` (no Docker), installs deps, then runs the lint suite and tests through the Makefile (`make lint.<x>@integration PHP_CONT=`, `make test PHP_CONT=`) plus a production static-build smoke check (`sass:build` + `asset-map:compile` + `stenope:build`).
+
+**`deploy.yaml` (« Deploy to server »)** — server deployment via Deployer, **gated on Tests**:
+- Triggered by `workflow_run` when the **Tests** workflow completes on `main`; the job's `if` proceeds only when `github.event.workflow_run.conclusion == 'success'`. `workflow_dispatch` allows a manual deploy that bypasses the gate. Note: `workflow_run` only fires from the workflow file on the **default branch** — it won't trigger from a feature branch, so the gate is testable only once merged to `main`.
+- The runner is only an **orchestrator**: installs Composer deps (Deployer is in `require-dev` → `vendor/bin/dep`), loads the `DEPLOY_SSH_KEY` secret into `ssh-agent` (`webfactory/ssh-agent`), trusts the server host key (`ssh-keyscan`), and runs `make deploy PHP_CONT=` (= `php vendor/bin/dep deploy`). No assets/site are built in CI.
+- The actual build happens **on the server**: Deployer's `update` task runs `make install@dist` + `make build@dist` in the new release dir. The `@dist` Makefile targets are the raw, Docker-free variants made for this.
+
+**Deployer recipe — `deploy.yaml` at the repo root** (not to be confused with `.github/workflows/deploy.yaml`): a Deployer 7 YAML recipe importing `recipe/symfony.php`. Single host `prod` (`193.70.90.143`, user `debian`, `deploy_path: /var/www/remij.dev`), clones `git@github.com:RemiJ-dev/remij.git` on `branch: main`, `forward_agent: true` (the server reuses the runner's forwarded SSH agent to clone from GitHub — so `DEPLOY_SSH_KEY`'s public half must also be a read-only **deploy key** on the GitHub repo, in addition to `debian@…:~/.ssh/authorized_keys`), keeps 2 releases, and posts start/success/fail notifications to a Mattermost webhook.
+
+**Required GitHub secret:** `DEPLOY_SSH_KEY` (private deploy key, no passphrase). `CACHE_VERSION` is also referenced by the image-cache key in `tests.yaml`.
+
 ## Architecture
 
 ### How Stenope Works

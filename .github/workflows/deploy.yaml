@@ -2,7 +2,12 @@ name: Deploy to server
 
 on:
   workflow_dispatch: ~
-  push:
+  # Déclenché à la fin du workflow "Tests" pour un push sur main. Le job ne
+  # s'exécute toutefois que si Tests a réussi (voir le `if` du job ci-dessous).
+  workflow_run:
+    workflows: ["Tests"]
+    types:
+      - completed
     branches:
       - main
 
@@ -17,6 +22,10 @@ jobs:
     name: '🚧  Build & deploy 🚀'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Déploie uniquement si le workflow Tests a réussi, ou en déclenchement manuel.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: 'Checkout'

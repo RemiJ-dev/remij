@@ -10,6 +10,8 @@ services:
       target: app_php
       args:
         COMPOSER_GITHUB_TOKEN: ${COMPOSER_GITHUB_TOKEN:-}
+    environment:
+      - SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
     volumes:
       - .:/srv
       - ${SSH_AUTH_SOCK}:${SSH_AUTH_SOCK}
@@ -18,8 +20,6 @@ services:
       - ~/.ssh:/ssh-host/:ro
       - php-socket:/var/run/php
     tty: true
-    environment:
-      - SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
 
   slides:
     image: marpteam/marp-cli:v4.4.0

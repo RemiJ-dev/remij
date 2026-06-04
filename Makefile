@@ -137,6 +137,8 @@ build@dist:
 ## Lint - Lint
 lint: lint.php-cs-fixer lint.phpstan lint.twig lint.yaml lint.eslint lint.container lint.composer
 
+lint@integration: lint.php-cs-fixer@integration lint.phpstan@integration lint.twig@integration lint.yaml@integration lint.eslint@integration lint.container@integration lint.composer@integration
+
 lint.composer:
 	$(COMPOSER) validate --no-check-publish
 
