@@ -6,11 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is **RémiJ** — a personal blog and static website built with [Stenope](https://stenopephp.github.io/Stenope/) (a Symfony-based static site generator). The site is a French-language PHP/Symfony developer blog. Content is written in Markdown and compiled into a static site.
 
-**Stack:** PHP 8.5, Symfony 8.0, Stenope (fork RemiJ-dev/Stenope, branche `update-to-sf-80-php-85`), Symfony AssetMapper, Sass, Turbo/Stimulus
+**Stack:** PHP 8.5, Symfony 8.0, Stenope (fork RemiJ-dev/Stenope, branche `update-to-sf-80-php-85`), Symfony AssetMapper, Sass, Turbo/Stimulus. Dev environment runs in **Docker** (see [Docker development environment](#docker-development-environment)).
 
 ## Commands
 
-All commands use the Symfony CLI (`symfony`) and `make`.
+The `Makefile` is the single entry point and is **Docker-aware**: when the `docker` binary is detected on the host, every PHP/Composer/Symfony/npm command is transparently run inside the `php` container (`docker compose exec php …`). When `docker` is absent — inside the container itself, or on GitHub Actions — the same targets run the binaries directly (this is why CI needs no Docker). Always drive the project through `make`, not the `symfony` CLI.
 
 ### Setup
 ```shell
@@ -19,9 +19,9 @@ make install          # Install all dependencies (Composer + npm + importmap ass
 
 ### Development
 ```shell
-make serve            # Start dev server (PHP + Sass watcher in parallel)
-make serve.php        # Start Symfony server only (no TLS)
-make serve.assets     # Watch and compile Sass only
+make serve            # Start the Docker stack: php + nginx + mailhog (site on http://localhost:8000)
+make serve.assets     # Watch & compile Sass (bin/console sass:build --watch, runs in the php container)
+make serve.slides     # Start the Marp slides watch server (Docker, http://localhost:8080)
 ```
 
 ### Build
@@ -30,7 +30,7 @@ make build.static     # Full production build (assets + static content)
 make build.assets     # Compile assets for production
 make build.content    # Build static site (APP_ENV=prod, clears image cache)
 make build.content.without-images  # Faster build, skips image resizing
-make serve.static     # Serve the built static site on localhost:8000
+make build.slides     # Copy slide images, then compile Marp slides
 ```
 
 ### Lint
@@ -58,6 +58,38 @@ make clear.assets    # Remove public/assets/
 make clear.build     # Remove build/ and public/assets/
 make clear.images    # Remove public/resized/ (Glide image cache)
 ```
+
+## Docker development environment
+
+The dev environment is fully containerized via Docker Compose — no host PHP install or `symfony` CLI binary required.
+
+**How `make` routes commands:** the `Makefile` checks for the `docker` binary (`command -v docker`). When found, `PHP` / `COMPOSER` / `SYMFONY` / `NPM` / `NPX` are prefixed with `docker compose exec php`, so `make install`, `make lint`, `make test`, `make serve.assets`, etc. all execute **inside the `php` container**. When `docker` is absent (in the container, or in CI), the same targets call the binaries directly. The `@dist` targets (`install@dist`, `build@dist`) always run raw commands, for production/deploy.
+
+**`docker-compose.yml` services:**
+- **`php`** — built from the `app_php` Dockerfile stage; mounts the project at `/srv`, forwards the host SSH agent + `~/.ssh` (private Composer deps) and shares the PHP-FPM socket with nginx via the `php-socket` volume. All CLI commands run here.
+- **`nginx`** — built from the `app_nginx` stage; serves the site on **http://localhost:8000**, proxying to `php` over the FPM unix socket.
+- **`mailhog`** — catches dev mail; SMTP on `1025`, web UI on **http://localhost:8025**.
+- **`slides`** — `marpteam/marp-cli`; Marp watch server on **http://localhost:8080** (`make serve.slides`).
+
+**`Dockerfile`** (multi-stage):
+- **`app_php`** — `php:8.5-fpm-alpine` with the required extensions (intl, gd, imagick, apcu, opcache, zip, exif, bcmath, soap, xsl…), Composer, Node 24 (copied from `node:24-alpine`), and Dart Sass (`npm install -g sass`, see Sass note below). Entrypoint `.docker/php/entrypoint.sh` sets up SSH keys, marks `/srv` as a safe git dir, and fixes `var/` + `public/` permissions.
+- **`app_nginx`** — `nginx:1-alpine` with the config from `.docker/nginx/`.
+
+**`.docker/` config files:**
+- `php/conf.d/app.ini` — PHP ini (timezone Europe/Paris, `memory_limit=1024M`, OPcache tuning).
+- `php/php-fpm.d/zz-docker.conf` — FPM pool listening on `/var/run/php/php-fpm.sock`.
+- `php/entrypoint.sh` — container entrypoint.
+- `nginx/nginx.conf`, `nginx/gzip.conf`, `nginx/templates/default.conf.template` — nginx config (root `/srv/public`, FPM passthrough).
+
+**Typical bootstrap:**
+```shell
+docker compose up -d php nginx    # build images & start containers (first run builds)
+make install                      # composer + npm + importmap, inside the php container
+make serve                        # foreground: php + nginx + mailhog (Ctrl-C to stop)
+make serve.assets                 # second terminal: Sass watcher
+```
+
+**Sass / dart-sass:** `symfonycasts/sass-bundle` needs a `sass` binary. Its `search_for_binary` option (default `true`) looks for `sass` on the `PATH` *before* downloading anything, so the image installs Dart Sass globally (`npm install -g sass`) and the bundle uses it directly — it never downloads a platform binary into `var/dart-sass/`. This matters on Alpine/musl: the bundle's auto-downloaded binary, or a glibc copy left in the bind-mounted `var/dart-sass/` by the host, would fail to exec inside the musl container. Keeping `sass` on the `PATH` sidesteps both.
 
 ## Verification workflow
 
@@ -230,7 +262,7 @@ Un fichier par action, organisé en sous-dossiers. Chaque action est une `readon
 - `assets/styles/app.scss` — main Sass entry point.
 - `assets/styles/prism.scss` — syntax highlighting styles.
 - `assets/controllers/` — Stimulus controllers.
-- Managed via Symfony AssetMapper + sass-bundle (no webpack/vite).
+- Managed via Symfony AssetMapper + sass-bundle (no webpack/vite). The `sass` binary is provided globally in the Docker image (`npm install -g sass`) and found via the bundle's `search_for_binary` — see the Sass note in [Docker development environment](#docker-development-environment).
 
 ### Site Configuration (`config/site.yaml`)
 

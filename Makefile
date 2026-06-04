@@ -186,7 +186,6 @@ lint.eslint@integration:
 ########
 
 ## Test - Most basic test: check the build command, without images
-test: build.content.without-images
 test:
 	$(PHP) bin/phpunit
 
