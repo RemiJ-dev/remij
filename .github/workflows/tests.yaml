@@ -63,7 +63,7 @@ jobs:
           echo "::endgroup::"
 
           echo "::group::importmap install"
-            symfony console importmap:install --ansi
+            php bin/console importmap:install --ansi
           echo "::endgroup::"
 
       - name: 'Warmup'
@@ -79,30 +79,30 @@ jobs:
 
       - name: 'Lint YAML'
         if: always() && steps.deps.outcome == 'success'
-        run: make lint.yaml@integration
+        run: make lint.yaml@integration PHP_CONT=
 
       - name: 'Lint Twig'
         if: always() && steps.deps.outcome == 'success'
-        run: make lint.yaml@integration
+        run: make lint.yaml@integration PHP_CONT=
 
       - name: 'Lint JS'
         if: always() && steps.deps.outcome == 'success'
-        run: make lint.eslint@integration
+        run: make lint.eslint@integration PHP_CONT=
 
       - name: 'Lint Parameters and Services'
         if: always() && steps.deps.outcome == 'success'
-        run: make lint.container@integration
+        run: make lint.container@integration PHP_CONT=
 
       - name: 'PHP CS Fixer'
         if: always() && steps.deps.outcome == 'success'
-        run: make lint.php-cs-fixer@integration
+        run: make lint.php-cs-fixer@integration PHP_CONT=
 
       - name: 'PhpStan'
         if: always() && steps.deps.outcome == 'success'
-        run: make lint.phpstan@integration
+        run: make lint.phpstan@integration PHP_CONT=
 
-      # - name: Run tests
-      #   run: vendor/bin/simple-phpunit --testdox
+      - name: Run tests
+        run: make test PHP_CONT=
 
       - name: 'Check build static'
         run: |

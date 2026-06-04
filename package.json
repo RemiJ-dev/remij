@@ -22,7 +22,6 @@
     "globals": "^17.4.0"
   },
   "scripts": {
-    "watch": "docker run --rm --init -v $PWD:/home/marp/app -e LANG=$LANG -p 8080:8080 -p 37717:37717 marpteam/marp-cli:v4.4.0 -s -w .",
     "build": "npx marp"
   },
   "marp": {
