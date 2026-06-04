@@ -1,10 +1,15 @@
-name: Deploy to GH Pages
+name: Deploy to server
 
 on:
   workflow_dispatch: ~
-#  push:
-#    branches:
-#      - main
+  push:
+    branches:
+      - main
+
+# Un seul déploiement à la fois, et on ne coupe pas un déploiement en cours.
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
 
 jobs:
 
@@ -15,7 +20,7 @@ jobs:
 
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 'Setup PHP'
         uses: shivammathur/setup-php@v2
@@ -23,59 +28,39 @@ jobs:
           coverage: "none"
           ini-values: "memory_limit=-1"
           php-version: "8.4"
-          tools: symfony
 
       - name: 'Determine composer cache directory'
         id: composer-cache
-        run: echo "::set-output name=directory::$(composer config cache-dir)"
+        run: echo "dir=$(composer config cache-dir)" >> "$GITHUB_OUTPUT"
 
       - name: 'Cache composer dependencies'
         uses: actions/cache@v4
         with:
-          path: ${{ steps.composer-cache.outputs.directory }}
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: composer-${{ hashFiles('composer.lock') }}
 
-      - name: 'Cache resized images'
-        uses: actions/cache@v4
-        with:
-          path: public/resized
-          key: resized-images-${{ secrets.CACHE_VERSION }}
-
+      # Deployer (vendor/bin/dep) est en require-dev : on installe les deps pour
+      # disposer du binaire `dep`. Aucun build ici : assets + site statique sont
+      # construits SUR LE SERVEUR par la tâche `update` de deploy.yaml
+      # (make install@dist + make build@dist).
       - name: 'Install dependencies'
-        run: |
-          echo "::group::composer install"
-            composer install --no-progress --ansi
-          echo "::endgroup::"
+        run: composer install --no-progress --ansi
 
-          echo "::group::importmap install"
-            symfony console importmap:install --ansi
-          echo "::endgroup::"
-
-      - name: 'Warmup'
-        run: |
-          echo "::group::warmup production env"
-            bin/console cache:clear --ansi
-            bin/console cache:warmup --ansi
-            bin/console sass:build --ansi
-            bin/console asset-map:compile --ansi
-          echo "::endgroup::"
-        env:
-          APP_ENV: prod
-
-      - name: 'Build static site'
-        run: bin/console stenope:build --no-interaction -vvv --ansi
-        env:
-          APP_ENV: prod
-          # Replace with your GH Pages URL:
-          ROUTER_DEFAULT_URI: https://${{ github.repository_owner }}.github.io/
-
-      # https://github.com/marketplace/actions/deploy-to-github-pages
-      - name: '🚀 Deploy'
-        uses: JamesIves/github-pages-deploy-action@3.7.1
+      # Charge la clé privée de déploiement dans ssh-agent.
+      # forward_agent: true (deploy.yaml) => le serveur réutilise cet agent
+      # transféré pour cloner le dépôt depuis GitHub.
+      - name: 'Setup SSH agent'
+        uses: webfactory/ssh-agent@v0.9.1
         with:
-          COMMIT_MESSAGE: "[AUTO] Static site update for ${{ github.sha }}"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: build # The folder the action should deploy.
-          CLEAN: true # Automatically remove deleted files from the deploy branch
-          CLEAN_EXCLUDE: '["CNAME", ".nojekyll"]' # Don't clean CNAME file for custom domain nor .nojekyll file to disable Jekyll on Github Pages
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: 'Trust the deploy server host key'
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          ssh-keyscan -H 193.70.90.143 >> ~/.ssh/known_hosts
+
+      # make deploy = `php vendor/bin/dep deploy` ; PHP_CONT= force l'exécution
+      # hors Docker (ubuntu-latest a docker, donc sans ça le Makefile passerait
+      # par `docker compose exec php`).
+      - name: '🚀 Deploy'
+        run: make deploy PHP_CONT=
