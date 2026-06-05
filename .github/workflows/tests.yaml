@@ -36,13 +36,13 @@ jobs:
         run: echo "::set-output name=directory::$(composer config cache-dir)"
 
       - name: 'Cache composer dependencies'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.composer-cache.outputs.directory }}
           key: composer-${{ hashFiles('composer.lock') }}
 
       - name: 'Cache resized images'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: public/resized
           key: resized-images-tests-${{ secrets.CACHE_VERSION }}
