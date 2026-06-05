@@ -79,10 +79,10 @@ jobs:
 
       - name: 'Lint'
         if: always() && steps.deps.outcome == 'success'
-        run: make lint@integration PHP_CONT=
+        run: make lint@integration PHP_CONT= DOCKER_COMP=
 
       - name: Run tests
-        run: make test PHP_CONT=
+        run: make test PHP_CONT= DOCKER_COMP=
 
       - name: 'Check build static'
         run: |

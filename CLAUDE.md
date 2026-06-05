@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is **RémiJ** — a personal blog and static website built with [Stenope](https://stenopephp.github.io/Stenope/) (a Symfony-based static site generator). The site is a French-language PHP/Symfony developer blog. Content is written in Markdown and compiled into a static site.
 
-**Stack:** PHP 8.5, Symfony 8.0, Stenope (fork RemiJ-dev/Stenope, branche `update-to-sf-80-php-85`), Symfony AssetMapper, Sass, Turbo/Stimulus. Dev environment runs in **Docker** (see [Docker development environment](#docker-development-environment)).
+**Stack:** PHP 8.5, Symfony 8.0, Stenope (fork RemiJ-dev/Stenope, branche `update-to-sf-80-php-85`), Symfony AssetMapper, Sass, Turbo/Stimulus. Dev environment runs in **Docker via FrankenPHP** (see [Docker development environment](#docker-development-environment)).
 
 ## Commands
 
@@ -19,9 +19,11 @@ make install          # Install all dependencies (Composer + npm + importmap ass
 
 ### Development
 ```shell
-make serve            # Start the Docker stack: php + nginx + mailhog (site on http://localhost:8000)
+make serve            # Clear assets + start FrankenPHP in detached mode (site sur https://localhost)
+make logs             # Follow container logs (after make serve)
 make serve.assets     # Watch & compile Sass (bin/console sass:build --watch, runs in the php container)
 make serve.slides     # Start the Marp slides watch server (Docker, http://localhost:8080)
+make start            # Rebuild images then start (after Dockerfile changes)
 ```
 
 ### Build
@@ -46,8 +48,9 @@ make lint.container            # Lint Symfony DI container
 
 ### Test
 ```shell
-make test              # Basic test: runs build.content.without-images and PHPUnit tests
-bin/phpunit            # Run PHPUnit tests (functional and unit tests)
+make test              # Run PHPUnit tests (APP_ENV=test, via docker compose exec)
+make test c="--testdox"  # Pass options to phpunit via c=
+bin/phpunit            # Run PHPUnit tests directly (hors Docker)
 bin/phpunit --testdox  # Run with human-readable output
 ```
 
@@ -61,35 +64,50 @@ make clear.images    # Remove public/resized/ (Glide image cache)
 
 ## Docker development environment
 
-The dev environment is fully containerized via Docker Compose — no host PHP install or `symfony` CLI binary required.
+The dev environment is fully containerized via Docker Compose with **FrankenPHP** — no host PHP install or `symfony` CLI binary required. FrankenPHP (Caddy + PHP embedded) remplace le duo `php-fpm` + `nginx` par un seul conteneur.
 
-**How `make` routes commands:** the `Makefile` checks for the `docker` binary (`command -v docker`). When found, `PHP` / `COMPOSER` / `SYMFONY` / `NPM` / `NPX` are prefixed with `docker compose exec php`, so `make install`, `make lint`, `make test`, `make serve.assets`, etc. all execute **inside the `php` container**. When `docker` is absent (in the container, or in CI), the same targets call the binaries directly. The `@dist` targets (`install@dist`, `build@dist`) always run raw commands, for production/deploy.
+**How `make` routes commands:** the `Makefile` checks for the `docker` binary (`command -v docker`). When found, `PHP` / `COMPOSER` / `SYMFONY` / `NPM` / `NPX` are prefixed with `docker compose exec php`, so `make install`, `make lint`, `make serve.assets`, etc. all execute **inside the `php` container**. When `docker` is absent (in the container, or in CI), the same targets call the binaries directly. The `@dist` targets (`install@dist`, `build@dist`) always run raw commands, for production/deploy.
 
-**`docker-compose.yml` services:**
-- **`php`** — built from the `app_php` Dockerfile stage; mounts the project at `/srv`, forwards the host SSH agent + `~/.ssh` (private Composer deps) and shares the PHP-FPM socket with nginx via the `php-socket` volume. All CLI commands run here.
-- **`nginx`** — built from the `app_nginx` stage; serves the site on **http://localhost:8000**, proxying to `php` over the FPM unix socket.
-- **`mailhog`** — catches dev mail; SMTP on `1025`, web UI on **http://localhost:8025**.
+**`compose.yaml` / `compose.override.yaml` services:**
+- **`php`** — built from the `frankenphp_dev` Dockerfile stage; mounts the project at `/app`. FrankenPHP/Caddy sert HTTP (port 80) et HTTPS (port 443) nativement — aucun nginx séparé. Hot-reload en dev via `FRANKENPHP_WORKER_CONFIG: watch`. Tous les commandes CLI s'exécutent ici.
 - **`slides`** — `marpteam/marp-cli`; Marp watch server on **http://localhost:8080** (`make serve.slides`).
 
-**`Dockerfile`** (multi-stage):
-- **`app_php`** — `php:8.5-fpm-alpine` with the required extensions (intl, gd, imagick, apcu, opcache, zip, exif, bcmath, soap, xsl…), Composer, Node 24 (copied from `node:24-alpine`), and Dart Sass (`npm install -g sass`, see Sass note below). Entrypoint `.docker/php/entrypoint.sh` sets up SSH keys, marks `/srv` as a safe git dir, and fixes `var/` + `public/` permissions.
-- **`app_nginx`** — `nginx:1-alpine` with the config from `.docker/nginx/`.
+Site accessible sur **https://localhost** (port 443, certificat auto-signé Caddy) en développement.
 
-**`.docker/` config files:**
-- `php/conf.d/app.ini` — PHP ini (timezone Europe/Paris, `memory_limit=1024M`, OPcache tuning).
-- `php/php-fpm.d/zz-docker.conf` — FPM pool listening on `/var/run/php/php-fpm.sock`.
-- `php/entrypoint.sh` — container entrypoint.
-- `nginx/nginx.conf`, `nginx/gzip.conf`, `nginx/templates/default.conf.template` — nginx config (root `/srv/public`, FPM passthrough).
+**`Dockerfile`** (multi-stage, image de base `dunglas/frankenphp:1-php8.5`, Debian) :
+- **`frankenphp_base`** — installe les extensions PHP (apcu, intl, opcache, zip), Composer, et l'entrypoint `frankenphp/docker-entrypoint.sh`.
+- **`frankenphp_dev`** — hérite de `frankenphp_base`, ajoute les outils dev (curl, xdebug), Node 24 (copié depuis `node:24-bookworm-slim`), et Dart Sass (`npm install -g sass`).
+
+**`frankenphp/` config files** (remplace l'ancien `.docker/`) :
+- `frankenphp/Caddyfile` — config Caddy (root `/app/public`, worker mode FrankenPHP, hub Mercure intégré requis pour le hot-reload dev, fichiers statiques).
+- `frankenphp/conf.d/10-app.ini` — PHP ini pour tous les envs (timezone UTC, OPcache).
+- `frankenphp/conf.d/20-app.dev.ini` — config PHP dev uniquement (Xdebug `client_host`).
+- `frankenphp/docker-entrypoint.sh` — entrypoint du conteneur : lance `composer install` automatiquement si `vendor/` est vide au démarrage.
 
 **Typical bootstrap:**
 ```shell
-docker compose up -d php nginx    # build images & start containers (first run builds)
-make install                      # composer + npm + importmap, inside the php container
-make serve                        # foreground: php + nginx + mailhog (Ctrl-C to stop)
-make serve.assets                 # second terminal: Sass watcher
+make serve            # clear assets + build image (first run) + start FrankenPHP detached
+make install          # composer (dev deps) + npm + importmap, inside the php container
+make serve.assets     # second terminal: Sass watcher
+make logs             # optionnel : suivre les logs FrankenPHP
 ```
 
-**Sass / dart-sass:** `symfonycasts/sass-bundle` needs a `sass` binary. Its `search_for_binary` option (default `true`) looks for `sass` on the `PATH` *before* downloading anything, so the image installs Dart Sass globally (`npm install -g sass`) and the bundle uses it directly — it never downloads a platform binary into `var/dart-sass/`. This matters on Alpine/musl: the bundle's auto-downloaded binary, or a glibc copy left in the bind-mounted `var/dart-sass/` by the host, would fail to exec inside the musl container. Keeping `sass` on the `PATH` sidesteps both.
+After a `Dockerfile` change, use `make start` instead of `make serve` to force a rebuild.
+
+**Sass / dart-sass:** `symfonycasts/sass-bundle` needs a `sass` binary. Its `search_for_binary` option (default `true`) looks for `sass` on the `PATH` *before* downloading anything, so the image installs Dart Sass globally (`npm install -g sass`) and the bundle uses it directly — it never downloads a platform binary into `var/dart-sass/`. L'image est Debian-based (plus Alpine/musl), mais le principe reste le même : garder `sass` sur le `PATH` évite tout téléchargement automatique par le bundle.
+
+## Dev Container (usage agent / autonome)
+
+Le dossier `.devcontainer/` configure un Dev Container VSCode pour faire tourner Claude Code de manière autonome à l'intérieur du conteneur `php` (FrankenPHP).
+
+**Spécificités du devcontainer :**
+- `remoteUser: nonroot` — Claude Code tourne sous l'utilisateur `nonroot` (défini dans le Dockerfile `frankenphp_dev`).
+- `postCreateCommand` — installe `intelephense` globalement, crée `AGENTS.md` (symlink vers `.devcontainer/AGENTS.md` pour les outils compatibles OpenAI Codex), et symlinke `.claude` vers `.devcontainer/.claude` (config Claude Code spécifique au devcontainer).
+- `postStartCommand` — lance `.devcontainer/init-firewall.sh` : configure un pare-feu sortant via `iptables` + `dnsmasq` qui bloque tout trafic réseau sauf les domaines autorisés (GitHub, Anthropic, npm, Packagist, CDN jsdelivr…). Pour autoriser un nouveau domaine, l'ajouter à la ligne `ipset=` dans `init-firewall.sh` puis reconstruire le devcontainer.
+- `compose.devcontainer.yaml` — surcharge supplémentaire : ajoute `NET_ADMIN` (requis par le firewall) et active Xdebug en mode `develop,debug` avec `start_with_request=yes`.
+- `claudeCode.initialPermissionMode: bypassPermissions` — Claude Code tourne en mode sans confirmation de permissions (conçu pour usage autonome).
+
+**Extensions VSCode installées :** `anthropic.claude-code`, `bmewburn.vscode-intelephense-client` (LSP PHP), `xdebug.php-debug`.
 
 ## Verification workflow
 
