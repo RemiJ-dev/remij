@@ -60,7 +60,7 @@ install@dist:
 ###############
 
 ## Dev - Start the whole application for development purposes (local only)
-serve: clear.assets up
+serve: clear.assets up logs
 .PHONY: serve
 
 ## Dev - Build Saas files

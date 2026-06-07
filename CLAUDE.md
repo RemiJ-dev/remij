@@ -78,11 +78,11 @@ Site accessible sur **https://localhost** (port 443, certificat auto-signé Cadd
 - **`frankenphp_base`** — installe les extensions PHP (apcu, intl, opcache, zip), Composer, et l'entrypoint `frankenphp/docker-entrypoint.sh`.
 - **`frankenphp_dev`** — hérite de `frankenphp_base`, ajoute les outils dev (curl, xdebug), Node 24 (copié depuis `node:24-bookworm-slim`), et Dart Sass (`npm install -g sass`).
 
-**`frankenphp/` config files** (remplace l'ancien `.docker/`) :
-- `frankenphp/Caddyfile` — config Caddy (root `/app/public`, worker mode FrankenPHP, hub Mercure intégré requis pour le hot-reload dev, fichiers statiques).
-- `frankenphp/conf.d/10-app.ini` — PHP ini pour tous les envs (timezone UTC, OPcache).
-- `frankenphp/conf.d/20-app.dev.ini` — config PHP dev uniquement (Xdebug `client_host`).
-- `frankenphp/docker-entrypoint.sh` — entrypoint du conteneur : lance `composer install` automatiquement si `vendor/` est vide au démarrage.
+**`.frankenphp/` config files** (remplace l'ancien `.docker/`) :
+- `.frankenphp/Caddyfile` — config Caddy (root `/app/public`, worker mode FrankenPHP, hub Mercure intégré requis pour le hot-reload dev, fichiers statiques).
+- `.frankenphp/conf.d/10-app.ini` — PHP ini pour tous les envs (timezone UTC, OPcache).
+- `.frankenphp/conf.d/20-app.dev.ini` — config PHP dev uniquement (Xdebug `client_host`).
+- `.frankenphp/docker-entrypoint.sh` — entrypoint du conteneur : lance `composer install` automatiquement si `vendor/` est vide au démarrage.
 
 **Typical bootstrap:**
 ```shell
