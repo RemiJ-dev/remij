@@ -163,13 +163,11 @@ lint.yaml: lint.yaml@integration
 lint.yaml@integration:
 	$(SYMFONY) lint:yaml config content --parse-tags --ansi --no-interaction
 
-lint.phpstan: export APP_ENV = test
 lint.phpstan:
-	$(SYMFONY) cache:clear --ansi
-	$(SYMFONY) cache:warmup --ansi
+	$(SYMFONY) cache:clear --ansi --env=test
+	$(SYMFONY) cache:warmup --ansi --env=test
 	$(PHP) vendor/bin/phpstan analyse --memory-limit=-1
 
-lint.phpstan@integration: export APP_ENV = test
 lint.phpstan@integration:
 	$(PHP) vendor/bin/phpstan --no-progress --no-interaction analyse
 
