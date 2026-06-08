@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(ShowResponder::class)]
 class ShowResponderTest extends TestCase
 {
-    public function testInvokeRendersExpectedTemplate(): void
+    public function testRespondRendersExpectedTemplate(): void
     {
         $renderCalled = 0;
         $render = function (string $template, array $parameters) use (&$renderCalled): Response {
@@ -36,14 +36,14 @@ class ShowResponderTest extends TestCase
             publishedAt: $publishedAt,
         );
 
-        $response = new ShowResponder($render)($article);
+        $response = (new ShowResponder($render))->respond($article);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('<html>article</html>', $response->getContent());
     }
 
-    public function testInvokeSetsLastModifiedFromArticle(): void
+    public function testRespondSetsLastModifiedFromArticle(): void
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
@@ -60,7 +60,7 @@ class ShowResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = new ShowResponder($render)($article);
+        $response = (new ShowResponder($render))->respond($article);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

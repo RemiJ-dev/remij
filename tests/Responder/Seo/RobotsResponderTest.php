@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(RobotsResponder::class)]
 class RobotsResponderTest extends TestCase
 {
-    public function testInvokeRendersExpectedTemplateWithTextPlainContentType(): void
+    public function testRespondRendersExpectedTemplateWithTextPlainContentType(): void
     {
         $renderCalled = 0;
         $render = function (string $template, array $parameters) use (&$renderCalled): Response {
@@ -23,7 +23,7 @@ class RobotsResponderTest extends TestCase
             return new Response('User-agent: *');
         };
 
-        $response = new RobotsResponder($render)();
+        $response = (new RobotsResponder($render))->respond();
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);

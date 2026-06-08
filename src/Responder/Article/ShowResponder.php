@@ -18,7 +18,7 @@ class ShowResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function __invoke(Article $article): Response
+    public function respond(Article $article): Response
     {
         return $this->render('articles/show.html.twig', [
             'article' => $article,

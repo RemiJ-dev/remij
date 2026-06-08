@@ -46,6 +46,6 @@ readonly class ContentAction
             ), $exception);
         }
 
-        return ($responder)($slug, $page);
+        return $responder->respond($slug, $page);
     }
 }

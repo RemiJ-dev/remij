@@ -24,6 +24,6 @@ readonly class ListAction
         ArticleRepository $repository,
         ListResponder $responder,
     ): Response {
-        return ($responder)($repository->findPublished());
+        return $responder->respond($repository->findPublished());
     }
 }

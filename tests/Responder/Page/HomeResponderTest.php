@@ -20,7 +20,7 @@ class HomeResponderTest extends TestCase
      * @throws RuntimeError
      * @throws LoaderError
      */
-    public function testInvokeRendersExpectedTemplate(): void
+    public function testRespondRendersExpectedTemplate(): void
     {
         $renderCalled = 0;
         $render = function (string $template, array $parameters) use (&$renderCalled): Response {
@@ -31,7 +31,7 @@ class HomeResponderTest extends TestCase
             return new Response('<html>home</html>');
         };
 
-        $response = new HomeResponder($render)([]);
+        $response = (new HomeResponder($render))->respond([]);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);

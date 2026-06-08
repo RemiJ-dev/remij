@@ -26,7 +26,7 @@ readonly class SitemapAction
         PageRepository $pageRepository,
         SitemapResponder $responder,
     ): Response {
-        return ($responder)(
+        return $responder->respond(
             $articleRepository->findPublished(),
             $pageRepository->findAll(),
         );

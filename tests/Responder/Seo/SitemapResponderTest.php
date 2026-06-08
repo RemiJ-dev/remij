@@ -13,16 +13,16 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(SitemapResponder::class)]
 class SitemapResponderTest extends TestCase
 {
-    public function testInvokeSetsXmlContentType(): void
+    public function testRespondSetsXmlContentType(): void
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
-        $response = new SitemapResponder($render)([], []);
+        $response = (new SitemapResponder($render))->respond([], []);
 
         self::assertSame('application/xml; charset=utf-8', $response->headers->get('Content-Type'));
     }
 
-    public function testInvokeAggregatesTagsAndAuthorsFromArticles(): void
+    public function testRespondAggregatesTagsAndAuthorsFromArticles(): void
     {
         $date1 = new \DateTimeImmutable('2025-01-01');
         $date2 = new \DateTimeImmutable('2025-06-01');
@@ -44,7 +44,7 @@ class SitemapResponderTest extends TestCase
             return new Response('');
         };
 
-        new SitemapResponder($render)([$article1->slug => $article1, $article2->slug => $article2], []);
+        (new SitemapResponder($render))->respond([$article1->slug => $article1, $article2->slug => $article2], []);
 
         /** @var array<string, \DateTimeInterface> $tags */
         $tags = $capturedContext['tags'];

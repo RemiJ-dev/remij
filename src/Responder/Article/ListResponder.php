@@ -19,7 +19,7 @@ class ListResponder extends AbstractArticleResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function __invoke(array $articles): Response
+    public function respond(array $articles): Response
     {
         return $this->render('articles/list.html.twig', [
             'articles' => $articles,

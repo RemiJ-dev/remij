@@ -26,6 +26,6 @@ readonly class HomeAction
     ): Response {
         $sections = $sectionRepository->findByPage('home');
 
-        return ($responder)($sections);
+        return $responder->respond($sections);
     }
 }

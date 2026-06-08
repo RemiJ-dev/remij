@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(ContactResponder::class)]
 class ContactResponderTest extends TestCase
 {
-    public function testInvokeRendersExpectedTemplate(): void
+    public function testRespondRendersExpectedTemplate(): void
     {
         $renderCalled = 0;
         $render = function (string $template, array $parameters) use (&$renderCalled): Response {
@@ -29,7 +29,7 @@ class ContactResponderTest extends TestCase
         $page = new Page(slug: 'contact', title: 'Contact', content: '', publishedAt: new \DateTimeImmutable());
         $form = self::createStub(FormInterface::class);
 
-        $response = new ContactResponder($render)($page, $form);
+        $response = (new ContactResponder($render))->respond($page, $form);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);

@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(ListByTagResponder::class)]
 class ListByTagResponderTest extends TestCase
 {
-    public function testInvokeRendersExpectedTemplate(): void
+    public function testRespondRendersExpectedTemplate(): void
     {
         $renderCalled = 0;
         $render = function (string $template, array $parameters) use (&$renderCalled): Response {
@@ -25,7 +25,7 @@ class ListByTagResponderTest extends TestCase
             return new Response('<html>articles</html>');
         };
 
-        $response = new ListByTagResponder($render)('symfony', []);
+        $response = (new ListByTagResponder($render))->respond('symfony', []);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -33,7 +33,7 @@ class ListByTagResponderTest extends TestCase
         self::assertNull($response->getLastModified());
     }
 
-    public function testInvokeSetsLastModifiedFromArticles(): void
+    public function testRespondSetsLastModifiedFromArticles(): void
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
@@ -50,7 +50,7 @@ class ListByTagResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = new ListByTagResponder($render)('php', ['2025-01-article' => $article]);
+        $response = (new ListByTagResponder($render))->respond('php', ['2025-01-article' => $article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

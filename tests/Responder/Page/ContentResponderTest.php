@@ -15,7 +15,7 @@ use Twig\Loader\LoaderInterface;
 #[CoversClass(ContentResponder::class)]
 class ContentResponderTest extends TestCase
 {
-    public function testInvokeRendersCustomTemplateWhenItExists(): void
+    public function testRespondRendersCustomTemplateWhenItExists(): void
     {
         $loader = self::createStub(LoaderInterface::class);
         $loader->method('exists')->willReturn(true);
@@ -34,14 +34,14 @@ class ContentResponderTest extends TestCase
 
         $page = new Page(slug: 'about', title: 'About', content: '', publishedAt: new \DateTimeImmutable());
 
-        $response = new ContentResponder($render, $twig)('about', $page);
+        $response = (new ContentResponder($render, $twig))->respond('about', $page);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
         self::assertSame('<html>about custom</html>', $response->getContent());
     }
 
-    public function testInvokeFallsBackToGenericTemplateWhenCustomDoesNotExist(): void
+    public function testRespondFallsBackToGenericTemplateWhenCustomDoesNotExist(): void
     {
         $loader = self::createStub(LoaderInterface::class);
         $loader->method('exists')->willReturn(false);
@@ -60,7 +60,7 @@ class ContentResponderTest extends TestCase
 
         $page = new Page(slug: 'unknown', title: 'Unknown', content: '', publishedAt: new \DateTimeImmutable());
 
-        $response = new ContentResponder($render, $twig)('unknown', $page);
+        $response = (new ContentResponder($render, $twig))->respond('unknown', $page);
 
         self::assertSame(1, $renderCalled);
         self::assertSame('<html>generic</html>', $response->getContent());

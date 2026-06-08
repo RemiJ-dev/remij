@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(ListResponder::class)]
 class ListResponderTest extends TestCase
 {
-    public function testInvokeRendersExpectedTemplate(): void
+    public function testRespondRendersExpectedTemplate(): void
     {
         $renderCalled = 0;
         $render = function (string $template, array $parameters) use (&$renderCalled): Response {
@@ -24,7 +24,7 @@ class ListResponderTest extends TestCase
             return new Response('<html>list</html>');
         };
 
-        $response = new ListResponder($render)([]);
+        $response = (new ListResponder($render))->respond([]);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -32,7 +32,7 @@ class ListResponderTest extends TestCase
         self::assertNull($response->getLastModified());
     }
 
-    public function testInvokeSetsLastModifiedFromArticles(): void
+    public function testRespondSetsLastModifiedFromArticles(): void
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
@@ -49,7 +49,7 @@ class ListResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = new ListResponder($render)(['2025-03-article' => $article]);
+        $response = (new ListResponder($render))->respond(['2025-03-article' => $article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

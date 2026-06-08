@@ -13,16 +13,16 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(RssResponder::class)]
 class RssResponderTest extends TestCase
 {
-    public function testInvokeSetsAtomContentType(): void
+    public function testRespondSetsAtomContentType(): void
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
-        $response = new RssResponder($render)([]);
+        $response = (new RssResponder($render))->respond([]);
 
         self::assertSame('application/atom+xml; charset=utf-8', $response->headers->get('Content-Type'));
     }
 
-    public function testInvokeSetsLastModifiedFromArticles(): void
+    public function testRespondSetsLastModifiedFromArticles(): void
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
@@ -32,7 +32,7 @@ class RssResponderTest extends TestCase
             nextArticle: null, authors: [], tags: [], publishedAt: $lastModified, lastModified: $lastModified,
         );
 
-        $response = new RssResponder($render)(['2025-05-article' => $article]);
+        $response = (new RssResponder($render))->respond(['2025-05-article' => $article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

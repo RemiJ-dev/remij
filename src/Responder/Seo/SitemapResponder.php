@@ -22,7 +22,7 @@ class SitemapResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function __invoke(array $articles, array $pages): Response
+    public function respond(array $articles, array $pages): Response
     {
         /** @var array<string, \DateTimeInterface> $tags */
         $tags = [];

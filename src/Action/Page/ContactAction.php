@@ -56,9 +56,9 @@ readonly class ContactAction
                 return ($this->redirectToRoute)('page_contact');
             }
 
-            return ($responder)($page, $result->form, Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $responder->respond($page, $result->form, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return ($responder)($page, $result->form);
+        return $responder->respond($page, $result->form);
     }
 }

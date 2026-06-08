@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(ListByAuthorResponder::class)]
 class ListByAuthorResponderTest extends TestCase
 {
-    public function testInvokeRendersExpectedTemplate(): void
+    public function testRespondRendersExpectedTemplate(): void
     {
         $renderCalled = 0;
         $render = function (string $template, array $parameters) use (&$renderCalled): Response {
@@ -27,7 +27,7 @@ class ListByAuthorResponderTest extends TestCase
         };
 
         $author = new Author(slug: 'remij', name: 'Rémi J.');
-        $response = new ListByAuthorResponder($render)($author, []);
+        $response = (new ListByAuthorResponder($render))->respond($author, []);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -35,7 +35,7 @@ class ListByAuthorResponderTest extends TestCase
         self::assertNull($response->getLastModified());
     }
 
-    public function testInvokeSetsLastModifiedFromArticles(): void
+    public function testRespondSetsLastModifiedFromArticles(): void
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
@@ -54,7 +54,7 @@ class ListByAuthorResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = new ListByAuthorResponder($render)($author, ['remij-2025-06-article' => $article]);
+        $response = (new ListByAuthorResponder($render))->respond($author, ['remij-2025-06-article' => $article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

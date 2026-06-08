@@ -21,6 +21,6 @@ readonly class RobotsAction
     #[Route('/robots.txt', name: 'seo_robots')]
     public function __invoke(RobotsResponder $responder): Response
     {
-        return ($responder)();
+        return $responder->respond();
     }
 }

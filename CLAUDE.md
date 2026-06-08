@@ -263,11 +263,13 @@ AbstractTwigResponder              ← injecte ControllerHelper::render() via #[
     └── Seo/SitemapResponder      ← agrège tags/authors, Content-Type: application/xml
 ```
 
+**Point d'entrée :** chaque Responder concret expose une unique méthode publique **`respond(): Response`** (et non un `__invoke` invokable) ; l'Action l'appelle via `$responder->respond(...)`. Les signatures de `respond()` diffèrent d'un Responder à l'autre (pas d'interface typée commune possible, ni souhaitée). La méthode `render()` reste `protected` sur `AbstractTwigResponder`. À l'inverse, les **Actions restent invokables** (`__invoke`) car ce sont les contrôleurs Symfony.
+
 **Règle :** le `Last-Modified` et les headers de Content-Type sont calculés et posés dans le Responder, pas dans l'Action.
 
 ### Actions (`src/Action/`)
 
-Un fichier par action, organisé en sous-dossiers. Chaque action est une `readonly class` avec une seule méthode `__invoke()`. Les actions se limitent à : récupérer les données via le Repository, appeler `($this->responder)(...)`. `ContactAction` injecte `addFlash` et `redirectToRoute` via `#[AutowireMethodOf(ControllerHelper::class)]` plutôt qu'en étendant `AbstractController`.
+Un fichier par action, organisé en sous-dossiers. Chaque action est une `readonly class` avec une seule méthode `__invoke()`. Les actions se limitent à : récupérer les données via le Repository, appeler `$this->responder->respond(...)` (ou `$responder->respond(...)` quand le Responder est injecté en argument de méthode). `ContactAction` injecte `addFlash` et `redirectToRoute` via `#[AutowireMethodOf(ControllerHelper::class)]` plutôt qu'en étendant `AbstractController`.
 
 **Convention de nommage des routes :** préfixées par le sous-dossier (ex: `seo_robots`, `seo_sitemap`). Exception explicite : `Article/RssAction` conserve le nom `rss` (pas de préfixe `article_`).
 

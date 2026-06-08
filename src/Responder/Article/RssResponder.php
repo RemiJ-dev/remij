@@ -19,7 +19,7 @@ class RssResponder extends AbstractArticleResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function __invoke(array $articles): Response
+    public function respond(array $articles): Response
     {
         $lastModified = $this->getLastModified($articles);
 
