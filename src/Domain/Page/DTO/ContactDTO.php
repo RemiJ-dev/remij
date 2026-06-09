@@ -23,4 +23,33 @@ class ContactDTO
     #[Assert\NotBlank]
     #[Assert\Length(max: 5000)]
     public string $message = '';
+
+    #[Assert\NotBlank]
+    public string $captcha = '';
+
+    private const array FRENCH_MONTHS = [
+        1 => 'janvier',
+        2 => 'février',
+        3 => 'mars',
+        4 => 'avril',
+        5 => 'mai',
+        6 => 'juin',
+        7 => 'juillet',
+        8 => 'août',
+        9 => 'septembre',
+        10 => 'octobre',
+        11 => 'novembre',
+        12 => 'décembre',
+    ];
+
+    #[Assert\IsTrue(message: 'contact.form.error.captcha')]
+    public function isCaptchaValid(): bool
+    {
+        $month = (int) new \DateTimeImmutable()->format('n');
+        $captcha = mb_strtolower(trim($this->captcha));
+
+        return $captcha === (string) $month
+            || $captcha === \sprintf('%02d', $month)
+            || $captcha === self::FRENCH_MONTHS[$month];
+    }
 }

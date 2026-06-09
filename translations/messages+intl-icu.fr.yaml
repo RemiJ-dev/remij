@@ -43,6 +43,7 @@ contact:
         email: "Email"
         subject: "Sujet"
         message: "Message"
+        captcha: "Quel mois de l'année sommes-nous ?"
         submit: "Envoyer"
     email:
         subject: "[Contact] {subject}"
