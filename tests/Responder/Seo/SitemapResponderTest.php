@@ -8,6 +8,7 @@ use App\Domain\Article\Model\Article;
 use App\Responder\Seo\SitemapResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(SitemapResponder::class)]
@@ -17,7 +18,7 @@ class SitemapResponderTest extends TestCase
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
-        $response = (new SitemapResponder($render))->respond([], []);
+        $response = new SitemapResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([], []);
 
         self::assertSame('application/xml; charset=utf-8', $response->headers->get('Content-Type'));
     }
@@ -44,7 +45,7 @@ class SitemapResponderTest extends TestCase
             return new Response('');
         };
 
-        (new SitemapResponder($render))->respond([$article1->slug => $article1, $article2->slug => $article2], []);
+        new SitemapResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([$article1->slug => $article1, $article2->slug => $article2], []);
 
         /** @var array<string, \DateTimeInterface> $tags */
         $tags = $capturedContext['tags'];

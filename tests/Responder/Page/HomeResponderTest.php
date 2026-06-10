@@ -7,6 +7,7 @@ namespace App\Tests\Responder\Page;
 use App\Responder\Page\HomeResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -31,7 +32,7 @@ class HomeResponderTest extends TestCase
             return new Response('<html>home</html>');
         };
 
-        $response = (new HomeResponder($render))->respond([]);
+        $response = new HomeResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([]);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);

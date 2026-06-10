@@ -11,15 +11,20 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-abstract class AbstractTwigResponder
+abstract class AbstractTwigResponder extends AbstractResponder
 {
     /**
      * @param \Closure(string, array<string, mixed>, Response|null=): Response $render
      */
     public function __construct(
         #[AutowireMethodOf(ControllerHelper::class)]
-        private readonly \Closure $render,
+        protected \Closure $addFlash,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        protected \Closure $redirectToRoute,
+        #[AutowireMethodOf(ControllerHelper::class)]
+        protected readonly \Closure $render,
     ) {
+        parent::__construct($addFlash, $redirectToRoute);
     }
 
     /**

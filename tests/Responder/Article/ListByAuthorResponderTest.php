@@ -9,11 +9,20 @@ use App\Domain\Article\Model\Author;
 use App\Responder\Article\ListByAuthorResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 #[CoversClass(ListByAuthorResponder::class)]
 class ListByAuthorResponderTest extends TestCase
 {
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function testRespondRendersExpectedTemplate(): void
     {
         $renderCalled = 0;
@@ -27,7 +36,7 @@ class ListByAuthorResponderTest extends TestCase
         };
 
         $author = new Author(slug: 'remij', name: 'Rémi J.');
-        $response = (new ListByAuthorResponder($render))->respond($author, []);
+        $response = new ListByAuthorResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond($author, []);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -54,7 +63,7 @@ class ListByAuthorResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = (new ListByAuthorResponder($render))->respond($author, ['remij-2025-06-article' => $article]);
+        $response = new ListByAuthorResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond($author, ['remij-2025-06-article' => $article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

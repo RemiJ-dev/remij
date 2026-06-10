@@ -8,6 +8,7 @@ use App\Domain\Article\Model\Article;
 use App\Responder\Article\RssResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(RssResponder::class)]
@@ -17,7 +18,7 @@ class RssResponderTest extends TestCase
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
-        $response = (new RssResponder($render))->respond([]);
+        $response = new RssResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([]);
 
         self::assertSame('application/atom+xml; charset=utf-8', $response->headers->get('Content-Type'));
     }
@@ -32,7 +33,7 @@ class RssResponderTest extends TestCase
             nextArticle: null, authors: [], tags: [], publishedAt: $lastModified, lastModified: $lastModified,
         );
 
-        $response = (new RssResponder($render))->respond(['2025-05-article' => $article]);
+        $response = new RssResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond(['2025-05-article' => $article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

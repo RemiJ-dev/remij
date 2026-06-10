@@ -31,5 +31,13 @@ readonly class ContactMailer
             ->text($this->translator->trans('contact.email.body', ['name' => $data->name, 'email' => $data->email, 'message' => $data->message]));
 
         $this->mailer->send($email);
+
+        $email = new Email()
+            ->from('bonjour@remij.dev')
+            ->to($data->email)
+            ->subject($this->translator->trans('contact.sender_email.subject', ['subject' => $data->subject]))
+            ->text($this->translator->trans('contact.sender_email.body', ['name' => $data->name, 'email' => $data->email, 'message' => $data->message]));
+
+        $this->mailer->send($email);
     }
 }
