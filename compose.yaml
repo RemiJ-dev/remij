@@ -34,8 +34,25 @@ services:
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###
 
+###> symfony/mailer ###
+  mailpit:
+    image: axllent/mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    volumes:
+      - mailer_data:/data
+###< symfony/mailer ###
+
 volumes:
   caddy_data:
   caddy_config:
+  mailer_data:
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###
