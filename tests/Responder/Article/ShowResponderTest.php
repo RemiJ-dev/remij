@@ -8,6 +8,7 @@ use App\Domain\Article\Model\Article;
 use App\Responder\Article\ShowResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(ShowResponder::class)]
@@ -36,7 +37,7 @@ class ShowResponderTest extends TestCase
             publishedAt: $publishedAt,
         );
 
-        $response = (new ShowResponder($render))->respond($article);
+        $response = new ShowResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond($article);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -60,7 +61,7 @@ class ShowResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = (new ShowResponder($render))->respond($article);
+        $response = new ShowResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond($article);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

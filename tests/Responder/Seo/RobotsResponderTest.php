@@ -7,6 +7,7 @@ namespace App\Tests\Responder\Seo;
 use App\Responder\Seo\RobotsResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(RobotsResponder::class)]
@@ -23,7 +24,7 @@ class RobotsResponderTest extends TestCase
             return new Response('User-agent: *');
         };
 
-        $response = (new RobotsResponder($render))->respond();
+        $response = new RobotsResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond();
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);

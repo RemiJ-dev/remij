@@ -8,6 +8,7 @@ use App\Domain\Article\Model\Article;
 use App\Responder\Article\ListResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(ListResponder::class)]
@@ -24,7 +25,7 @@ class ListResponderTest extends TestCase
             return new Response('<html>list</html>');
         };
 
-        $response = (new ListResponder($render))->respond([]);
+        $response = new ListResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([]);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -49,7 +50,7 @@ class ListResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = (new ListResponder($render))->respond(['2025-03-article' => $article]);
+        $response = new ListResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond(['2025-03-article' => $article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

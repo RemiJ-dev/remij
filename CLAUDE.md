@@ -248,20 +248,23 @@ The `marp` config in `package.json`: `inputDir: ./content/videos`, `glob: **/sli
 
 Hiérarchie des classes de base :
 ```
-AbstractTwigResponder              ← injecte ControllerHelper::render() via #[AutowireMethodOf] comme \Closure, expose render(): Response
-├── AbstractArticleResponder       ← ajoute lastModified(array) via ContentUtils
-│   ├── ListResponder
-│   ├── ListByTagResponder
-│   ├── ListByAuthorResponder
-│   ├── ShowResponder              ← utilise $article->getLastModifiedOrCreated() directement
-│   └── RssResponder              ← Content-Type: application/atom+xml
-└── (direct)
-    ├── Page/HomeResponder
-    ├── Page/ContactResponder      ← @param FormInterface<ContactDTO>
-    ├── Page/ContentResponder      ← sélection template custom vs fallback via twig loader ; surcharge le constructeur pour injecter Twig\Environment séparément
-    ├── Seo/RobotsResponder       ← Content-Type: text/plain
-    └── Seo/SitemapResponder      ← agrège tags/authors, Content-Type: application/xml
+AbstractResponder                  ← base commune : injecte ControllerHelper::addFlash() et redirectToRoute() via #[AutowireMethodOf] comme \Closure protégés
+└── AbstractTwigResponder          ← ajoute ControllerHelper::render() (même mécanisme), expose render(): Response
+    ├── AbstractArticleResponder   ← ajoute lastModified(array) via ContentUtils
+    │   ├── ListResponder
+    │   ├── ListByTagResponder
+    │   ├── ListByAuthorResponder
+    │   ├── ShowResponder          ← utilise $article->getLastModifiedOrCreated() directement
+    │   └── RssResponder          ← Content-Type: application/atom+xml
+    └── (direct)
+        ├── Page/HomeResponder
+        ├── Page/ContactResponder  ← délègue à ContactFormHandler ; addFlash + redirectToRoute('page_contact') on success, status 422 si invalide
+        ├── Page/ContentResponder  ← sélection template custom vs fallback via twig loader ; surcharge le constructeur pour injecter Twig\Environment séparément
+        ├── Seo/RobotsResponder   ← Content-Type: text/plain
+        └── Seo/SitemapResponder  ← agrège tags/authors, Content-Type: application/xml
 ```
+
+**`AbstractResponder`** porte les closures `addFlash` et `redirectToRoute` (autowirées via `#[AutowireMethodOf(ControllerHelper::class)]`) pour les Responders qui doivent rediriger ou poser un flash (ex: `ContactResponder`). **`AbstractTwigResponder`** en hérite et y ajoute la closure `render`. Un Responder qui surcharge le constructeur (ex: `ContentResponder`) reçoit les trois closures en paramètres simples — **non promus** — et les transmet via `parent::__construct($addFlash, $redirectToRoute, $render)` (les promouvoir à nouveau réassignerait la propriété `readonly` `$render` du parent → erreur).
 
 **Point d'entrée :** chaque Responder concret expose une unique méthode publique **`respond(): Response`** (et non un `__invoke` invokable) ; l'Action l'appelle via `$responder->respond(...)`. Les signatures de `respond()` diffèrent d'un Responder à l'autre (pas d'interface typée commune possible, ni souhaitée). La méthode `render()` reste `protected` sur `AbstractTwigResponder`. À l'inverse, les **Actions restent invokables** (`__invoke`) car ce sont les contrôleurs Symfony.
 
@@ -269,12 +272,12 @@ AbstractTwigResponder              ← injecte ControllerHelper::render() via #[
 
 ### Actions (`src/Action/`)
 
-Un fichier par action, organisé en sous-dossiers. Chaque action est une `readonly class` avec une seule méthode `__invoke()`. Les actions se limitent à : récupérer les données via le Repository, appeler `$this->responder->respond(...)` (ou `$responder->respond(...)` quand le Responder est injecté en argument de méthode). `ContactAction` injecte `addFlash` et `redirectToRoute` via `#[AutowireMethodOf(ControllerHelper::class)]` plutôt qu'en étendant `AbstractController`.
+Un fichier par action, organisé en sous-dossiers. Chaque action est une `readonly class` avec une seule méthode `__invoke()`. Les actions se limitent à : récupérer les données via le Repository, appeler `$this->responder->respond(...)` (ou `$responder->respond(...)` quand le Responder est injecté en argument de méthode). `ContactAction` reste minimal : il récupère la page `contact` et passe la `Request` à `ContactResponder::respond()` — c'est le Responder qui gère le formulaire (flash, redirect, status 422) via les closures `addFlash`/`redirectToRoute` d'`AbstractResponder`.
 
 **Convention de nommage des routes :** préfixées par le sous-dossier (ex: `seo_robots`, `seo_sitemap`). Exception explicite : `Article/RssAction` conserve le nom `rss` (pas de préfixe `article_`).
 
 - **`Page/HomeAction`** — `GET /` → `page_home`
-- **`Page/ContactAction`** — `GET|POST /contact` → `page_contact` (envoie un email via Brevo ; redirect on success reste dans l'Action)
+- **`Page/ContactAction`** — `GET|POST /contact` → `page_contact` (délègue tout le traitement du formulaire à `ContactResponder`, qui envoie l'email via Brevo et redirige on success)
 - **`Page/ContentAction`** — `GET /{slug}` → `page_content` (catch-all, priority -500 ; redirige le slug `home` vers `page_home` ; convertit `ContentNotFoundException` en `NotFoundHttpException`)
 - **`Article/ListAction`** — `GET /articles/` → `article_list`
 - **`Article/ListByTagAction`** — `GET /articles/tag/{tag}` → `article_list_by_tag`
@@ -329,7 +332,7 @@ Global site metadata (title, description) and navigation menus (main + footer) a
 - `tests/Infrastructure/Form/ContactFormHandlerTest.php` — unit tests for `ContactFormHandler`.
 - `tests/Infrastructure/Mailer/ContactMailerTest.php` — unit tests for `ContactMailer`.
 - `tests/Domain/Article/Repository/ArticleRepositoryTest.php` — unit tests for `ArticleRepository`: vérifie les expressions de filtrage transmises à `ContentManagerInterface` et le filtrage effectif des résultats.
-- `tests/Responder/` — un test par Responder, miroir de `src/Responder/`. Chaque test couvre : le bon template appelé, les headers HTTP spécifiques (Content-Type, Last-Modified), et les cas limites (liste vide, template fallback). Utilise de vraies instances de Domain Models plutôt que des mocks. Le constructeur reçoit une `\Closure(string, array): Response` à la place d'un `Twig\Environment` (car `AbstractTwigResponder` utilise `AutowireMethodOf`). `ContentResponder` reçoit en plus un `Twig\Environment` stub pour le check du loader.
+- `tests/Responder/` — un test par Responder, miroir de `src/Responder/`. Chaque test couvre : le bon template appelé, les headers HTTP spécifiques (Content-Type, Last-Modified), et les cas limites (liste vide, template fallback). Utilise de vraies instances de Domain Models plutôt que des mocks. Le constructeur reçoit les **trois closures** d'`AbstractResponder`/`AbstractTwigResponder` dans l'ordre **`addFlash`, `redirectToRoute`, `render`** (car ils utilisent `AutowireMethodOf`). Les Responders qui n'en ont pas l'usage reçoivent des no-op : `static fn () => null` pour `addFlash`, `static fn (): RedirectResponse => new RedirectResponse('/')` pour `redirectToRoute` (le retour doit être un `RedirectResponse` pour PHPStan), et un vrai closure `render(string, array, ?Response): Response`. `ContentResponder` reçoit en plus un `Twig\Environment` stub pour le check du loader. `ContactResponderTest` couvre les trois branches de `respond()` : non soumis (rendu, 200), succès (flash + redirect, pas de rendu), invalide (rendu, 422), en stubbant `ContactFormHandler`.
 - `tests/Helper/RouteDiscoveryTrait.php` — shared trait that scans `src/Action/` via Reflection to extract route names, paths, and parameter names. Supports excluding subdirectories and handles `{param:mapping}` syntax.
 - Adding a new file to `content/` automatically adds an action test case — no code change needed.
 

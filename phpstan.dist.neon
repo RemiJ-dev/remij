@@ -14,5 +14,9 @@ parameters:
         - src/
         - tests/
 
+    excludePaths:
+        - src/Kernel.php
+        - tests/bootstrap.php
+
     symfony:
         containerXmlPath: '%rootDir%/../../../var/cache/test/App_KernelTestDebugContainer.xml'

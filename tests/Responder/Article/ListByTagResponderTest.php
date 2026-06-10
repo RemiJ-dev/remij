@@ -8,6 +8,7 @@ use App\Domain\Article\Model\Article;
 use App\Responder\Article\ListByTagResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 #[CoversClass(ListByTagResponder::class)]
@@ -25,7 +26,7 @@ class ListByTagResponderTest extends TestCase
             return new Response('<html>articles</html>');
         };
 
-        $response = (new ListByTagResponder($render))->respond('symfony', []);
+        $response = new ListByTagResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond('symfony', []);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -50,7 +51,7 @@ class ListByTagResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = (new ListByTagResponder($render))->respond('php', ['2025-01-article' => $article]);
+        $response = new ListByTagResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond('php', ['2025-01-article' => $article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

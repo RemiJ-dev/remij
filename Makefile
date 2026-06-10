@@ -85,29 +85,25 @@ clear.images:
 
 ## Clear - Clear symfony cache
 clear.cache:
-	$(SYMFONY) cache:clear
+	$(SYMFONY) cache:clear --env=prod
 
 #########
 # Build #
 #########
 
 ## Build - Build assets
-build.assets: export APP_ENV = prod
 build.assets:
-	$(SYMFONY) asset-map:compile
+	$(SYMFONY) asset-map:compile --env=prod
 
 ## Build - Build static site
-build.content: export APP_ENV = prod
 build.content: clear.images clear.cache
-	$(SYMFONY) stenope:build
+	$(SYMFONY) stenope:build --env=prod
 
 ## Build - Build static site without resizing images, for moar speed
-build.content.without-images: export APP_ENV = prod
 build.content.without-images: clear.cache
-	$(SYMFONY) stenope:build
+	$(SYMFONY) stenope:build --env=prod
 
 ## Build - Build static site with assets
-build.static: export APP_ENV = prod
 build.static: clear.cache build.assets build.content build.slides
 
 ## Build - Build slides with assets
@@ -116,14 +112,13 @@ build.slides:
 	cp -r ./assets/images/slides/* ./slides/images/
 	$(NPM) run build
 
-build@dist: export APP_ENV = prod
 build@dist:
-	php bin/console cache:clear
+	php bin/console cache:clear --env=prod
 	rm -rf public/assets
-	php bin/console asset-map:compile
+	php bin/console asset-map:compile --env=prod
 	rm -rf public/resized
 	rm -rf build
-	php bin/console stenope:build
+	php bin/console stenope:build --env=prod
 	npm run build
 
 ########

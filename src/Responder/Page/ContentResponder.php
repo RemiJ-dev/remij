@@ -17,11 +17,12 @@ use Twig\Error\SyntaxError;
 class ContentResponder extends AbstractTwigResponder
 {
     public function __construct(
-        #[AutowireMethodOf(ControllerHelper::class)]
-        \Closure $render,
+        #[AutowireMethodOf(ControllerHelper::class)] \Closure $addFlash,
+        #[AutowireMethodOf(ControllerHelper::class)] \Closure $redirectToRoute,
+        #[AutowireMethodOf(ControllerHelper::class)] \Closure $render,
         private readonly Environment $twig,
     ) {
-        parent::__construct($render);
+        parent::__construct($addFlash, $redirectToRoute, $render);
     }
 
     /**

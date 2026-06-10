@@ -20,7 +20,7 @@
 
 ###> symfony/asset-mapper ###
 /public/assets/
-/assets/vendor
+/assets/vendor/
 ###< symfony/asset-mapper ###
 
 ###> phpstan/phpstan ###
@@ -36,3 +36,6 @@ phpstan.neon
 /slides/
 .idea
 /node_modules/
+
+###> symfonycasts/sass-bundle ###
+###< symfonycasts/sass-bundle ###
