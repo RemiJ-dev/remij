@@ -1,0 +1,48 @@
+# Configuration FrankenPHP pour la production (remplace nginx + php-fpm).
+#
+# Lancement : frankenphp run --config .frankenphp/prod/Caddyfile
+#
+# Caddy gère automatiquement le HTTPS (Let's Encrypt) pour les domaines
+# déclarés ci-dessous : DNS à jour + ports 80/443 accessibles, et le binaire
+# frankenphp doit pouvoir s'y binder (setcap cap_net_bind_service=+ep, ou
+# service systemd avec AmbientCapabilities=CAP_NET_BIND_SERVICE).
+
+# Redirection du domaine nu vers www
+remij.dev {
+	redir https://www.remij.dev{uri} permanent
+}
+
+# Site principal : build statique Stenope, /contact en PHP via Symfony (mode worker)
+www.remij.dev {
+	root * /var/www/remij.dev/current/build
+	encode zstd gzip
+
+	@contact path /contact
+	handle @contact {
+		root * /var/www/remij.dev/current/public
+		rewrite * /index.php
+
+		php {
+			worker {
+				file /var/www/remij.dev/current/public/index.php
+				num 10
+			}
+		}
+	}
+
+	handle {
+		try_files {path} {path}/ {path}/index.html
+		file_server
+	}
+}
+
+# slides.remij.dev : contenu 100% statique (Marp)
+slides.remij.dev {
+	root * /var/www/remij.dev/current/slides
+	encode zstd gzip
+
+	try_files {path} {path}/ {path}/README.html
+	file_server {
+		index README.html
+	}
+}
