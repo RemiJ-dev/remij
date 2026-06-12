@@ -25,7 +25,7 @@ class ContactDTO
     public string $message = '';
 
     #[Assert\NotBlank]
-    public string $captcha = '';
+    public ?string $captcha = null;
 
     private const array FRENCH_MONTHS = [
         1 => 'janvier',
@@ -45,6 +45,10 @@ class ContactDTO
     #[Assert\IsTrue(message: 'contact.form.error.captcha')]
     public function isCaptchaValid(): bool
     {
+        if (null === $this->captcha) {
+            return false;
+        }
+
         $month = (int) new \DateTimeImmutable()->format('n');
         $captcha = mb_strtolower(trim($this->captcha));
 
