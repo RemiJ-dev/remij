@@ -1,86 +1,82 @@
-# Stenope Skeleton
+# RémiJ
 
-This skeleton is an opinionated starter kit for creating your static website
-with [Stenope](https://stenopephp.github.io/Stenope/).
+Blog personnel et site statique généré avec [Stenope](https://stenopephp.github.io/Stenope/) (Symfony 8 + FrankenPHP).
 
-It contains [a few features](https://stenopephp.github.io/skeleton/articles/guide#what-s-inside) to get you started 
-if you plan to create a content website from scratch along with the following stack:
+**Stack :** PHP 8.5, Symfony 8.1, Stenope, Symfony AssetMapper, Sass, Turbo/Stimulus, Docker/FrankenPHP.
 
-- Symfony 6.4
-- Symfony AssetMapper
-- Sass
-- Lint / CS (php-cs-fixer, phpstan, eslint, …)
-- Glide integration for images resizing
-- and more…
+## Prérequis
 
-## Create a new project
+- [Docker](https://docs.docker.com/get-docker/) et Docker Compose
+- `make`
 
-Start a new app from scratch using this skeleton with:
+C'est tout. PHP, Composer, Node et Sass tournent dans le conteneur Docker.
 
-```shell
-composer create-project stenope/skeleton -s dev
-```
-
-## Prerequisites
-
-Either:
-
-- Node 16+,
-- PHP 8.1+
-- [Symfony CLI](https://symfony.com/download)
-- Composer
-- Make
-
-## Setup
-
-Install the dependencies using
+## Installation
 
 ```shell
 make install
 ```
 
-## Dev
-
-Start a server using
+## Développement
 
 ```shell
-make serve
+make serve          # Lance FrankenPHP en arrière-plan → https://localhost
+make serve.assets   # Watcher Sass (second terminal)
+make logs           # Suivre les logs FrankenPHP
+make serve.slides   # Serveur Marp slides → http://localhost:8080
 ```
 
-The Symfony CLI exposes you the URL at which the site is available.
+> Après un changement de `Dockerfile`, utiliser `make start` à la place de `make serve` pour forcer le rebuild de l'image.
 
-> **Note**
-> `make serve` is enough to serve both PHP app and assets.  
-> You're ready to dev!
+### Accès aux services
+
+| Service     | URL                       |
+|-------------|---------------------------|
+| Site        | https://localhost         |
+| Mailpit     | http://localhost:8025     |
+| Slides Marp | http://localhost:8080     |
+
+### Commandes utiles
+
+```shell
+make sh             # Shell dans le conteneur php
+make sf c="…"       # Commande Symfony console (ex: make sf c=about)
+make composer c="…" # Commande Composer (ex: make composer c='req monolog')
+make test           # Tests PHPUnit
+make test c="--testdox"  # Tests avec options
+```
+
+## Lint & qualité
+
+```shell
+make lint                  # Tous les linters
+make lint.php-cs-fixer     # PHP CS Fixer (auto-fix)
+make lint.phpstan          # PHPStan niveau max
+make lint.twig             # Lint templates Twig
+make lint.yaml             # Lint YAML (config + contenu)
+make lint.eslint           # ESLint (auto-fix)
+```
 
 ## Build
 
-### Assets
-
 ```shell
-make build.assets
+make build.assets  # Compile les assets (production)
+make build.content # Génère le site statique
+make build.static  # Build complet : assets + contenu + slides
+make build.slides  # Compile les slides Marp
 ```
 
-### Content
-
-```shell
-make build.content
-````
-
-### Assets+Content
-
-Build the whole static site from source, with assets:
-
-```shell
-make build.static
-```
-
-Serve the static version using:
+Servir le site statique généré :
 
 ```shell
 make serve.static
 ```
 
-## Going further
+## Cache
 
-Learn more about this skeleton by browsing its content.
+```shell
+make clear.cache   # Vide le cache Symfony
+make clear.assets  # Supprime public/assets/
+make clear.build   # Supprime build/ et public/assets/
+make clear.images  # Supprime public/resized/ (cache Glide)
+```
