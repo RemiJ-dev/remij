@@ -102,6 +102,8 @@ J'ai bien envie de tester [Nuxt](https://nuxt.com/) pour rendre ça encore plus 
 
 Comme j'ai l'impression qu'il faut un doctorat (ou 12 ans d'expérience) pour utiliser [React](https://fr.react.dev/), je n'ai pas réussi à aller au-delà du "Getting Started" (tutoriel de base) et, très franchement, j'ai grandement la flemme (même avec [NextJS](https://nextjs.org/)) !
 
+Ce que je pratique finalement le plus depuis peu, c'est [Stimulus](https://symfony.com/bundles/StimulusBundle/current/index.html) qui a le grand avantage d'être directement présent dans la doc de Symfony et simplifie déjà beaucoup de choses.
+
 Vous aussi, vous manquez de temps pour tout tester ?
 
 ### Environnement de travail

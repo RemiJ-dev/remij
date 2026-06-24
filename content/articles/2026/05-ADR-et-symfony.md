@@ -148,7 +148,7 @@ class ArticleRepository
 
 ```
 
-Pour le coup, ça ne me change pas trop des repositories de Doctrine : j'ai une classe dédiée aux différentes méthodes me permettant de récupérer mes éléments d'un type précis. Une méthode par requête que je veux faire, à factoriser si des éléments se répètent. Du classique !
+Pour le coup, ça ne me change pas trop des repositories de Doctrine : j'ai une classe dédiée aux différentes méthodes me permettant de récupérer mes éléments d'un type précis. Une méthode par requête que je veux faire. À factoriser si des éléments sont répétés... Du classique !
 
 ### Le responder
 
@@ -206,11 +206,11 @@ abstract class AbstractTwigResponder
 
 ### Des tests
 
-Personnellement, et comme un certain [Grafikart](https://grafikart.fr) (dont je ne peux que recommander le travail) dans une vidéo très intéressante sur [les choix techniques d'une refonte du site grafikart.fr](https://www.youtube.com/watch?v=mWpvFGw2c7I), mes tests parfaits sont des tests fonctionnels. 
+Personnellement, et comme un certain [Grafikart](https://grafikart.fr) (dont je ne peux que recommander le travail) dans une vidéo très intéressante sur [les choix techniques d'une refonte du site grafikart.fr](https://www.youtube.com/watch?v=mWpvFGw2c7I), mes tests parfaits seraient des tests fonctionnels. 
 
 Pour ce cas-là, je le rejoins tout à fait sur le fait que Symfony n'est, par défaut, pas pratique pour réaliser ces tests et on doit ruser ou mettre en place des tests compliqués et particulièrement longs à écrire. 
 
-C'est là que le pattern <abbr title="Action Domain Responder">ADR</abbr> prend une valeur supplémentaire à mes yeux : vu qu'il n'y a plus grand-chose dans les actions, on peut tester les services sur domaine et les responders séparément et ça permet d'avoir une meilleure couverture sans forcément faire des tests fonctionnels. Bon, par contre, comme les tests unitaires ne sont pas encore mon point fort (#shame), je les ai générés avec Claude et je n'en suis pas super satisfait. Du coup, il est grand temps que je me forme un peu (sur [SymfonyCasts](https://symfonycasts.com/) par exemple) sur le sujet et que je reprenne ça proprement !
+C'est là que le pattern <abbr title="Action Domain Responder">ADR</abbr> prend une valeur supplémentaire à mes yeux : vu qu'il n'y a plus grand-chose dans les actions, on peut tester les services du domaine et les responders séparément et ça permet d'avoir une meilleure couverture sans forcément faire des tests fonctionnels. Bon, par contre, comme les tests unitaires ne sont pas encore mon point fort (#shame), je les ai générés avec Claude et je n'en suis pas super satisfait. Du coup, il est grand temps que je me forme un peu (sur [SymfonyCasts](https://symfonycasts.com/) par exemple) sur le sujet et que je reprenne ça proprement !
 
 ## Conclusion
 
