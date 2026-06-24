@@ -69,10 +69,27 @@ The dev environment is fully containerized via Docker Compose with **FrankenPHP*
 **How `make` routes commands:** the `Makefile` checks for the `docker` binary (`command -v docker`). When found, `PHP` / `COMPOSER` / `SYMFONY` / `NPM` / `NPX` are prefixed with `docker compose exec php`, so `make install`, `make lint`, `make serve.assets`, etc. all execute **inside the `php` container**. When `docker` is absent (in the container, or in CI), the same targets call the binaries directly. The `@dist` targets (`install@dist`, `build@dist`) always run raw commands, for production/deploy.
 
 **`compose.yaml` / `compose.override.yaml` services:**
-- **`php`** — built from the `frankenphp_dev` Dockerfile stage; mounts the project at `/app`. FrankenPHP/Caddy sert HTTP (port 80) et HTTPS (port 443) nativement — aucun nginx séparé. Hot-reload en dev via `FRANKENPHP_WORKER_CONFIG: watch`. Tous les commandes CLI s'exécutent ici.
+- **`php`** — built from the `frankenphp_dev` Dockerfile stage; mounts the project at `/app`. FrankenPHP/Caddy sert HTTP (port 80) et HTTPS (port 443) nativement — aucun nginx séparé. Hot-reload en dev via `FRANKENPHP_WORKER_CONFIG: watch …` (voir le piège du cache mémoire Stenope plus bas). Tous les commandes CLI s'exécutent ici.
 - **`slides`** — `marpteam/marp-cli`; Marp watch server on **http://localhost:8080** (`make serve.slides`).
 
 Site accessible sur **https://localhost** (port 443, certificat auto-signé Caddy) en développement.
+
+**Mode worker & contenu Markdown (piège du cache mémoire Stenope) :** en mode worker, le kernel Symfony et ses services restent vivants entre les requêtes. Le `ContentManager` de Stenope (`vendor/stenope/stenope/src/ContentManager.php`) garde son contenu dans un cache **en mémoire** (`private array $cache`), qui survit donc d'une requête à l'autre. Conséquence : modifier un fichier de `content/**/*.md` ne se voit pas en rechargeant la page tant que le worker n'a pas redémarré. Le `watch` de FrankenPHP redémarre bien le worker sur changement de fichier, **mais son pattern par défaut (`./**/*.{php,yaml,yml,twig,env}`) n'inclut pas `.md`**. D'où le `FRANKENPHP_WORKER_CONFIG: watch ./**/*.{php,yaml,yml,twig,env,md}` explicite dans `compose.override.yaml` : sans le `md`, le contenu reste périmé. À noter : ce glob matche aussi `compose.override.yaml` lui-même (`*.yaml`) → l'éditer redémarre le worker. La prod n'est pas concernée (build statique Stenope, le contenu est pré-compilé).
+
+**Deux patterns `watch` à garder synchronisés** dans `compose.override.yaml`, qui répondent à deux besoins distincts — **les deux doivent inclure `md`** :
+- `FRANKENPHP_WORKER_CONFIG: watch …` → redémarre le **worker** (= vide le cache mémoire Stenope ci-dessus). Sans lui, le contenu servi reste périmé.
+- `FRANKENPHP_SITE_CONFIG: hot_reload …` → surveille les fichiers et **pousse un update Mercure** vers le navigateur quand un fichier surveillé change. Son champ `watch` vaut `null` par défaut (pattern interne avec `twig` mais sans `md`), d'où la forme explicite `hot_reload ./**/*.{php,yaml,yml,twig,env,md}`. Vérifiable via `frankenphp adapt --config /etc/frankenphp/Caddyfile` (champs `hot_reload.watch` et `workers[].watch`).
+
+  **⚠️ Le directive `hot_reload` ne suffit PAS à recharger le navigateur** : contrairement à ce qu'on pourrait croire, FrankenPHP **n'injecte aucun script** dans le HTML. Il expose seulement, par requête, la variable `$_SERVER['FRANKENPHP_HOT_RELOAD']` (= l'URL d'abonnement Mercure, ex. `/.well-known/mercure?topic=…/hot-reload/<hash>`) et publie les events de changement sur ce topic. C'est au **layout** d'embarquer le client JS qui s'abonne et recharge/morph la page. D'où le bloc dans `templates/base.html.twig` (head), gardé par la présence de la variable (donc dev only — le build statique de prod ne l'a pas) :
+  ```twig
+  {% set hotReloadUrl = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
+  {% if hotReloadUrl %}
+      <meta name="frankenphp-hot-reload:url" content="{{ hotReloadUrl }}">
+      <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
+      <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
+  {% endif %}
+  ```
+  (`idiomorph` = morphing DOM en préservant scroll/inputs ; sans lui, simple `reload`. CDN jsdelivr déjà autorisé par le firewall du devcontainer.) Sans ce bloc, le worker redémarre bien et le contenu `.md` est à jour **au rechargement manuel**, mais la page ouverte ne se recharge jamais toute seule.
 
 **`Dockerfile`** (multi-stage, image de base `dunglas/frankenphp:1-php8.5`, Debian) :
 - **`frankenphp_base`** — installe les extensions PHP (apcu, intl, opcache, zip), Composer, et l'entrypoint `frankenphp/docker-entrypoint.sh`.

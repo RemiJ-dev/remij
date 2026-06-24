@@ -16,8 +16,8 @@ services:
       #  from the bind-mount for better performance by enabling the next line:
       #- /app/vendor
     environment:
-      FRANKENPHP_WORKER_CONFIG: watch
-      FRANKENPHP_SITE_CONFIG: hot_reload
+      FRANKENPHP_WORKER_CONFIG: watch ./**/*.{php,yaml,yml,twig,env,md}
+      FRANKENPHP_SITE_CONFIG: hot_reload ./**/*.{php,yaml,yml,twig,env,md}
       MERCURE_EXTRA_DIRECTIVES: demo
       # See https://xdebug.org/docs/all_settings#mode
       XDEBUG_MODE: "${XDEBUG_MODE:-develop}"
