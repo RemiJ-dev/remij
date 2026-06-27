@@ -14,7 +14,7 @@ Je reviendrai sur les pours et les contres vers [la fin de cet article](#conclus
 
 ## Définitions
 
-Tout d'abord, voyons de quoi on parle ! Le pattern <abbr title="Action Domain Responder">ADR</abbr> change (un peu) de la logique <abbr title="Model View Controller">MVC</abbr> classique. On suit beaucoup plus un principe que j'apprécie : un page web reçoit une requête et doit renvoyer une réponse (pareil pour une API, mais c'est pour faire plus court ;) ). Pour moi, une action de controller avec le pattern MVC devait déjà respecter ce principe, mais on se retrouve souvent à y injecter de la logique métier. Le but est que le controller reçoive la requête, appelle le modèle, transmette les données à la vue et renvoie une réponse.
+Tout d'abord, voyons de quoi on parle ! Le pattern <abbr title="Action Domain Responder">ADR</abbr> change (un peu) de la logique <abbr title="Model View Controller">MVC</abbr> classique. On suit beaucoup plus un principe que j'apprécie : un page web reçoit une requête et doit renvoyer une réponse (pareil pour une API, mais c'est pour faire plus court 😉). Pour moi, une action de controller avec le pattern MVC devait déjà respecter ce principe, mais on se retrouve souvent à y injecter de la logique métier. Le but est que le controller reçoive la requête, appelle le modèle, transmette les données à la vue et renvoie une réponse.
 
 Avec <abbr title="Action Domain Responder">ADR</abbr>, on twiste un peu la formule : 
 - L'action reçoit la requête,

@@ -60,4 +60,4 @@ Vous vous en doutez, ça ne permettrait pas de sauver le monde, mais en attendan
 
 Vous l'aurez compris, j'adore partager ce que je sais et ce que je sais faire. Pas particulièrement pour me faire mousser (même si ça n'est jamais désagréable, ne nous mentons pas), mais surtout parce que c'est un excellent moyen de découvrir d'autres manières de voir, d'apprendre de nouvelles choses et de remettre en question ce que je crois savoir.
 
-Pour ça, je pense continuer les articles techniques et, très probablement, les vidéos. Bien entendu, vous pouvez être les premiers informés en suivant ce blog et son [flux RSS](/rss.xml) ;) !
+Pour ça, je pense continuer les articles techniques et, très probablement, les vidéos. Bien entendu, vous pouvez être les premiers informés en suivant ce blog et son [flux RSS](/rss.xml) 😉 !
