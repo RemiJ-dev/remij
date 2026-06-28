@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=../vendor/symfony/routing/Loader/schema/routing.schema.json
+
 errors_404:
     path: 404.html
     controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
@@ -6,8 +8,6 @@ errors_404:
     options:
         stenope:
             sitemap: false
-
-# yaml-language-server: $schema=../vendor/symfony/routing/Loader/schema/routing.schema.json
 
 # This file is the entry point to configure the routes of your app.
 # Methods with the #[Route] attribute are automatically imported.
