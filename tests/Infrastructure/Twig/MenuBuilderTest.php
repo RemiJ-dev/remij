@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Twig;
 
+use App\Domain\Tutorial\Model\Tutorial;
+use App\Domain\Tutorial\Repository\TutorialRepository;
 use App\Infrastructure\Twig\MenuBuilder;
 use App\Tests\Helper\RouteDiscoveryTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -22,12 +24,15 @@ class MenuBuilderTest extends TestCase
         'page_contact' => 2,
         'page_content' => 2,
         'article_list' => 2,
-        'article_list_by_author' => 3,
-        'article_list_by_tag' => 3,
         'article_show' => 3,
+        'publication_list_by_author' => 2,
+        'publication_list_by_tag' => 2,
         'rss' => 1,
         'seo_robots' => 1,
         'seo_sitemap' => 1,
+        'tutorial_list' => 2,
+        'tutorial_show' => 3,
+        'tutorial_chapter' => 4,
     ];
 
     /**
@@ -71,7 +76,7 @@ class MenuBuilderTest extends TestCase
         $requestStack = new RequestStack();
         $requestStack->push($request);
 
-        $breadcrumb = new MenuBuilder($requestStack)->breadcrumb();
+        $breadcrumb = new MenuBuilder($requestStack, self::tutorialRepository())->breadcrumb();
 
         self::assertCount(
             $expectedCount,
@@ -82,9 +87,42 @@ class MenuBuilderTest extends TestCase
 
     public function testBreadcrumbWithNoRequestReturnsHomeOnly(): void
     {
-        $breadcrumb = new MenuBuilder(new RequestStack())->breadcrumb();
+        $breadcrumb = new MenuBuilder(new RequestStack(), self::tutorialRepository())->breadcrumb();
 
         self::assertCount(1, $breadcrumb);
         self::assertSame('page_home', $breadcrumb[0]['route']);
+    }
+
+    public function testBreadcrumbForChapterContainsTutorialItemLabelledWithItsTitle(): void
+    {
+        $request = new Request();
+        $request->attributes->set('_route', 'tutorial_chapter');
+        $request->attributes->set('_route_params', ['slug' => 'symfony-les-bases/architecture']);
+
+        $requestStack = new RequestStack();
+        $requestStack->push($request);
+
+        $breadcrumb = new MenuBuilder($requestStack, self::tutorialRepository())->breadcrumb();
+
+        self::assertSame('tutorial_show', $breadcrumb[2]['route']);
+        self::assertSame(['slug' => 'symfony-les-bases'], $breadcrumb[2]['routeParams']);
+        self::assertSame('Symfony : les bases', $breadcrumb[2]['label']);
+        self::assertFalse($breadcrumb[2]['translate']);
+    }
+
+    private static function tutorialRepository(): TutorialRepository
+    {
+        $repository = self::createStub(TutorialRepository::class);
+        $repository->method('findBySlug')->willReturn(new Tutorial(
+            slug: 'symfony-les-bases',
+            title: 'Symfony : les bases',
+            description: null,
+            content: '',
+            authors: [],
+            tags: [],
+            publishedAt: new \DateTimeImmutable('2025-01-01'),
+        ));
+
+        return $repository;
     }
 }

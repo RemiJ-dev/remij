@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Action\Article;
+namespace App\Action\Publication;
 
-use App\Domain\Article\Repository\ArticleRepository;
-use App\Responder\Article\ListByTagResponder;
+use App\Domain\Publication\Repository\PublicationRepository;
+use App\Responder\Publication\ListByTagResponder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Twig\Error\LoaderError;
@@ -15,7 +15,7 @@ use Twig\Error\SyntaxError;
 readonly class ListByTagAction
 {
     public function __construct(
-        private ArticleRepository $repository,
+        private PublicationRepository $repository,
         private ListByTagResponder $responder,
     ) {
     }
@@ -25,11 +25,11 @@ readonly class ListByTagAction
      * @throws SyntaxError
      * @throws LoaderError
      */
-    #[Route('/articles/tag/{tag:tag}', name: 'article_list_by_tag')]
+    #[Route('/tag/{tag:tag}', name: 'publication_list_by_tag')]
     public function __invoke(string $tag): Response
     {
-        $articles = $this->repository->findByTag($tag);
+        $publications = $this->repository->findByTag($tag);
 
-        return $this->responder->respond($tag, $articles);
+        return $this->responder->respond($tag, $publications);
     }
 }

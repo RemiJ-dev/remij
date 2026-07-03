@@ -93,6 +93,7 @@ clear.cache:
 
 ## Build - Build assets
 build.assets:
+	$(SYMFONY) cache:clear --env=prod
 	$(SYMFONY) asset-map:compile --env=prod
 
 ## Build - Build static site

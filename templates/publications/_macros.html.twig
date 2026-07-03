@@ -1,0 +1,12 @@
+{% macro list(publications) %}
+    {% import 'articles/_macros.html.twig' as articleMacros %}
+    {% import 'tutorials/_macros.html.twig' as tutorialMacros %}
+
+    {% for publication in publications %}
+        {% if 'tutorial' == publication.type.value %}
+            {{ tutorialMacros.show(publication) }}
+        {% else %}
+            {{ articleMacros.show(publication) }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}

@@ -25,7 +25,7 @@
 
         <footer>
             {% for authorSlug in article.authors %}
-                {% set author = content_get('App\\Domain\\Article\\Model\\Author', authorSlug) %}
+                {% set author = content_get('App\\Domain\\Publication\\Model\\Author', authorSlug) %}
                 {% include 'articles/_author_card.html.twig' with { author: author } only %}
             {% endfor %}
         </footer>

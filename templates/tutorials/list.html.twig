@@ -1,0 +1,17 @@
+{% set pageTitle = pageTitle|default('tutorial.list.title'|trans) %}
+
+{% extends 'base.html.twig' %}
+
+{% from 'tutorials/_macros.html.twig' import list %}
+
+{% block meta_title pageTitle ~ ' - ' ~ parent() %}
+
+{% block content %}
+    <h1>{{ pageTitle }}</h1>
+
+    {% block before_content %}{% endblock before_content %}
+
+    <main class="tutorials">
+        {{ list(tutorials) }}
+    </main>
+{% endblock %}

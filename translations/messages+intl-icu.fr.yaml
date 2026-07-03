@@ -14,6 +14,7 @@ layout:
 menu:
     home: "Accueil"
     blog: "Blog"
+    tutorials: "Tutoriels"
 
 error:
     not_found:
@@ -36,6 +37,26 @@ article:
         next_article: "Article suivant : « {title} » ➜"
     author:
         since: "Auteur depuis {year}"
+
+tutorial:
+    list:
+        title: "Tutoriels"
+    show:
+        published_at: "Publié le {date}"
+        summary: "Sommaire"
+        upcoming: "à venir"
+        back_to_list: "← Retour à la liste des tutoriels"
+    chapter:
+        published_at: "Publié le {date}"
+        back_to_tutorial: "Sommaire du tutoriel"
+        previous: "⬅ Partie précédente : « {title} »"
+        next: "Partie suivante : « {title} » ➜"
+
+publication:
+    list_by_tag:
+        title: "Publications pour le tag #{tag}"
+    list_by_author:
+        title: "Publications de {name}"
 
 contact:
     form:

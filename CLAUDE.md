@@ -160,8 +160,13 @@ Stenope reads content files (Markdown with YAML front matter) from `content/`, d
 
 Content types and their source directories are configured in `config/packages/stenope.yaml`:
 - `App\Domain\Article\Model\Article` ← `content/articles/`
-- `App\Domain\Article\Model\Author` ← `content/authors/`
+- `App\Domain\Publication\Model\Author` ← `content/authors/`
 - `App\Domain\Page\Model\Page` ← `content/pages/`
+- `App\Domain\Page\Model\Section` ← `content/sections/`
+- `App\Domain\Tutorial\Model\Tutorial` ← `content/tutoriels/` avec `depth: '== 0'` (fichiers racine)
+- `App\Domain\Tutorial\Model\Chapter` ← `content/tutoriels/` avec `depth: '>= 1'` (fichiers en sous-dossier)
+
+**Tutoriels — deux providers sur le même dossier :** la config étendue d'un provider accepte `path`, `depth`, `patterns`, `excludes` (options du `Finder`). `Tutorial` et `Chapter` lisent tous deux `content/tutoriels/`, séparés par la profondeur. Le slug Stenope étant le chemin relatif sans extension, un chapitre a un slug `<serie>/<partie>` et retrouve sa série via `dirname(slug)` — la relation série/partie est portée par l'arborescence, sans champ de liaison dans le front matter.
 
 ### Architecture ADR
 
@@ -183,14 +188,23 @@ src/
 ### Domain (`src/Domain/`)
 
 **Modèles (value objects, exclus du container Symfony) :**
-- **`Domain/Article/Model/Article`** — articles de blog : `slug`, `title`, `description`, `content`, `authors[]`, `tags[]`, `publishedAt`, `image`, `lastModified`, `tableOfContent`. Méthodes `isPublished()` et `getLastModifiedOrCreated()`.
-- **`Domain/Article/Model/Author`** — profils auteurs : `slug`, `name`, `avatar`, `active`, `since`.
+- **`Domain/Article/Model/Article`** — articles de blog : `slug`, `title`, `description`, `content`, `authors[]`, `tags[]`, `publishedAt`, `image`, `lastModified`, `tableOfContent`. Implémente `PublicationInterface`, utilise `PublishableTrait`.
+- **`Domain/Tutorial/Model/Tutorial`** — un tutoriel : soit une **série** (fichier racine = intro + sommaire, parties dans un sous-dossier du même nom), soit un **contenu autonome** (fichier racine seul). Mêmes champs qu'`Article` (sans `nextArticle`). Implémente `PublicationInterface`, utilise `PublishableTrait`.
+- **`Domain/Tutorial/Model/Chapter`** — une partie de série : `slug` (`<serie>/<partie>`), `title`, `description`, `content`, `position` (ordre dans la série), `publishedAt`, `lastModified`, `tableOfContent`, et `getTutorialSlug()` (= `dirname(slug)`). **Pas** de tags/auteurs (hérités de la série) → n'implémente **pas** `PublicationInterface`.
+- **`Domain/Publication/Model/Author`** — profils auteurs : `slug`, `name`, `avatar`, `active`, `since`. Partagé entre articles et tutoriels (anciennement dans `Domain/Article`).
+- **`Domain/Publication/Model/PublicationInterface`** — contrat des contenus « listables » sur les pages transversales (tag, auteur) et dans le flux Atom : propriétés communes via **property hooks** (`public string $slug { get; }`…, satisfaites par les propriétés publiques natives), + `isPublished()`, `getLastModifiedOrCreated()`, `getType(): PublicationType`.
+- **`Domain/Publication/Model/PublicationType`** — enum `Article|Tutorial` ; `getShowRoute()` donne la route de détail (`article_show`/`tutorial_show`), `->value` sert au dispatch des cartes Twig.
+- **`Domain/Publication/Model/PublishableTrait`** — `isPublished()` (date future = brouillon) et `getLastModifiedOrCreated()`, partagé par `Article`, `Tutorial`, `Chapter`.
+- **`Domain/Publication/DTO/FeedEntry`** — une entrée Atom uniforme (`title`, `routeName`/`routeParams`, `publishedAt`, `updated`, `authors[]` = noms résolus, `tags[]`). Named constructors : `fromPublication()` et `fromChapter()` (titre contextualisé « Série : Partie », tags/auteurs hérités de la série).
 - **`Domain/Page/Model/Page`** — pages statiques génériques.
-- **`Domain/Seo/Model/MetaTrait`** — champs SEO/réseaux sociaux partagés (`metaTitle`, `metaDescription`), utilisé par `Article` et `Page`.
+- **`Domain/Seo/Model/MetaTrait`** — champs SEO/réseaux sociaux partagés (`metaTitle`, `metaDescription`), utilisé par `Article`, `Tutorial`, `Chapter` et `Page`.
 - **`Domain/Page/DTO/ContactDTO`** — DTO du formulaire de contact avec contraintes de validation (`NotBlank`, `Email`, `Length`).
 
 **Repositories (services autowirés) :**
 - **`Domain/Article/Repository/ArticleRepository`** — `findPublished()`, `findByTag(string $tag)`, `findByAuthor(Author $author)`. Wraps `ContentManagerInterface`.
+- **`Domain/Tutorial/Repository/TutorialRepository`** — `findPublished()`, `findBySlug()`, `findByTag()`, `findByAuthor()`, `findChapters(Tutorial)` (**toutes** les parties, publiées ou non — le sommaire tease les parties à venir — triées par `position`), `findPublishedChapters()` (parties publiées de séries publiées). Wraps `ContentManagerInterface`.
+- **`Domain/Publication/Repository/PublicationRepository`** — vue transversale : **compose** `ArticleRepository` + `TutorialRepository` + `AuthorRepository` (aucune dépendance croisée entre domaines de contenu). `findPublished()`, `findByTag()`, `findByAuthor()` (fusion triée par date décroissante, typée `list<PublicationInterface>`), `findTags()`/`findAuthors()` (agrégation « slug → date la plus récente », consommée par le sitemap), `findFeedEntries()` (articles + tutoriels + parties publiées de séries publiées, en `FeedEntry` triés).
+- **`Domain/Publication/Repository/AuthorRepository`** — `findAll()`. Wraps `ContentManagerInterface`.
 - **`Domain/Page/Repository/PageRepository`** — `findBySlug(string $slug)` (peut lever `ContentNotFoundException`), `findAll()`. Wraps `ContentManagerInterface`.
 
 ### Infrastructure (`src/Infrastructure/`)
@@ -198,7 +212,7 @@ src/
 - **`Infrastructure/Form/ContactType`** — Symfony Form type pour la page contact, lié à `ContactDTO`.
 - **`Infrastructure/Form/Handler/ContactFormHandler`** — gère la soumission du formulaire de contact (validation + envoi).
 - **`Infrastructure/Mailer/ContactMailer`** — envoie l'email de contact via Brevo.
-- **`Infrastructure/Twig/MenuBuilder`** — construit le fil d'Ariane pour la requête courante. Lit `_route` et `_route_params` depuis `RequestStack`. Gère : `page_home`, `page_contact`, `page_content`, `article_list`, `article_list_by_tag`, `article_list_by_author`, `article_show`. Les routes non gérées (ex: `rss`, `seo_robots`, `seo_sitemap`) retournent uniquement l'entrée home.
+- **`Infrastructure/Twig/MenuBuilder`** — construit le fil d'Ariane pour la requête courante. Lit `_route` et `_route_params` depuis `RequestStack`. Gère : `page_home`, `page_contact`, `page_content`, `article_list`, `article_show`, `tutorial_list`, `tutorial_show`, `tutorial_chapter`, `publication_list_by_tag`, `publication_list_by_author`. Pour `tutorial_chapter`, injecte `TutorialRepository` afin d'insérer un crumb intermédiaire « série » libellé avec le **titre** du tutoriel (flag `translate: false` dans l'item, honoré par `layout/_breadcrumb.html.twig` pour ne pas passer le titre dans `|trans`). Les routes non gérées (ex: `rss`, `seo_robots`, `seo_sitemap`) retournent uniquement l'entrée home.
 - **`Infrastructure/Twig/MenuExtension`** — expose `MenuBuilder::breadcrumb()` via la fonction Twig `breadcrumb()`.
 - **`Infrastructure/Stenope/Processor/AssetsProcessor`** — post-traite le HTML des articles pour résoudre les URLs d'assets locaux pour les éléments `<source>` et `<video>` via le composant Asset de Symfony.
 
@@ -217,6 +231,35 @@ tags:           ["tag1", "tag2"]
 ---
 ```
 A future `publishedAt` date means the article is not yet published (draft).
+
+### Tutorial Content (`content/tutoriels/`)
+
+Un fichier **à la racine** est un tutoriel (`Tutorial`) : soit une **série** quand un sous-dossier du même nom contient ses parties, soit un **tutoriel autonome** d'une seule page. Les fichiers **en sous-dossier** sont les parties (`Chapter`) :
+
+```
+content/tutoriels/
+├── symfony-les-bases.md         ← série : front matter identique aux articles (sans nextArticle)
+└── symfony-les-bases/
+    ├── architecture.md          ← partie, front matter réduit (voir ci-dessous)
+    └── controllers.md
+```
+
+Front matter d'une partie — pas de `authors`/`tags` (portés par la série) :
+```yaml
+---
+title:          "Titre de la partie"
+description:    "Description courte"
+position:       1
+publishedAt:    "YYYY-MM-DD"
+lastModified:   ~
+tableOfContent: true
+---
+```
+
+Règles :
+- L'ordre des parties vient du champ `position` (pas de préfixe numérique dans les noms de fichiers → URLs stables, insertion sans renommage).
+- Publication progressive : chaque partie a son `publishedAt`. Le sommaire de la série liste **toutes** les parties, les non-publiées grisées « à venir » **sans lien** — donc jamais crawlées par `stenope:build`, absentes du site statique.
+- Deux niveaux maximum (série → parties), pas de sous-parties.
 
 ### Video Content (`content/videos/`)
 
@@ -267,18 +310,20 @@ Hiérarchie des classes de base :
 ```
 AbstractResponder                  ← base commune : injecte ControllerHelper::addFlash() et redirectToRoute() via #[AutowireMethodOf] comme \Closure protégés
 └── AbstractTwigResponder          ← ajoute ControllerHelper::render() (même mécanisme), expose render(): Response
-    ├── AbstractArticleResponder   ← ajoute lastModified(array) via ContentUtils
-    │   ├── ListResponder
-    │   ├── ListByTagResponder
-    │   ├── ListByAuthorResponder
-    │   ├── ShowResponder          ← utilise $article->getLastModifiedOrCreated() directement
-    │   └── RssResponder          ← Content-Type: application/atom+xml
-    └── (direct)
-        ├── Page/HomeResponder
-        ├── Page/ContactResponder  ← délègue à ContactFormHandler ; addFlash + redirectToRoute('page_contact') on success, status 422 si invalide
-        ├── Page/ContentResponder  ← sélection template custom vs fallback via twig loader ; surcharge le constructeur pour injecter Twig\Environment séparément
-        ├── Seo/RobotsResponder   ← Content-Type: text/plain
-        └── Seo/SitemapResponder  ← agrège tags/authors, Content-Type: application/xml
+    │                                et getLastModified(array): ?DateTimeInterface (max des lastModifiedOrCreated via ContentUtils)
+    ├── Article/ListResponder
+    ├── Article/ShowResponder      ← utilise $article->getLastModifiedOrCreated() directement
+    ├── Tutorial/ListResponder
+    ├── Tutorial/ShowResponder     ← Last-Modified = max(série + toutes ses parties, y compris non publiées : le sommaire les tease)
+    ├── Tutorial/ChapterResponder  ← calcule previousChapter/nextChapter parmi les seules parties publiées (triées par position)
+    ├── Publication/ListByTagResponder
+    ├── Publication/ListByAuthorResponder
+    ├── Publication/RssResponder   ← reçoit list<FeedEntry> ; Content-Type: application/atom+xml ; Last-Modified = max(updated)
+    ├── Page/HomeResponder
+    ├── Page/ContactResponder      ← délègue à ContactFormHandler ; addFlash + redirectToRoute('page_contact') on success, status 422 si invalide
+    ├── Page/ContentResponder      ← sélection template custom vs fallback via twig loader ; surcharge le constructeur pour injecter Twig\Environment séparément
+    ├── Seo/RobotsResponder        ← Content-Type: text/plain
+    └── Seo/SitemapResponder       ← Content-Type: application/xml (l'agrégation tags/auteurs vit dans PublicationRepository, pas ici)
 ```
 
 **`AbstractResponder`** porte les closures `addFlash` et `redirectToRoute` (autowirées via `#[AutowireMethodOf(ControllerHelper::class)]`) pour les Responders qui doivent rediriger ou poser un flash (ex: `ContactResponder`). **`AbstractTwigResponder`** en hérite et y ajoute la closure `render`. Un Responder qui surcharge le constructeur (ex: `ContentResponder`) reçoit les trois closures en paramètres simples — **non promus** — et les transmet via `parent::__construct($addFlash, $redirectToRoute, $render)` (les promouvoir à nouveau réassignerait la propriété `readonly` `$render` du parent → erreur).
@@ -291,24 +336,30 @@ AbstractResponder                  ← base commune : injecte ControllerHelper::
 
 Un fichier par action, organisé en sous-dossiers. Chaque action est une `readonly class` avec une seule méthode `__invoke()`. Les actions se limitent à : récupérer les données via le Repository, appeler `$this->responder->respond(...)` (ou `$responder->respond(...)` quand le Responder est injecté en argument de méthode). `ContactAction` reste minimal : il récupère la page `contact` et passe la `Request` à `ContactResponder::respond()` — c'est le Responder qui gère le formulaire (flash, redirect, status 422) via les closures `addFlash`/`redirectToRoute` d'`AbstractResponder`.
 
-**Convention de nommage des routes :** préfixées par le sous-dossier (ex: `seo_robots`, `seo_sitemap`). Exception explicite : `Article/RssAction` conserve le nom `rss` (pas de préfixe `article_`).
+**Convention de nommage des routes :** préfixées par le sous-dossier (ex: `seo_robots`, `seo_sitemap`). Exception explicite : `Publication/RssAction` conserve le nom `rss` (pas de préfixe `publication_`).
 
 - **`Page/HomeAction`** — `GET /` → `page_home`
 - **`Page/ContactAction`** — `GET|POST /contact` → `page_contact` (délègue tout le traitement du formulaire à `ContactResponder`, qui envoie l'email via Brevo et redirige on success)
 - **`Page/ContentAction`** — `GET /{slug}` → `page_content` (catch-all, priority -500 ; redirige le slug `home` vers `page_home` ; convertit `ContentNotFoundException` en `NotFoundHttpException`)
 - **`Article/ListAction`** — `GET /articles/` → `article_list`
-- **`Article/ListByTagAction`** — `GET /articles/tag/{tag}` → `article_list_by_tag`
-- **`Article/ListByAuthorAction`** — `GET /articles/auteur/{slug}` → `article_list_by_author`
-- **`Article/ShowAction`** — `GET /articles/{slug:article}` → `article_show`
-- **`Article/RssAction`** — `GET /rss.xml` → `rss`, retourne un flux Atom avec `Content-Type: application/atom+xml`
+- **`Article/ShowAction`** — `GET /articles/{slug:article}` → `article_show` (requirements `.+` : les slugs contiennent le dossier année, ex. `2026/02-controllers-symfony`)
+- **`Tutorial/ListAction`** — `GET /tutoriels/` → `tutorial_list`
+- **`Tutorial/ShowAction`** — `GET /tutoriels/{slug:tutorial}` → `tutorial_show` (segment unique, requirement par défaut sans slash)
+- **`Tutorial/ChapterAction`** — `GET /tutoriels/{slug:chapter}` → `tutorial_chapter`, requirements `['slug' => '.+/.+']` : le slash obligatoire désambiguïse avec `tutorial_show` sans dépendre de l'ordre des routes. Convertit en `NotFoundHttpException` le cas « partie sans fichier de série ».
+- **`Publication/ListByTagAction`** — `GET /tag/{tag}` → `publication_list_by_tag` (articles + tutoriels ; un tag inconnu rend une liste vide, 200)
+- **`Publication/ListByAuthorAction`** — `GET /auteur/{slug:author}` → `publication_list_by_author`
+- **`Publication/RssAction`** — `GET /rss.xml` → `rss`, flux Atom transversal (`Content-Type: application/atom+xml`) : articles + tutoriels + parties publiées de séries publiées, via `PublicationRepository::findFeedEntries()`
 - **`Seo/RobotsAction`** — `GET /robots.txt` → `seo_robots`
-- **`Seo/SitemapAction`** — `GET /sitemap.xml` → `seo_sitemap`, liste toutes les URLs publiques (articles, pages, tags, auteurs) sauf `seo_robots` et `seo_sitemap`
+- **`Seo/SitemapAction`** — `GET /sitemap.xml` → `seo_sitemap`, liste toutes les URLs publiques (articles, tutoriels, parties, pages, tags, auteurs) sauf `seo_robots` et `seo_sitemap`
 
 ### Templates (`templates/`)
 
-- `base.html.twig` / layout partials in `templates/layout/` — global layout with header, footer, breadcrumb.
+- `base.html.twig` / layout partials in `templates/layout/` — global layout with header, footer, breadcrumb (`_breadcrumb.html.twig` honore le flag `translate: false` des items de `MenuBuilder`).
 - `templates/pages/` — page templates: `home.html.twig`, `page.html.twig` (generic fallback), `contact.html.twig`. Custom page templates go here, named after the content slug.
-- `templates/articles/` — list, show, tag-filtered list, table of contents partial.
+- `templates/articles/` — `list`, `show`, la carte article (`_macros.html.twig`), `_toc.html.twig` (table des matières, réutilisé par les tutoriels) et `_author_card.html.twig` (réutilisé par les pages auteur).
+- `templates/tutorials/` — `list`, `show` (intro + sommaire avec teasing des parties à venir), `chapter` (ToC + nav précédent/suivant), carte tutoriel (`_macros.html.twig`).
+- `templates/publications/` — pages transversales : `list.html.twig` (layout commun), `list_by_tag`, `list_by_author`, et `_macros.html.twig` qui dispatche la carte selon `publication.type.value` (carte article ou carte tutoriel).
+- `templates/rss/rss.xml.twig` — flux Atom, boucle uniquement sur des `FeedEntry` (URL générée via `url(entry.routeName, entry.routeParams)`).
 - `templates/seo/` — `robots.txt.twig`, `sitemap.xml.twig`.
 
 ### Assets (`assets/`)
@@ -339,16 +390,21 @@ Global site metadata (title, description) and navigation menus (main + footer) a
 
 **Tests fonctionnels (WebTestCase) :**
 - `tests/Action/ArticleActionsTest.php` — tests `/articles/` list (200), all slugs from `content/articles/` (200 each), and a non-existent slug (`ContentNotFoundException` via `catchExceptions(false)`).
+- `tests/Action/TutorialActionsTest.php` — même approche pour `/tutoriels/` : list (200), chaque slug de `Tutorial` et de `Chapter` (200, brouillons compris — accessibles par URL directe), slugs inexistants (`ContentNotFoundException`).
+- `tests/Action/PublicationActionsTest.php` — pages transversales : `/tag/{tag}` (200) pour chaque tag des contenus publiés (articles + tutoriels), tag inconnu (200, liste vide), `/auteur/{slug}` (200) pour chaque auteur, auteur inconnu (`ContentNotFoundException`).
 - `tests/Action/DefaultActionsTest.php` — tests `/` home (200), all slugs from `content/pages/` except `home` (redirects) and `contact` (dedicated route), and a non-existent slug (`NotFoundHttpException`).
-- `tests/Action/RssActionTest.php` — tests `/rss.xml` (200, correct Content-Type, valid Atom XML, article count, ordering, Last-Modified header).
+- `tests/Action/RssActionTest.php` — tests `/rss.xml` (200, correct Content-Type, valid Atom XML, ordering, Last-Modified header). Le nombre d'entrées attendu = articles publiés + tutoriels publiés + parties publiées de séries publiées, recalculé dynamiquement via `ContentManagerInterface`.
 - `tests/Action/RobotsActionTest.php` — tests `/robots.txt` (200).
-- `tests/Action/SitemapActionTest.php` — tests `/sitemap.xml` (200) and verifies every expected URL is present: static routes discovered via `#[Route]` attributes (excluding `Seo/` actions and non-HTML routes), plus one URL per published article, tag, author, and page.
+- `tests/Action/SitemapActionTest.php` — tests `/sitemap.xml` (200) and verifies every expected URL is present: static routes discovered via `#[Route]` attributes (excluding `Seo/` actions and non-HTML routes), plus one URL per published article, tutorial, chapter (of a published tutorial), tag and author (agrégés sur articles + tutoriels), and page.
 
 **Tests unitaires (TestCase) :**
-- `tests/Infrastructure/Twig/MenuBuilderTest.php` — unit tests for `MenuBuilder::breadcrumb()`. Data provider discovers routes dynamically from action `#[Route]` attributes via PHP Reflection (using `RouteDiscoveryTrait`); asserts exact breadcrumb item count per route. `EXPECTED_BREADCRUMB_COUNTS` must be updated when a new action route is added.
+- `tests/Infrastructure/Twig/MenuBuilderTest.php` — unit tests for `MenuBuilder::breadcrumb()`. Data provider discovers routes dynamically from action `#[Route]` attributes via PHP Reflection (using `RouteDiscoveryTrait`); asserts exact breadcrumb item count per route. `EXPECTED_BREADCRUMB_COUNTS` must be updated when a new action route is added. `MenuBuilder` reçoit un `TutorialRepository` stubé (`findBySlug` → `Tutorial` réel) pour le crumb série des pages de partie.
 - `tests/Infrastructure/Form/ContactFormHandlerTest.php` — unit tests for `ContactFormHandler`.
 - `tests/Infrastructure/Mailer/ContactMailerTest.php` — unit tests for `ContactMailer`.
 - `tests/Domain/Article/Repository/ArticleRepositoryTest.php` — unit tests for `ArticleRepository`: vérifie les expressions de filtrage transmises à `ContentManagerInterface` et le filtrage effectif des résultats.
+- `tests/Domain/Tutorial/Repository/TutorialRepositoryTest.php` — même approche pour `TutorialRepository`, y compris `findChapters()` (filtrage par slug de série) et `findPublishedChapters()` (exclusion des parties de séries non publiées).
+- `tests/Domain/Publication/Repository/PublicationRepositoryTest.php` — l'agrégateur, avec les repositories composés **stubés** (`self::createStub()` sur les classes concrètes) : fusion + tri par date, agrégations `findTags()`/`findAuthors()`, `findFeedEntries()` (brouillons exclus, titres contextualisés, noms d'auteurs résolus — slug inconnu conservé tel quel).
+- `tests/Domain/Publication/Repository/AuthorRepositoryTest.php` et `tests/Domain/Publication/DTO/FeedEntryTest.php` — les named constructors de `FeedEntry` (routes par type, héritage tags/auteurs de la série, fallback `updated` = `publishedAt`).
 - `tests/Responder/` — un test par Responder, miroir de `src/Responder/`. Chaque test couvre : le bon template appelé, les headers HTTP spécifiques (Content-Type, Last-Modified), et les cas limites (liste vide, template fallback). Utilise de vraies instances de Domain Models plutôt que des mocks. Le constructeur reçoit les **trois closures** d'`AbstractResponder`/`AbstractTwigResponder` dans l'ordre **`addFlash`, `redirectToRoute`, `render`** (car ils utilisent `AutowireMethodOf`). Les Responders qui n'en ont pas l'usage reçoivent des no-op : `static fn () => null` pour `addFlash`, `static fn (): RedirectResponse => new RedirectResponse('/')` pour `redirectToRoute` (le retour doit être un `RedirectResponse` pour PHPStan), et un vrai closure `render(string, array, ?Response): Response`. `ContentResponder` reçoit en plus un `Twig\Environment` stub pour le check du loader. `ContactResponderTest` couvre les trois branches de `respond()` : non soumis (rendu, 200), succès (flash + redirect, pas de rendu), invalide (rendu, 422), en stubbant `ContactFormHandler`.
 - `tests/Helper/RouteDiscoveryTrait.php` — shared trait that scans `src/Action/` via Reflection to extract route names, paths, and parameter names. Supports excluding subdirectories and handles `{param:mapping}` syntax.
 - Adding a new file to `content/` automatically adds an action test case — no code change needed.

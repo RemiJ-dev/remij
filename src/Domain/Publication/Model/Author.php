@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Article\Model;
+namespace App\Domain\Publication\Model;
 
 use Stenope\Bundle\Attribute\SuggestedDebugQuery;
 use Symfony\Component\Serializer\Attribute\Context;

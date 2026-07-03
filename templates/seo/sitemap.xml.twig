@@ -21,6 +21,25 @@
     </url>
     {% endfor %}
 
+    <url>
+        <loc>{{ url('tutorial_list') }}</loc>
+        {% if tutorialsLastModified %}<lastmod>{{ tutorialsLastModified|date('Y-m-d') }}</lastmod>{% endif %}
+    </url>
+
+    {% for tutorial in tutorials %}
+    <url>
+        <loc>{{ url('tutorial_show', { slug: tutorial.slug }) }}</loc>
+        <lastmod>{{ tutorial.lastModifiedOrCreated|date('Y-m-d') }}</lastmod>
+    </url>
+    {% endfor %}
+
+    {% for chapter in chapters %}
+    <url>
+        <loc>{{ url('tutorial_chapter', { slug: chapter.slug }) }}</loc>
+        <lastmod>{{ chapter.lastModifiedOrCreated|date('Y-m-d') }}</lastmod>
+    </url>
+    {% endfor %}
+
     {% for page in pages %}
     <url>
         <loc>{{ url('page_content', { slug: page.slug }) }}</loc>
@@ -30,14 +49,14 @@
 
     {% for tag, lastmod in tags %}
     <url>
-        <loc>{{ url('article_list_by_tag', { tag: tag }) }}</loc>
+        <loc>{{ url('publication_list_by_tag', { tag: tag }) }}</loc>
         <lastmod>{{ lastmod|date('Y-m-d') }}</lastmod>
     </url>
     {% endfor %}
 
     {% for authorSlug, lastmod in authors %}
     <url>
-        <loc>{{ url('article_list_by_author', { slug: authorSlug }) }}</loc>
+        <loc>{{ url('publication_list_by_author', { slug: authorSlug }) }}</loc>
         <lastmod>{{ lastmod|date('Y-m-d') }}</lastmod>
     </url>
     {% endfor %}

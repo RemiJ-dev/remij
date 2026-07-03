@@ -8,22 +8,22 @@
     <id>{{ url('page_home') }}</id>
     <updated>{{ lastModified|date('Y-m-d\\TH:i:s\\Z') }}</updated>
 
-    {% for article in articles %}
+    {% for entry in entries %}
         <entry>
-            <title>{{ article.title }}</title>
-            <link href="{{ url('article_show', { slug: article.slug }) }}" rel="alternate" type="text/html"/>
-            <id>{{ url('article_show', { slug: article.slug }) }}</id>
-            <published>{{ article.publishedAt|date('Y-m-d\\TH:i:s\\Z') }}</published>
-            <updated>{{ article.lastModifiedOrCreated|date('Y-m-d\\TH:i:s\\Z') }}</updated>
-            {% if article.description %}
-                <summary type="text">{{ article.description }}</summary>
+            <title>{{ entry.title }}</title>
+            <link href="{{ url(entry.routeName, entry.routeParams) }}" rel="alternate" type="text/html"/>
+            <id>{{ url(entry.routeName, entry.routeParams) }}</id>
+            <published>{{ entry.publishedAt|date('Y-m-d\\TH:i:s\\Z') }}</published>
+            <updated>{{ entry.updated|date('Y-m-d\\TH:i:s\\Z') }}</updated>
+            {% if entry.description %}
+                <summary type="text">{{ entry.description }}</summary>
             {% endif %}
-            {% for author in article.authors %}
+            {% for author in entry.authors %}
             <author>
                 <name>{{ author }}</name>
             </author>
             {% endfor %}
-            {% for tag in article.tags %}
+            {% for tag in entry.tags %}
                 <category term="{{ tag }}"/>
             {% endfor %}
         </entry>

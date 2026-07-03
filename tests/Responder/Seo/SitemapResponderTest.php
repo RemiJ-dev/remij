@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Responder\Seo;
 
 use App\Domain\Article\Model\Article;
+use App\Domain\Tutorial\Model\Chapter;
+use App\Domain\Tutorial\Model\Tutorial;
 use App\Responder\Seo\SitemapResponder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -18,24 +20,27 @@ class SitemapResponderTest extends TestCase
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
-        $response = new SitemapResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([], []);
+        $response = new SitemapResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([], [], [], [], [], []);
 
         self::assertSame('application/xml; charset=utf-8', $response->headers->get('Content-Type'));
     }
 
-    public function testRespondAggregatesTagsAndAuthorsFromArticles(): void
+    public function testRespondPassesContentsAndComputedLastModifiedToTemplate(): void
     {
-        $date1 = new \DateTimeImmutable('2025-01-01');
-        $date2 = new \DateTimeImmutable('2025-06-01');
-
-        $article1 = new Article(
+        $article = new Article(
             slug: 'a1', title: 'A1', description: null, content: '', nextArticle: null,
-            authors: ['remij'], tags: ['php', 'symfony'], publishedAt: $date1,
+            authors: ['remij'], tags: ['php'], publishedAt: new \DateTimeImmutable('2025-01-01'),
         );
-        $article2 = new Article(
-            slug: 'a2', title: 'A2', description: null, content: '', nextArticle: null,
-            authors: ['remij'], tags: ['php'], publishedAt: $date2,
+        $tutorial = new Tutorial(
+            slug: 't1', title: 'T1', description: null, content: '',
+            authors: ['remij'], tags: ['symfony'], publishedAt: new \DateTimeImmutable('2025-02-01'),
         );
+        $chapter = new Chapter(
+            slug: 't1/c1', title: 'C1', description: null, content: '',
+            position: 1, publishedAt: new \DateTimeImmutable('2025-03-01'),
+        );
+        $tags = ['php' => new \DateTimeImmutable('2025-01-01')];
+        $authors = ['remij' => new \DateTimeImmutable('2025-02-01')];
 
         /** @var array<string, mixed> $capturedContext */
         $capturedContext = [];
@@ -45,16 +50,21 @@ class SitemapResponderTest extends TestCase
             return new Response('');
         };
 
-        new SitemapResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([$article1->slug => $article1, $article2->slug => $article2], []);
+        new SitemapResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)
+            ->respond(['a1' => $article], ['t1' => $tutorial], ['t1/c1' => $chapter], [], $tags, $authors);
 
-        /** @var array<string, \DateTimeInterface> $tags */
-        $tags = $capturedContext['tags'];
-        /** @var array<string, \DateTimeInterface> $authors */
-        $authors = $capturedContext['authors'];
+        self::assertSame(['a1' => $article], $capturedContext['articles']);
+        self::assertSame(['t1' => $tutorial], $capturedContext['tutorials']);
+        self::assertSame(['t1/c1' => $chapter], $capturedContext['chapters']);
+        self::assertSame($tags, $capturedContext['tags']);
+        self::assertSame($authors, $capturedContext['authors']);
 
-        self::assertArrayHasKey('php', $tags);
-        self::assertArrayHasKey('symfony', $tags);
-        self::assertArrayHasKey('remij', $authors);
-        self::assertSame($date2->format('U'), $tags['php']->format('U'));
+        /** @var \DateTimeInterface $articlesLastModified */
+        $articlesLastModified = $capturedContext['articlesLastModified'];
+        self::assertSame('2025-01-01', $articlesLastModified->format('Y-m-d'));
+
+        /** @var \DateTimeInterface $tutorialsLastModified */
+        $tutorialsLastModified = $capturedContext['tutorialsLastModified'];
+        self::assertSame('2025-03-01', $tutorialsLastModified->format('Y-m-d'), 'The tutorials freshness accounts for their chapters.');
     }
 }

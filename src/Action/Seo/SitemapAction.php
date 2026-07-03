@@ -6,6 +6,8 @@ namespace App\Action\Seo;
 
 use App\Domain\Article\Repository\ArticleRepository;
 use App\Domain\Page\Repository\PageRepository;
+use App\Domain\Publication\Repository\PublicationRepository;
+use App\Domain\Tutorial\Repository\TutorialRepository;
 use App\Responder\Seo\SitemapResponder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,12 +25,18 @@ readonly class SitemapAction
     #[Route('/sitemap.xml', name: 'seo_sitemap')]
     public function __invoke(
         ArticleRepository $articleRepository,
+        TutorialRepository $tutorialRepository,
         PageRepository $pageRepository,
+        PublicationRepository $publicationRepository,
         SitemapResponder $responder,
     ): Response {
         return $responder->respond(
             $articleRepository->findPublished(),
+            $tutorialRepository->findPublished(),
+            $tutorialRepository->findPublishedChapters(),
             $pageRepository->findAll(),
+            $publicationRepository->findTags(),
+            $publicationRepository->findAuthors(),
         );
     }
 }

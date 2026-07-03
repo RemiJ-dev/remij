@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Article\Model;
 
+use App\Domain\Publication\Model\PublicationInterface;
+use App\Domain\Publication\Model\PublicationType;
+use App\Domain\Publication\Model\PublishableTrait;
 use App\Domain\Seo\Model\MetaTrait;
 use Stenope\Bundle\Attribute\SuggestedDebugQuery;
 use Stenope\Bundle\Processor\TableOfContentProcessor;
@@ -12,9 +15,10 @@ use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[SuggestedDebugQuery('Scheduled', filters: 'not _.isPublished()', orders: 'desc:publishedAt')]
-class Article
+class Article implements PublicationInterface
 {
     use MetaTrait;
+    use PublishableTrait;
 
     public function __construct(
         public string $slug,
@@ -35,13 +39,8 @@ class Article
     ) {
     }
 
-    public function getLastModifiedOrCreated(): \DateTimeInterface
+    public function getType(): PublicationType
     {
-        return $this->lastModified ?? $this->publishedAt;
-    }
-
-    public function isPublished(): bool
-    {
-        return new \DateTimeImmutable() >= $this->publishedAt;
+        return PublicationType::Article;
     }
 }

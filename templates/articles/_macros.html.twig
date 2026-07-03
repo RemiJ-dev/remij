@@ -15,7 +15,7 @@
             <aside>{{ article.lastModifiedOrCreated|format_date('long') }}</aside>
             <div>
                 {% for tag in article.tags %}
-                    <a class="chip" href="{{ path('article_list_by_tag', { "tag": tag }) }}">#{{ tag|lower }}</a>
+                    <a class="chip" href="{{ path('publication_list_by_tag', { "tag": tag }) }}">#{{ tag|lower }}</a>
                 {% endfor %}
             </div>
         </aside>

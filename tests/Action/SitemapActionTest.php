@@ -6,6 +6,8 @@ namespace App\Tests\Action;
 
 use App\Domain\Article\Model\Article;
 use App\Domain\Page\Model\Page;
+use App\Domain\Tutorial\Model\Chapter;
+use App\Domain\Tutorial\Model\Tutorial;
 use App\Tests\Helper\RouteDiscoveryTrait;
 use Stenope\Bundle\ContentManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -50,12 +52,21 @@ class SitemapActionTest extends WebTestCase
         /** @var Article[] $articles */
         $articles = $manager->getContents(Article::class, ['publishedAt' => false], '_.isPublished()');
 
+        /** @var array<string, Tutorial> $tutorials */
+        $tutorials = $manager->getContents(Tutorial::class, ['publishedAt' => false], '_.isPublished()');
+
+        /** @var Chapter[] $chapters */
+        $chapters = array_filter(
+            $manager->getContents(Chapter::class, [], '_.isPublished()'),
+            static fn (Chapter $chapter): bool => \array_key_exists($chapter->getTutorialSlug(), $tutorials),
+        );
+
         /** @var Page[] $pages */
         $pages = $manager->getContents(Page::class);
 
         $tags = [];
-        foreach ($articles as $article) {
-            foreach ($article->tags as $tag) {
+        foreach ([...array_values($articles), ...array_values($tutorials)] as $publication) {
+            foreach ($publication->tags as $tag) {
                 $tags[$tag] = true;
             }
         }
@@ -78,21 +89,31 @@ class SitemapActionTest extends WebTestCase
             self::assertContains($url, $locs, \sprintf('Article "%s" is missing from sitemap.', $article->slug));
         }
 
-        // One URL per unique tag from published articles
+        // One URL per published tutorial, plus one per published chapter of a published tutorial
+        foreach ($tutorials as $tutorial) {
+            $url = $router->generate('tutorial_show', ['slug' => $tutorial->slug], UrlGeneratorInterface::ABSOLUTE_URL);
+            self::assertContains($url, $locs, \sprintf('Tutorial "%s" is missing from sitemap.', $tutorial->slug));
+        }
+        foreach ($chapters as $chapter) {
+            $url = $router->generate('tutorial_chapter', ['slug' => $chapter->slug], UrlGeneratorInterface::ABSOLUTE_URL);
+            self::assertContains($url, $locs, \sprintf('Chapter "%s" is missing from sitemap.', $chapter->slug));
+        }
+
+        // One URL per unique tag from published articles and tutorials
         foreach (array_keys($tags) as $tag) {
-            $url = $router->generate('article_list_by_tag', ['tag' => $tag], UrlGeneratorInterface::ABSOLUTE_URL);
+            $url = $router->generate('publication_list_by_tag', ['tag' => $tag], UrlGeneratorInterface::ABSOLUTE_URL);
             self::assertContains($url, $locs, \sprintf('Tag "%s" is missing from sitemap.', $tag));
         }
 
-        // One URL per unique author from published articles
+        // One URL per unique author from published articles and tutorials
         $authorSlugs = [];
-        foreach ($articles as $article) {
-            foreach ($article->authors as $authorSlug) {
+        foreach ([...array_values($articles), ...array_values($tutorials)] as $publication) {
+            foreach ($publication->authors as $authorSlug) {
                 $authorSlugs[$authorSlug] = true;
             }
         }
         foreach (array_keys($authorSlugs) as $authorSlug) {
-            $url = $router->generate('article_list_by_author', ['slug' => $authorSlug], UrlGeneratorInterface::ABSOLUTE_URL);
+            $url = $router->generate('publication_list_by_author', ['slug' => $authorSlug], UrlGeneratorInterface::ABSOLUTE_URL);
             self::assertContains($url, $locs, \sprintf('Author "%s" is missing from sitemap.', $authorSlug));
         }
 
