@@ -27,7 +27,7 @@ Le but d'un controller restant, pour moi, de recevoir une requête et de renvoye
 
 Historiquement, j'ai mis beaucoup de choses dans mes actions (méthodes de controller) et me suis régulièrement retrouvé avec des controllers de plusieurs centaines de lignes (voire un bon millier), ce qui les rend très difficiles à relire et manipuler. En tant que services (parce que je les considère comme tels), ces controllers se retrouvent donc à faire nettement plus que leur travail initial de chef d'orchestre !
 
-Une « astuce » que j'ai pu utiliser est la présence d'un « méga-service », très volumineux et contenant toute la logique pour un controller, mais ça n'est pas une solution qui me semble plus viable sur le long terme, mais c'est un autre sujet ;).
+Une « astuce » que j'ai pu utiliser est la présence d'un « méga-service », très volumineux et contenant toute la logique pour un controller, mais ça n'est pas une solution qui me semble plus viable sur le long terme, mais c'est un autre sujet 😉.
 
 
 ### Routing intégré

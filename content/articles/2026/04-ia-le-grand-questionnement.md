@@ -5,7 +5,7 @@ publishedAt: "2026-04-10"
 lastModified: ~
 tableOfContent: true
 authors: ["remij"]
-tags: ["reflexions","IA","outil"]
+tags: ["réflexions","IA","outil"]
 ---
 
 ## Table ronde autour de l'IA

@@ -17,7 +17,7 @@ C'est avec un certain enthousiasme (et un bon peu d'appréhension) que je quitte
 
 Dans les éléments nécessaires à la création de la société (au départ, dans mon cas, c'était pour trouver un nom), il y avait les valeurs que je défends. 
 
-J'en conviens, le terme de "valeurs" fait ronflant, mais je le prends dans le sens de : ce que je considère comme apportant de la valeur à mon travail et à ma vie (et si possible, à celle des gens qui m'entourent). Oui, je suis dans les grands mots ;).
+J'en conviens, le terme de "valeurs" fait ronflant, mais je le prends dans le sens de : ce que je considère comme apportant de la valeur à mon travail et à ma vie (et si possible, à celle des gens qui m'entourent). Oui, je suis dans les grands mots 😉.
 
 ### Open Source et horizontalité
 
@@ -68,7 +68,7 @@ Grand amateur de calembours (nuls), j'avais tout un tas d'idées en cours de rou
 
 Saurez-vous trouver les défauts que j'ai trouvés à ces différents noms ? Ou plus difficile : d'où ils sortent ?
 
-Au final, vu qu'il s'agit d'une société unipersonnelle, construite autour de moi, autant la personnifier. Mais bon, pas trop quand même ! Juste mon prénom et... La première lettre de mon nom pour faire un [jeu de mot avec les rémiges des oiseaux](https://fr.wikipedia.org/wiki/R%C3%A9mige) (moi non plus, je ne connaissais pas le mot, si ça peut vous rassurer). En plus, ce jeu de mot là, je l'aime bien (aussi) parce qu'il colle à mes valeurs : je suis une plume parmi d'autres, mais je contribue à faire voler l'oiseau ! Et ça, ça me parle :)...
+Au final, vu qu'il s'agit d'une société unipersonnelle, construite autour de moi, autant la personnifier. Mais bon, pas trop quand même ! Juste mon prénom et... La première lettre de mon nom pour faire un [jeu de mot avec les rémiges des oiseaux](https://fr.wikipedia.org/wiki/R%C3%A9mige) (moi non plus, je ne connaissais pas le mot, si ça peut vous rassurer). En plus, ce jeu de mot là, je l'aime bien (aussi) parce qu'il colle à mes valeurs : je suis une plume parmi d'autres, mais je contribue à faire voler l'oiseau ! Et ça, ça me parle 🙂...
 
 ### S'entourer
 
