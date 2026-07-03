@@ -1,7 +1,7 @@
 ---
 title: "IA : le grand questionnement"
 description: ""
-publishedAt: "2026-04-10"
+publishedAt: "2027-04-10"
 lastModified: ~
 tableOfContent: true
 authors: ["remij"]
