@@ -1,0 +1,56 @@
+{% set pageTitle = tutorial.title %}
+
+{% extends 'base.html.twig' %}
+
+{% block meta_title tutorial.title ~ ' - ' ~ parent() %}
+{% block meta_description tutorial.description %}
+
+{% block content %}
+    <main class="tutorial">
+        <header>
+            {% if tutorial.image %}
+                <div class="banner">
+                    <img src="{{ tutorial.image }}" alt="{{ tutorial.title }}" />
+                </div>
+            {% endif %}
+            <h1>{{ tutorial.title }}</h1>
+            <small class="text-body-secondary">{{ 'tutorial.show.published_at'|trans({'date': tutorial.publishedAt|format_date('long')}) }}</small>
+        </header>
+
+        {% if chapters is empty %}
+            {% include 'articles/_toc.html.twig' with { toc: tutorial.tableOfContent } only %}
+        {% endif %}
+
+        <article>
+            {{ tutorial.content|raw }}
+        </article>
+
+        {% if chapters is not empty %}
+            <section class="tutorial-summary">
+                <h2>{{ 'tutorial.show.summary'|trans }}</h2>
+                <ol>
+                    {% for chapter in chapters %}
+                        <li>
+                            {% if chapter.published %}
+                                <a href="{{ path('tutorial_chapter', { slug: chapter.slug }) }}">{{ chapter.title }}</a>
+                            {% else %}
+                                <span class="text-body-secondary">{{ chapter.title }} — {{ 'tutorial.show.upcoming'|trans }}</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ol>
+            </section>
+        {% endif %}
+
+        <footer>
+            {% for authorSlug in tutorial.authors %}
+                {% set author = content_get('App\\Domain\\Publication\\Model\\Author', authorSlug) %}
+                {% include 'articles/_author_card.html.twig' with { author: author } only %}
+            {% endfor %}
+        </footer>
+
+        <nav class="d-flex justify-content-between">
+            <a href="{{ path('tutorial_list') }}" class="btn btn-outline-primary">{{ 'tutorial.show.back_to_list'|trans }}</a>
+        </nav>
+    </main>
+{% endblock %}

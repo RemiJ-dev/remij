@@ -30,6 +30,6 @@ readonly class ContactAction
     ): Response {
         $page = $pageRepository->findBySlug('contact');
 
-        return $responder->respond($page, $request);
+        return $responder($page, $request);
     }
 }

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Action\Article;
+namespace App\Action\Publication;
 
-use App\Domain\Article\Model\Author;
-use App\Domain\Article\Repository\ArticleRepository;
-use App\Responder\Article\ListByAuthorResponder;
+use App\Domain\Publication\Model\Author;
+use App\Domain\Publication\Repository\PublicationRepository;
+use App\Responder\Publication\ListByAuthorResponder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Twig\Error\LoaderError;
@@ -20,14 +20,14 @@ readonly class ListByAuthorAction
      * @throws SyntaxError
      * @throws LoaderError
      */
-    #[Route('/articles/auteur/{slug:author}', name: 'article_list_by_author')]
+    #[Route('/auteur/{slug:author}', name: 'publication_list_by_author')]
     public function __invoke(
         Author $author,
-        ArticleRepository $repository,
+        PublicationRepository $repository,
         ListByAuthorResponder $responder,
     ): Response {
-        $articles = $repository->findByAuthor($author);
+        $publications = $repository->findByAuthor($author);
 
-        return $responder->respond($author, $articles);
+        return $responder($author, $publications);
     }
 }

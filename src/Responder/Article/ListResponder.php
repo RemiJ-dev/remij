@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Responder\Article;
 
 use App\Domain\Article\Model\Article;
+use App\Responder\AbstractTwigResponder;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class ListResponder extends AbstractArticleResponder
+class ListResponder extends AbstractTwigResponder
 {
     /**
      * @param array<string, Article> $articles
@@ -19,7 +20,7 @@ class ListResponder extends AbstractArticleResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(array $articles): Response
+    public function __invoke(array $articles): Response
     {
         return $this->render('articles/list.html.twig', [
             'articles' => $articles,

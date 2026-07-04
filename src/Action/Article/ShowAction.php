@@ -24,6 +24,6 @@ readonly class ShowAction
         Article $article,
         ShowResponder $responder,
     ): Response {
-        return $responder->respond($article);
+        return $responder($article);
     }
 }

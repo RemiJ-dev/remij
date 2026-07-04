@@ -30,7 +30,7 @@ class ContentResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(string $slug, Page $page): Response
+    public function __invoke(string $slug, Page $page): Response
     {
         $template = "pages/$slug.html.twig";
         if (!$this->twig->getLoader()->exists($template)) {

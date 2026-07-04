@@ -1,0 +1,35 @@
+{% set pageTitle = chapter.title %}
+
+{% extends 'base.html.twig' %}
+
+{% block meta_title tutorial.title ~ ' : ' ~ chapter.title ~ ' - ' ~ parent() %}
+{% block meta_description chapter.description %}
+
+{% block content %}
+    <main class="tutorial-chapter">
+        <header>
+            <h1>{{ chapter.title }}</h1>
+            <small class="text-body-secondary">{{ 'tutorial.chapter.published_at'|trans({'date': chapter.publishedAt|format_date('long')}) }}</small>
+        </header>
+
+        {% include 'articles/_toc.html.twig' with { toc: chapter.tableOfContent } only %}
+
+        <article>
+            {{ chapter.content|raw }}
+        </article>
+
+        <nav class="d-flex justify-content-between column-gap-2">
+            {% if previousChapter %}
+                <a href="{{ path('tutorial_chapter', { slug: previousChapter.slug }) }}" class="btn btn-outline-primary">
+                    {{ 'tutorial.chapter.previous'|trans({'title': previousChapter.title}) }}
+                </a>
+            {% endif %}
+            <a href="{{ path('tutorial_show', { slug: tutorial.slug }) }}" class="btn btn-outline-primary">{{ 'tutorial.chapter.back_to_tutorial'|trans }}</a>
+            {% if nextChapter %}
+                <a href="{{ path('tutorial_chapter', { slug: nextChapter.slug }) }}" class="btn btn-outline-primary">
+                    {{ 'tutorial.chapter.next'|trans({'title': nextChapter.title}) }}
+                </a>
+            {% endif %}
+        </nav>
+    </main>
+{% endblock %}

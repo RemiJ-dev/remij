@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Responder;
 
+use Stenope\Bundle\Service\ContentUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\ControllerHelper;
 use Symfony\Component\DependencyInjection\Attribute\AutowireMethodOf;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,5 +38,20 @@ abstract class AbstractTwigResponder extends AbstractResponder
     protected function render(string $template, array $parameters = [], int $status = Response::HTTP_OK): Response
     {
         return ($this->render)($template, $parameters, new Response(status: $status));
+    }
+
+    /**
+     * @param array<object> $contents Contents exposing a `lastModifiedOrCreated` property or getter
+     */
+    protected function getLastModified(array $contents): ?\DateTimeInterface
+    {
+        if (0 === \count($contents)) {
+            return null;
+        }
+
+        /** @var ?\DateTimeInterface $lastModified */
+        $lastModified = ContentUtils::max($contents, 'lastModifiedOrCreated');
+
+        return $lastModified;
     }
 }

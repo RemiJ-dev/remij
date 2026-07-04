@@ -4,7 +4,7 @@
     {% endif %}
     <div class="card-body">
         <div class="card-title">
-            <a href="{{ path('article_list_by_author', { slug: author.slug }) }}">{{ author.name }}</a>
+            <a href="{{ path('publication_list_by_author', { slug: author.slug }) }}">{{ author.name }}</a>
         </div>
         {% if author.description %}
             <p class="card-text">{{ author.description }}</p>

@@ -17,7 +17,7 @@ class RobotsResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(): Response
+    public function __invoke(): Response
     {
         $response = $this->render('seo/robots.txt.twig');
         $response->headers->set('Content-Type', 'text/plain');

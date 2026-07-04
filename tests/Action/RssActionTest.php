@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Action;
 
 use App\Domain\Article\Model\Article;
+use App\Domain\Tutorial\Model\Chapter;
+use App\Domain\Tutorial\Model\Tutorial;
 use Stenope\Bundle\ContentManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -47,7 +49,7 @@ class RssActionTest extends WebTestCase
     /**
      * @throws \Exception
      */
-    public function testRssArticleCountMatchesPublishedArticles(): void
+    public function testRssEntryCountMatchesPublishedContents(): void
     {
         $client = static::createClient();
         $client->request('GET', '/rss.xml');
@@ -60,15 +62,24 @@ class RssActionTest extends WebTestCase
         $manager = static::getContainer()->get(ContentManagerInterface::class);
 
         $publishedArticles = $manager->getContents(Article::class, ['publishedAt' => false], '_.isPublished()');
+        /** @var array<string, Tutorial> $publishedTutorials */
+        $publishedTutorials = $manager->getContents(Tutorial::class, ['publishedAt' => false], '_.isPublished()');
+        $publishedChapters = array_filter(
+            $manager->getContents(Chapter::class, [], '_.isPublished()'),
+            static fn (Chapter $chapter): bool => \array_key_exists($chapter->getTutorialSlug(), $publishedTutorials),
+        );
 
-        self::assertCount(\count($publishedArticles), $entries);
+        self::assertCount(
+            \count($publishedArticles) + \count($publishedTutorials) + \count($publishedChapters),
+            $entries,
+        );
     }
 
     /**
      * @throws \DateMalformedStringException
      * @throws \Exception
      */
-    public function testRssArticlesAreInReverseChronologicalOrder(): void
+    public function testRssEntriesAreInReverseChronologicalOrder(): void
     {
         $client = static::createClient();
         $client->request('GET', '/rss.xml');

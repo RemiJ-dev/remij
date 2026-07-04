@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Article\Repository;
 
 use App\Domain\Article\Model\Article;
-use App\Domain\Article\Model\Author;
+use App\Domain\Publication\Model\Author;
 use Stenope\Bundle\ContentManagerInterface;
 
 class ArticleRepository

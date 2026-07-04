@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% from 'publications/_macros.html.twig' import list %}
+
+{% block meta_title pageTitle ~ ' - ' ~ parent() %}
+
+{% block content %}
+    <h1>{{ pageTitle }}</h1>
+
+    {% block before_content %}{% endblock before_content %}
+
+    <main class="publications">
+        {{ list(publications) }}
+    </main>
+{% endblock %}

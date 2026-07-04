@@ -3,11 +3,19 @@ stenope:
 
     providers:
         App\Domain\Article\Model\Article: '%kernel.project_dir%/content/articles'
-        App\Domain\Article\Model\Author: '%kernel.project_dir%/content/authors'
+        App\Domain\Publication\Model\Author: '%kernel.project_dir%/content/authors'
         App\Domain\Page\Model\Page: '%kernel.project_dir%/content/pages'
         App\Domain\Page\Model\Section: '%kernel.project_dir%/content/sections'
+        App\Domain\Tutorial\Model\Tutorial:
+            path: '%kernel.project_dir%/content/tutoriels'
+            depth: '== 0'
+        App\Domain\Tutorial\Model\Chapter:
+            path: '%kernel.project_dir%/content/tutoriels'
+            depth: '>= 1'
 
     resolve_links:
-        App\Domain\Article\Model\Author: { route: 'article_list_by_author', slug: 'author' }
+        App\Domain\Publication\Model\Author: { route: 'publication_list_by_author', slug: 'author' }
         App\Domain\Article\Model\Article: { route: 'article_show', slug: 'slug' }
         App\Domain\Page\Model\Page: { route: 'page_content', slug: 'slug' }
+        App\Domain\Tutorial\Model\Tutorial: { route: 'tutorial_show', slug: 'slug' }
+        App\Domain\Tutorial\Model\Chapter: { route: 'tutorial_chapter', slug: 'slug' }

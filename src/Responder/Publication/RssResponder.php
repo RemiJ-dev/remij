@@ -2,29 +2,32 @@
 
 declare(strict_types=1);
 
-namespace App\Responder\Article;
+namespace App\Responder\Publication;
 
-use App\Domain\Article\Model\Article;
+use App\Domain\Publication\DTO\FeedEntry;
+use App\Responder\AbstractTwigResponder;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class RssResponder extends AbstractArticleResponder
+class RssResponder extends AbstractTwigResponder
 {
     /**
-     * @param array<string, Article> $articles
+     * @param list<FeedEntry> $entries
      *
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(array $articles): Response
+    public function __invoke(array $entries): Response
     {
-        $lastModified = $this->getLastModified($articles);
+        $lastModified = [] === $entries
+            ? null
+            : max(array_map(static fn (FeedEntry $entry): \DateTimeInterface => $entry->updated, $entries));
 
         $response = $this->render('rss/rss.xml.twig', [
-            'articles' => $articles,
+            'entries' => $entries,
             'lastModified' => $lastModified,
         ])->setLastModified($lastModified);
         $response->headers->set('Content-Type', 'application/atom+xml; charset=utf-8');

@@ -20,7 +20,7 @@ class HomeResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(array $sections): Response
+    public function __invoke(array $sections): Response
     {
         return $this->render('pages/home.html.twig', [
             'sections' => $sections,
