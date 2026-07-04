@@ -31,7 +31,7 @@ class ChapterResponderTest extends TestCase
 
         $chapter = self::chapter('serie/premiere', position: 1);
 
-        $response = self::responder($render)->respond(self::tutorial(), $chapter, ['serie/premiere' => $chapter]);
+        $response = self::responder($render)(self::tutorial(), $chapter, ['serie/premiere' => $chapter]);
 
         self::assertSame(1, $renderCalled);
         self::assertSame('<html>chapter</html>', $response->getContent());
@@ -60,7 +60,7 @@ class ChapterResponderTest extends TestCase
             return new Response('');
         };
 
-        self::responder($render)->respond(self::tutorial(), $second, $chapters);
+        self::responder($render)(self::tutorial(), $second, $chapters);
 
         self::assertSame($first, $captured['previousChapter'], 'The unpublished chapter must be skipped.');
         self::assertSame($third, $captured['nextChapter']);
@@ -78,7 +78,7 @@ class ChapterResponderTest extends TestCase
             return new Response('');
         };
 
-        self::responder($render)->respond(self::tutorial(), $first, ['serie/premiere' => $first, 'serie/deuxieme' => $second]);
+        self::responder($render)(self::tutorial(), $first, ['serie/premiere' => $first, 'serie/deuxieme' => $second]);
 
         self::assertNull($captured['previousChapter']);
         self::assertSame($second, $captured['nextChapter']);
@@ -96,7 +96,7 @@ class ChapterResponderTest extends TestCase
             return new Response('');
         };
 
-        self::responder($render)->respond(self::tutorial(), $draft, ['serie/premiere' => $first, 'serie/brouillon' => $draft]);
+        self::responder($render)(self::tutorial(), $draft, ['serie/premiere' => $first, 'serie/brouillon' => $draft]);
 
         self::assertNull($captured['previousChapter']);
         self::assertNull($captured['nextChapter']);

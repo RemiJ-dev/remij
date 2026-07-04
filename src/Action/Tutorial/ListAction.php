@@ -24,6 +24,6 @@ readonly class ListAction
         TutorialRepository $repository,
         ListResponder $responder,
     ): Response {
-        return $responder->respond($repository->findPublished());
+        return $responder($repository->findPublished());
     }
 }

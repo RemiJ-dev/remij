@@ -20,7 +20,7 @@ class RssResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(array $entries): Response
+    public function __invoke(array $entries): Response
     {
         $lastModified = [] === $entries
             ? null

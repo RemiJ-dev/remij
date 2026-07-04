@@ -25,7 +25,7 @@ class ListResponderTest extends TestCase
             return new Response('<html>list</html>');
         };
 
-        $response = new ListResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([]);
+        $response = new ListResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)([]);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -50,7 +50,7 @@ class ListResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = new ListResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond(['2025-03-article' => $article]);
+        $response = new ListResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)(['2025-03-article' => $article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

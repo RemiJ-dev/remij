@@ -35,7 +35,7 @@ class ContentResponderTest extends TestCase
 
         $page = new Page(slug: 'about', title: 'About', content: '', publishedAt: new \DateTimeImmutable());
 
-        $response = new ContentResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render, $twig)->respond('about', $page);
+        $response = new ContentResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render, $twig)('about', $page);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -61,7 +61,7 @@ class ContentResponderTest extends TestCase
 
         $page = new Page(slug: 'unknown', title: 'Unknown', content: '', publishedAt: new \DateTimeImmutable());
 
-        $response = new ContentResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render, $twig)->respond('unknown', $page);
+        $response = new ContentResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render, $twig)('unknown', $page);
 
         self::assertSame(1, $renderCalled);
         self::assertSame('<html>generic</html>', $response->getContent());

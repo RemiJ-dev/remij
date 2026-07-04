@@ -42,7 +42,7 @@ class ContactResponderTest extends TestCase
             $this->formHandler(sent: false, success: false),
         );
 
-        $response = $responder->respond($this->page(), new Request());
+        $response = $responder($this->page(), new Request());
 
         self::assertSame(1, $renderCalled);
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
@@ -76,7 +76,7 @@ class ContactResponderTest extends TestCase
             $this->formHandler(sent: true, success: true),
         );
 
-        $response = $responder->respond($this->page(), new Request());
+        $response = $responder($this->page(), new Request());
 
         self::assertInstanceOf(RedirectResponse::class, $response);
         self::assertSame('page_contact', $redirectedTo);
@@ -102,7 +102,7 @@ class ContactResponderTest extends TestCase
             $this->formHandler(sent: true, success: false),
         );
 
-        $response = $responder->respond($this->page(), new Request());
+        $response = $responder($this->page(), new Request());
 
         self::assertSame(Response::HTTP_UNPROCESSABLE_ENTITY, $capturedStatus);
         self::assertSame(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());

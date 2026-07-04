@@ -30,7 +30,7 @@ readonly class SitemapAction
         PublicationRepository $publicationRepository,
         SitemapResponder $responder,
     ): Response {
-        return $responder->respond(
+        return $responder(
             $articleRepository->findPublished(),
             $tutorialRepository->findPublished(),
             $tutorialRepository->findPublishedChapters(),

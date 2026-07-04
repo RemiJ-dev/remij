@@ -37,7 +37,7 @@ class ShowResponderTest extends TestCase
             publishedAt: $publishedAt,
         );
 
-        $response = new ShowResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond($article);
+        $response = new ShowResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)($article);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -61,7 +61,7 @@ class ShowResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = new ShowResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond($article);
+        $response = new ShowResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)($article);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

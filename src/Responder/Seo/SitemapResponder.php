@@ -28,13 +28,13 @@ class SitemapResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(array $articles, array $tutorials, array $chapters, array $pages, array $tags, array $authors): Response
+    public function __invoke(array $articles, array $tutorials, array $chapters, array $pages, array $tags, array $authors): Response
     {
         $response = $this->render('seo/sitemap.xml.twig', [
             'articles' => $articles,
             'articlesLastModified' => $this->getLastModified($articles),
             'tutorials' => $tutorials,
-            'tutorialsLastModified' => $this->getLastModified([...array_values($tutorials), ...array_values($chapters)]),
+            'tutorialsLastModified' => $this->getLastModified([...$tutorials, ...$chapters]),
             'chapters' => $chapters,
             'pages' => array_filter($pages, static fn (Page $page): bool => 'home' !== $page->slug),
             'tags' => $tags,

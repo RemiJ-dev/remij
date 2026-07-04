@@ -28,6 +28,6 @@ readonly class ListByAuthorAction
     ): Response {
         $publications = $repository->findByAuthor($author);
 
-        return $responder->respond($author, $publications);
+        return $responder($author, $publications);
     }
 }

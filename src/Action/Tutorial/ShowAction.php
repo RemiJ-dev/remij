@@ -26,6 +26,6 @@ readonly class ShowAction
         TutorialRepository $repository,
         ShowResponder $responder,
     ): Response {
-        return $responder->respond($tutorial, $repository->findChapters($tutorial));
+        return $responder($tutorial, $repository->findChapters($tutorial));
     }
 }

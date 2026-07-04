@@ -18,7 +18,7 @@ class RssResponderTest extends TestCase
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
-        $response = new RssResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([]);
+        $response = new RssResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)([]);
 
         self::assertSame('application/atom+xml; charset=utf-8', $response->headers->get('Content-Type'));
     }
@@ -35,7 +35,7 @@ class RssResponderTest extends TestCase
             return new Response('');
         };
 
-        new RssResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([]);
+        new RssResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)([]);
 
         self::assertSame(1, $renderCalled);
     }
@@ -46,7 +46,7 @@ class RssResponderTest extends TestCase
 
         $mostRecent = new \DateTimeImmutable('2025-05-01 08:00:00');
 
-        $response = new RssResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([
+        $response = new RssResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)([
             self::entry(new \DateTimeImmutable('2025-01-01')),
             self::entry($mostRecent),
         ]);

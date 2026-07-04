@@ -26,7 +26,7 @@ class ListByTagResponderTest extends TestCase
             return new Response('<html>tag</html>');
         };
 
-        $response = new ListByTagResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond('php', []);
+        $response = new ListByTagResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)('php', []);
 
         self::assertSame(1, $renderCalled);
         self::assertSame('<html>tag</html>', $response->getContent());
@@ -50,7 +50,7 @@ class ListByTagResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = new ListByTagResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond('php', [$article]);
+        $response = new ListByTagResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)('php', [$article]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

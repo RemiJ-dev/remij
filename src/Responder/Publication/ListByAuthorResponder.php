@@ -21,7 +21,7 @@ class ListByAuthorResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(Author $author, array $publications): Response
+    public function __invoke(Author $author, array $publications): Response
     {
         return $this->render('publications/list_by_author.html.twig', [
             'publications' => $publications,

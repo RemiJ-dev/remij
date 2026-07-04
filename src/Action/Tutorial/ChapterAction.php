@@ -41,6 +41,6 @@ readonly class ChapterAction
             ), $exception);
         }
 
-        return $responder->respond($tutorial, $chapter, $repository->findChapters($tutorial));
+        return $responder($tutorial, $chapter, $repository->findChapters($tutorial));
     }
 }

@@ -28,6 +28,6 @@ readonly class RssAction
     #[Route(path: '/rss.xml', name: 'rss', methods: ['GET'])]
     public function __invoke(): Response
     {
-        return $this->responder->respond($this->repository->findFeedEntries());
+        return ($this->responder)($this->repository->findFeedEntries());
     }
 }

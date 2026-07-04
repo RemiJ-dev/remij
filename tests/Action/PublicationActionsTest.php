@@ -29,7 +29,7 @@ class PublicationActionsTest extends WebTestCase
         self::ensureKernelShutdown();
 
         $tags = [];
-        foreach ([...array_values($articles), ...array_values($tutorials)] as $publication) {
+        foreach ([...$articles, ...$tutorials] as $publication) {
             foreach ($publication->tags as $tag) {
                 $tags[$tag] = [$tag];
             }

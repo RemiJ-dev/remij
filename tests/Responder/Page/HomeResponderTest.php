@@ -32,7 +32,7 @@ class HomeResponderTest extends TestCase
             return new Response('<html>home</html>');
         };
 
-        $response = new HomeResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([]);
+        $response = new HomeResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)([]);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);

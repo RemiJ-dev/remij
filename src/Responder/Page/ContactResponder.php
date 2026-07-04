@@ -35,7 +35,7 @@ class ContactResponder extends AbstractTwigResponder
      * @throws LoaderError
      * @throws TransportExceptionInterface
      */
-    public function respond(Page $page, Request $request): Response
+    public function __invoke(Page $page, Request $request): Response
     {
         $status = Response::HTTP_OK;
         $result = $this->formHandler->handle($request);

@@ -30,6 +30,6 @@ readonly class ListByTagAction
     {
         $publications = $this->repository->findByTag($tag);
 
-        return $this->responder->respond($tag, $publications);
+        return ($this->responder)($tag, $publications);
     }
 }

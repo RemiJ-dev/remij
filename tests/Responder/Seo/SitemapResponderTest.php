@@ -20,7 +20,7 @@ class SitemapResponderTest extends TestCase
     {
         $render = static fn (string $template, array $parameters): Response => new Response('');
 
-        $response = new SitemapResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([], [], [], [], [], []);
+        $response = new SitemapResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)([], [], [], [], [], []);
 
         self::assertSame('application/xml; charset=utf-8', $response->headers->get('Content-Type'));
     }
@@ -50,8 +50,7 @@ class SitemapResponderTest extends TestCase
             return new Response('');
         };
 
-        new SitemapResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)
-            ->respond(['a1' => $article], ['t1' => $tutorial], ['t1/c1' => $chapter], [], $tags, $authors);
+        new SitemapResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)(['a1' => $article], ['t1' => $tutorial], ['t1/c1' => $chapter], [], $tags, $authors);
 
         self::assertSame(['a1' => $article], $capturedContext['articles']);
         self::assertSame(['t1' => $tutorial], $capturedContext['tutorials']);

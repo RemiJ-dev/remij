@@ -20,7 +20,7 @@ class ListByTagResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(string $tag, array $publications): Response
+    public function __invoke(string $tag, array $publications): Response
     {
         return $this->render('publications/list_by_tag.html.twig', [
             'publications' => $publications,

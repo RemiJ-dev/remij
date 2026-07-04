@@ -24,7 +24,7 @@ class RobotsResponderTest extends TestCase
             return new Response('User-agent: *');
         };
 
-        $response = new RobotsResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond();
+        $response = new RobotsResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)();
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);

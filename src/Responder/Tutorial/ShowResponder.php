@@ -24,11 +24,11 @@ class ShowResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(Tutorial $tutorial, array $chapters): Response
+    public function __invoke(Tutorial $tutorial, array $chapters): Response
     {
         return $this->render('tutorials/show.html.twig', [
             'tutorial' => $tutorial,
             'chapters' => $chapters,
-        ])->setLastModified($this->getLastModified([$tutorial, ...array_values($chapters)]));
+        ])->setLastModified($this->getLastModified([$tutorial, ...$chapters]));
     }
 }

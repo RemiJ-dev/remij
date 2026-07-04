@@ -27,8 +27,7 @@ class ShowResponderTest extends TestCase
             return new Response('<html>show</html>');
         };
 
-        $response = new ShowResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)
-            ->respond(self::tutorial(), []);
+        $response = new ShowResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)(self::tutorial(), []);
 
         self::assertSame(1, $renderCalled);
         self::assertSame('<html>show</html>', $response->getContent());
@@ -49,8 +48,7 @@ class ShowResponderTest extends TestCase
             lastModified: $chapterLastModified,
         );
 
-        $response = new ShowResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)
-            ->respond(self::tutorial(), ['symfony-les-bases/architecture' => $chapter]);
+        $response = new ShowResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)(self::tutorial(), ['symfony-les-bases/architecture' => $chapter]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($chapterLastModified->format('U'), $response->getLastModified()->format('U'));

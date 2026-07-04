@@ -65,7 +65,7 @@ class SitemapActionTest extends WebTestCase
         $pages = $manager->getContents(Page::class);
 
         $tags = [];
-        foreach ([...array_values($articles), ...array_values($tutorials)] as $publication) {
+        foreach ([...$articles, ...$tutorials] as $publication) {
             foreach ($publication->tags as $tag) {
                 $tags[$tag] = true;
             }
@@ -107,7 +107,7 @@ class SitemapActionTest extends WebTestCase
 
         // One URL per unique author from published articles and tutorials
         $authorSlugs = [];
-        foreach ([...array_values($articles), ...array_values($tutorials)] as $publication) {
+        foreach ([...$articles, ...$tutorials] as $publication) {
             foreach ($publication->authors as $authorSlug) {
                 $authorSlugs[$authorSlug] = true;
             }

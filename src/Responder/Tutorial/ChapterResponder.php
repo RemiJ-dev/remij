@@ -23,7 +23,7 @@ class ChapterResponder extends AbstractTwigResponder
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function respond(Tutorial $tutorial, Chapter $chapter, array $chapters): Response
+    public function __invoke(Tutorial $tutorial, Chapter $chapter, array $chapters): Response
     {
         $published = array_values(array_filter(
             $chapters,

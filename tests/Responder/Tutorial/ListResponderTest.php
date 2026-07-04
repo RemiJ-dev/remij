@@ -25,7 +25,7 @@ class ListResponderTest extends TestCase
             return new Response('<html>list</html>');
         };
 
-        $response = new ListResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond([]);
+        $response = new ListResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)([]);
 
         self::assertSame(1, $renderCalled);
         self::assertInstanceOf(Response::class, $response);
@@ -49,7 +49,7 @@ class ListResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = new ListResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond(['symfony-les-bases' => $tutorial]);
+        $response = new ListResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)(['symfony-les-bases' => $tutorial]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));

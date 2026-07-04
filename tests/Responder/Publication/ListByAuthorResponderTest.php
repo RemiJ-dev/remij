@@ -29,7 +29,7 @@ class ListByAuthorResponderTest extends TestCase
             return new Response('<html>author</html>');
         };
 
-        $response = new ListByAuthorResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)->respond($author, []);
+        $response = new ListByAuthorResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)($author, []);
 
         self::assertSame(1, $renderCalled);
         self::assertSame('<html>author</html>', $response->getContent());
@@ -52,8 +52,7 @@ class ListByAuthorResponderTest extends TestCase
             lastModified: $lastModified,
         );
 
-        $response = new ListByAuthorResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)
-            ->respond(new Author(slug: 'remij', name: 'RémiJ'), [$tutorial]);
+        $response = new ListByAuthorResponder(static fn () => null, static fn (): RedirectResponse => new RedirectResponse('/'), $render)(new Author(slug: 'remij', name: 'RémiJ'), [$tutorial]);
 
         self::assertNotNull($response->getLastModified());
         self::assertSame($lastModified->format('U'), $response->getLastModified()->format('U'));
