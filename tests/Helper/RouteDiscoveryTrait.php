@@ -64,8 +64,8 @@ trait RouteDiscoveryTrait
                     $routeName = $classNamePrefix . ($instance->name ?? '');
                     $fullPath = $classPathPrefix . $instance->path;
 
-                    // Handle both {param} and {param:mapping} syntaxes
-                    preg_match_all('/\{(\w+)(?::[^}]*)?}/', $fullPath, $matches);
+                    // Handle {param}, {param:mapping} and inline {param<requirement>} syntaxes
+                    preg_match_all('/\{!?(\w+)[^}]*}/', $fullPath, $matches);
 
                     $routes[] = [
                         'name' => $routeName,

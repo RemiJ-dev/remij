@@ -25,7 +25,7 @@ readonly class ChapterAction
      * A chapter slug always contains a slash (`<tutorial>/<chapter>`), which
      * distinguishes this route from `tutorial_show`.
      */
-    #[Route('/tutoriels/{slug:chapter}', name: 'tutorial_chapter', requirements: ['slug' => '.+/.+'])]
+    #[Route('/tutoriels/{slug:chapter<.+/.+>}', name: 'tutorial_chapter')]
     public function __invoke(
         Chapter $chapter,
         TutorialRepository $repository,
