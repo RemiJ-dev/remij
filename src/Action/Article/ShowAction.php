@@ -19,7 +19,7 @@ readonly class ShowAction
      * @throws RuntimeError
      * @throws LoaderError
      */
-    #[Route('/articles/{slug:article}', name: 'article_show', requirements: ['slug' => '.+'])]
+    #[Route('/articles/{slug:article<.+>}', name: 'article_show')]
     public function __invoke(
         Article $article,
         ShowResponder $responder,
