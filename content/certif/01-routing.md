@@ -205,7 +205,7 @@ Quelles affirmations sur l'option `condition` sont vraies ? *(plusieurs bonnes r
 Quelle commande liste toutes les routes de l'application, dans l'ordre où Symfony les évalue ? *(une seule bonne réponse)*
 
 - [ ] **A.** `php bin/console router:debug`
-- [ ] **B.** `php bin/console debug:router`
+- [X] **B.** `php bin/console debug:router`
 - [ ] **C.** `php bin/console debug:routes`
 - [ ] **D.** `php bin/console router:list`
 
@@ -213,10 +213,10 @@ Quelle commande liste toutes les routes de l'application, dans l'ordre où Symfo
 
 Quelles options de la commande `debug:router` existent en Symfony 8.0 ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `--show-controllers` — afficher les contrôleurs associés aux routes
+- [X] **A.** `--show-controllers` — afficher les contrôleurs associés aux routes
 - [ ] **B.** `--sort=path` — trier la liste par colonne
-- [ ] **C.** `--show-aliases` — afficher aussi les alias de routes
-- [ ] **D.** `--method=GET` — n'afficher que les routes qui matchent la méthode donnée
+- [X] **C.** `--show-aliases` — afficher aussi les alias de routes
+- [X] **D.** `--method=GET` — n'afficher que les routes qui matchent la méthode donnée
 
 ### Question 20
 
@@ -224,7 +224,7 @@ Quelle est la bonne commande pour savoir quelle route matche une URL donnée ? *
 
 - [ ] **A.** `php bin/console debug:router /lucky/number/8`
 - [ ] **B.** `php bin/console router:test /lucky/number/8`
-- [ ] **C.** `php bin/console router:match /lucky/number/8`
+- [X] **C.** `php bin/console router:match /lucky/number/8`
 - [ ] **D.** `php bin/console debug:router --match=/lucky/number/8`
 
 ## Paramètres de route
@@ -234,7 +234,7 @@ Quelle est la bonne commande pour savoir quelle route matche une URL donnée ? *
 Quelle est la bonne syntaxe pour définir une partie variable dans le chemin d'une route ? *(une seule bonne réponse)*
 
 - [ ] **A.** `/blog/:slug`
-- [ ] **B.** `/blog/{slug}`
+- [x] **B.** `/blog/{slug}`
 - [ ] **C.** `/blog/<slug>`
 - [ ] **D.** `/blog/*slug`
 
@@ -242,9 +242,9 @@ Quelle est la bonne syntaxe pour définir une partie variable dans le chemin d'u
 
 Quelles affirmations sur les paramètres de route sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Une route peut définir autant de paramètres qu'elle veut
-- [ ] **B.** Chaque paramètre ne peut être utilisé qu'une seule fois par route
-- [ ] **C.** `/blog/posts-about-{category}/page/{pageNumber}` est un chemin valide
+- [X] **A.** Une route peut définir autant de paramètres qu'elle veut
+- [X] **B.** Chaque paramètre ne peut être utilisé qu'une seule fois par route
+- [X] **C.** `/blog/posts-about-{category}/page/{pageNumber}` est un chemin valide
 - [ ] **D.** Un paramètre doit obligatoirement occuper un segment d'URL entier, entre deux `/`
 
 ### Question 23
@@ -266,22 +266,22 @@ Que se passe-t-il pour une requête `GET /blog/my-first-post` ? *(une seule bonn
 - [ ] **A.** Symfony renvoie une erreur 404, aucune route ne correspondant exactement
 - [ ] **B.** `blog_show` matche, car le motif `{slug}` correspond mieux à une chaîne de texte
 - [ ] **C.** Symfony lève une exception d'ambiguïté, les deux routes matchant l'URL
-- [ ] **D.** `blog_list` matche (première définie) et `$page` vaut `'my-first-post'`
+- [X] **D.** `blog_list` matche (première définie) et `$page` vaut `'my-first-post'`
 
 ### Question 24
 
 Quelles sont les bonnes méthodes parmi celles-ci pour restreindre le paramètre `{page}` à des chiffres ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `#[Route('/blog/{page}', name: 'blog_list', requirements: ['page' => '[0-9]+'])]`
-- [ ] **B.** Le requirement en ligne : `#[Route('/blog/{page<[0-9]+>}', name: 'blog_list')]`
-- [ ] **C.** `#[Route('/blog/{page}', name: 'blog_list', requirements: ['page' => Requirement::DIGITS])]`
+- [X] **A.** `#[Route('/blog/{page}', name: 'blog_list', requirements: ['page' => '[0-9]+'])]`
+- [X] **B.** Le requirement en ligne : `#[Route('/blog/{page<[0-9]+>}', name: 'blog_list')]`
+- [X] **C.** `#[Route('/blog/{page}', name: 'blog_list', requirements: ['page' => Requirement::DIGITS])]`
 - [ ] **D.** Typer l'argument du contrôleur `int $page` : le typage restreint le matching
 
 ### Question 25
 
 Quelle est la bonne syntaxe pour utiliser la constante `Requirement::DIGITS` dans un fichier de routes YAML ? *(une seule bonne réponse)*
 
-- [ ] **A.**
+- [X] **A.**
 
   ```yaml
   requirements:
@@ -305,18 +305,18 @@ Quelle est la bonne syntaxe pour utiliser la constante `Requirement::DIGITS` dan
 
 Quelles affirmations sur l'option `requirements` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Les requirements sont des expressions régulières PHP (PCRE)
-- [ ] **B.** Les requirements (et les paths) peuvent inclure des paramètres de configuration (`%...%`)
-- [ ] **C.** Les requirements supportent les propriétés Unicode PCRE, comme `\p{Lu}` ou `\p{Greek}`
+- [X] **A.** Les requirements sont des expressions régulières PHP (PCRE)
+- [X] **B.** Les requirements (et les paths) peuvent inclure des paramètres de configuration (`%...%`)
+- [X] **C.** Les requirements supportent les propriétés Unicode PCRE, comme `\p{Lu}` ou `\p{Greek}`
 - [ ] **D.** Les requirements s'appliquent aussi aux paramètres de la query string
 
 ### Question 27
 
 Quelles sont les bonnes méthodes parmi celles-ci pour donner la valeur par défaut `1` au paramètre `{page}` ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** En attributs : donner une valeur par défaut à l'argument du contrôleur, `int $page = 1`
-- [ ] **B.** En YAML : `defaults: { page: 1 }`
-- [ ] **C.** En ligne dans le path : `/blog/{page?1}`
+- [X] **A.** En attributs : donner une valeur par défaut à l'argument du contrôleur, `int $page = 1`
+- [X] **B.** En YAML : `defaults: { page: 1 }`
+- [X] **C.** En ligne dans le path : `/blog/{page?1}`
 - [ ] **D.** En YAML : `default: { page: 1 }`
 
 ### Question 28
@@ -325,7 +325,7 @@ Que signifie le chemin `/blog/{page<[0-9]+>?1}` ? *(une seule bonne réponse)*
 
 - [ ] **A.** Rien : requirement et valeur par défaut ne peuvent pas être combinés en ligne
 - [ ] **B.** `page` accepte un nombre entre 0 et 9, avec un minimum de 1
-- [ ] **C.** `page` doit être numérique et vaut `1` par défaut
+- [X] **C.** `page` doit être numérique et vaut `1` par défaut
 - [ ] **D.** `page` doit contenir exactement un chiffre et est obligatoire
 
 ### Question 29
@@ -333,7 +333,7 @@ Que signifie le chemin `/blog/{page<[0-9]+>?1}` ? *(une seule bonne réponse)*
 Que produit la déclaration `/blog/{page?}` (rien après le `?`) ? *(une seule bonne réponse)*
 
 - [ ] **A.** `page` reçoit une chaîne vide par défaut
-- [ ] **B.** `page` reçoit `null` par défaut — il faut adapter le type de l'argument (`?int $page`)
+- [X] **B.** `page` reçoit `null` par défaut — il faut adapter le type de l'argument (`?int $page`)
 - [ ] **C.** Une erreur de configuration au démarrage
 - [ ] **D.** `page` reste obligatoire, le `?` seul étant ignoré
 
@@ -341,10 +341,10 @@ Que produit la déclaration `/blog/{page?}` (rien après le `?`) ? *(une seule b
 
 Quelles affirmations sur les paramètres optionnels sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Tout ce qui suit un paramètre optionnel doit être optionnel
+- [X] **A.** Tout ce qui suit un paramètre optionnel doit être optionnel
 - [ ] **B.** Dans `/{page}/blog`, le paramètre `page` peut être rendu optionnel
-- [ ] **C.** Une route peut avoir plusieurs paramètres optionnels
-- [ ] **D.** La valeur par défaut a le droit de ne pas respecter le requirement du paramètre
+- [X] **C.** Une route peut avoir plusieurs paramètres optionnels
+- [X] **D.** La valeur par défaut a le droit de ne pas respecter le requirement du paramètre
 
 ### Question 31
 
@@ -353,22 +353,22 @@ Que fait le caractère `!` dans le chemin `/blog/{!page}` ? *(une seule bonne r�
 - [ ] **A.** Il interdit d'inclure `page` dans les URLs générées
 - [ ] **B.** Il inverse le requirement du paramètre (négation de la regex)
 - [ ] **C.** Il rend le paramètre obligatoire au matching même si un défaut existe
-- [ ] **D.** Il force l'inclusion de la valeur (même par défaut) dans l'URL générée : `/blog/1` au lieu de `/blog`
+- [X] **D.** Il force l'inclusion de la valeur (même par défaut) dans l'URL générée : `/blog/1` au lieu de `/blog`
 
 ### Question 32
 
 Quelles affirmations sur la priorité des routes sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** L'option `priority` attend une valeur entière
-- [ ] **B.** La priorité par défaut d'une route est `0`
-- [ ] **C.** Les routes de priorité plus élevée sont évaluées avant celles de priorité plus basse
-- [ ] **D.** En YAML ou PHP, on contrôle la priorité en déplaçant les définitions vers le haut ou le bas du fichier
+- [X] **A.** L'option `priority` attend une valeur entière
+- [X] **B.** La priorité par défaut d'une route est `0`
+- [X] **C.** Les routes de priorité plus élevée sont évaluées avant celles de priorité plus basse
+- [X] **D.** En YAML ou PHP, on contrôle la priorité en déplaçant les définitions vers le haut ou le bas du fichier
 
 ### Question 33
 
 En attributs, la route `/blog/{slug}` est définie avant `/blog/list` et l'intercepte. Quelle est la bonne solution documentée ? *(une seule bonne réponse)*
 
-- [ ] **A.** Ajouter `priority: 2` à la route `/blog/list`
+- [X] **A.** Ajouter `priority: 2` à la route `/blog/list`
 - [ ] **B.** Ajouter `priority: -1` à la route `/blog/list`
 - [ ] **C.** Rien à faire : la route la plus spécifique gagne automatiquement
 - [ ] **D.** Renommer les routes pour que `/blog/list` soit chargée en premier par ordre alphabétique
@@ -379,9 +379,9 @@ En attributs, la route `/blog/{slug}` est définie avant `/blog/list` et l'inter
 
 Une route est déclarée `#[Route('/blog/{slug:post}')]` sur une action dont l'argument est `BlogPost $post`. Quelles affirmations sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** La syntaxe `{slug:post}` mappe le paramètre de route `slug` vers l'argument `$post`
-- [ ] **B.** Le « param converter » cherche le `BlogPost` en base de données via son `slug`
-- [ ] **C.** Si aucun objet n'est trouvé, Symfony génère automatiquement une réponse 404
+- [X] **A.** La syntaxe `{slug:post}` mappe le paramètre de route `slug` vers l'argument `$post`
+- [X] **B.** Le « param converter » cherche le `BlogPost` en base de données via son `slug`
+- [X] **C.** Si aucun objet n'est trouvé, Symfony génère automatiquement une réponse 404
 - [ ] **D.** La partie `post` est une regex de validation appliquée au paramètre `slug`
 
 ### Question 35
@@ -389,7 +389,7 @@ Une route est déclarée `#[Route('/blog/{slug:post}')]` sur une action dont l'a
 Deux entités doivent être chargées chacune par son champ `name`. Quelle est la bonne syntaxe ? *(une seule bonne réponse)*
 
 - [ ] **A.** `#[Route('/search-book/{name:author}/{name:category}')]`
-- [ ] **B.** `#[Route('/search-book/{authorName:author.name}/{categoryName:category.name}')]`
+- [X] **B.** `#[Route('/search-book/{authorName:author.name}/{categoryName:category.name}')]`
 - [ ] **C.** `#[Route('/search-book/{author.name}/{category.name}')]`
 - [ ] **D.** Aucune : ce cas exige obligatoirement l'attribut `#[MapEntity]`
 
@@ -397,9 +397,9 @@ Deux entités doivent être chargées chacune par son champ `name`. Quelle est l
 
 Quelles affirmations sur les backed enums PHP utilisés comme paramètres de route sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Symfony les convertit automatiquement vers leur valeur scalaire
+- [X] **A.** Symfony les convertit automatiquement vers leur valeur scalaire
 - [ ] **B.** Il faut écrire un value resolver personnalisé pour les supporter
-- [ ] **C.** L'argument peut avoir une valeur par défaut, ex. `OrderStatusEnum $status = OrderStatusEnum::Paid`
+- [X] **C.** L'argument peut avoir une valeur par défaut, ex. `OrderStatusEnum $status = OrderStatusEnum::Paid`
 - [ ] **D.** Seuls les enums adossés à des chaînes (`string`) sont supportés
 
 ## Paramètres spéciaux et paramètres extra
@@ -408,10 +408,10 @@ Quelles affirmations sur les backed enums PHP utilisés comme paramètres de rou
 
 Lesquels de ces paramètres sont des paramètres spéciaux créés par Symfony ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `_controller`
+- [X] **A.** `_controller`
 - [ ] **B.** `_method`
-- [ ] **C.** `_locale`
-- [ ] **D.** `_format`
+- [X] **C.** `_locale`
+- [X] **D.** `_format`
 
 ### Question 38
 
@@ -419,16 +419,16 @@ Que fait le paramètre spécial `_format` ? *(une seule bonne réponse)*
 
 - [ ] **A.** Il force l'extension de fichier dans les URLs générées
 - [ ] **B.** Il sélectionne le sérialiseur utilisé pour la réponse
-- [ ] **C.** Il définit le « request format » de l'objet `Request`, utilisé notamment pour le `Content-Type` de la réponse (ex. `json` → `application/json`)
+- [X] **C.** Il définit le « request format » de l'objet `Request`, utilisé notamment pour le `Content-Type` de la réponse (ex. `json` → `application/json`)
 - [ ] **D.** Il définit le format d'affichage des dates dans les templates
 
 ### Question 39
 
 Quels paramètres spéciaux disposent d'une option d'attribut équivalente « sans underscore » ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `_locale`, via `locale: 'en'`
-- [ ] **B.** `_format`, via `format: 'html'`
-- [ ] **C.** `_query`, via `query: ['page' => 1]`
+- [X] **A.** `_locale`, via `locale: 'en'`
+- [X] **B.** `_format`, via `format: 'html'`
+- [X] **C.** `_query`, via `query: ['page' => 1]`
 - [ ] **D.** `_fragment`, via `fragment: 'top'`
 
 ### Question 40
@@ -438,14 +438,14 @@ Une route déclare `defaults: { title: 'Hello world!' }` alors que `{title}` n'a
 - [ ] **A.** Symfony lève une erreur « paramètre inconnu »
 - [ ] **B.** La valeur est ignorée silencieusement
 - [ ] **C.** La valeur est ajoutée en query string aux URLs générées
-- [ ] **D.** La valeur est passée au contrôleur comme argument `$title` (paramètre « extra »)
+- [X] **D.** La valeur est passée au contrôleur comme argument `$title` (paramètre « extra »)
 
 ### Question 41
 
 À quoi sert le paramètre spécial `_query` ? *(une seule bonne réponse)*
 
 - [ ] **A.** À lire la query string de la requête courante depuis le contrôleur
-- [ ] **B.** À définir un tableau de paramètres de query string ajoutés à l'URL générée
+- [X] **B.** À définir un tableau de paramètres de query string ajoutés à l'URL générée
 - [ ] **C.** À contraindre la query string lors du matching de la route
 - [ ] **D.** À exclure certains paramètres de la query string générée
 

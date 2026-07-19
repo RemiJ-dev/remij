@@ -1,8 +1,8 @@
 # QCM — Les templates Symfony (Twig)
 
-> **Version :** Symfony **8.0** · **Source :** [symfony.com/doc/8.0/templates.html](https://symfony.com/doc/8.0/templates.html) · **Généré le :** 18 juillet 2026
+> **Version :** Symfony **8.0** · **Sources :** [symfony.com/doc/8.0/templates.html](https://symfony.com/doc/8.0/templates.html) (questions 1 à 60) et la [documentation Twig 3.x](https://twig.symfony.com/doc/3.x/) (questions 61 à 90) · **Généré le :** 18 juillet 2026 · **Complété le :** 19 juillet 2026
 >
-> **60 questions.** Chaque question propose **4 réponses (A à D)**, dont **1 à 4 sont correctes**. La formulation indique ce qui est attendu :
+> **90 questions.** Chaque question propose **4 réponses (A à D)**, dont **1 à 4 sont correctes**. La formulation indique ce qui est attendu :
 >
 > - *« Quelle est… / Que fait… »* + mention ***(une seule bonne réponse)*** → exactement une réponse correcte ;
 > - *« Quelles sont… / Quelles affirmations… »* + mention ***(plusieurs bonnes réponses)*** → deux réponses correctes ou plus (jusqu'à quatre).
@@ -575,9 +575,293 @@ Un template peut-il surcharger des blocks définis à **différents niveaux** de
 
 ---
 
+> Les questions 61 à 90 portent sur le **langage Twig** lui-même, à partir de la [documentation officielle Twig 3.x](https://twig.symfony.com/doc/3.x/).
+
+## Le langage Twig : expressions et opérateurs
+
+### Question 61
+
+Quelles variables globales sont toujours disponibles dans les templates Twig ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** `_self` — le nom du template courant
+- [ ] **B.** `_context` — le contexte courant
+- [ ] **C.** `_charset` — le charset courant
+- [ ] **D.** `_env` — l'environnement Twig courant
+
+### Question 62
+
+Dans quel type de chaîne l'interpolation `#{expression}` fonctionne-t-elle ? *(une seule bonne réponse)*
+
+- [ ] **A.** Dans les chaînes à guillemets simples et doubles
+- [ ] **B.** Dans aucune : l'interpolation s'écrit `${expression}`
+- [ ] **C.** Uniquement dans les chaînes à guillemets **simples**
+- [ ] **D.** Uniquement dans les chaînes à guillemets **doubles**
+
+### Question 63
+
+Quels opérateurs de comparaison de chaînes existent en Twig ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** `starts with` — teste si une chaîne commence par une sous-chaîne
+- [ ] **B.** `ends with` — teste si une chaîne se termine par une sous-chaîne
+- [ ] **C.** `matches` — compare avec une expression régulière
+- [ ] **D.** `contains` — teste si une chaîne contient une sous-chaîne
+
+### Question 64
+
+Que vaut `{{ 20 // 7 }}` ? *(une seule bonne réponse)*
+
+- [ ] **A.** `2`
+- [ ] **B.** `2.857…`
+- [ ] **C.** `3`
+- [ ] **D.** Une erreur de syntaxe : `//` n'existe pas en Twig
+
+### Question 65
+
+Quelles affirmations sur les opérateurs de Twig sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** `~` convertit ses opérandes en chaînes et les concatène
+- [ ] **B.** `..` crée une séquence — c'est du sucre syntaxique pour la fonction `range()`
+- [ ] **C.** Combiné à un filtre, `..` exige des parenthèses : `{{ (1..5)|join(', ') }}`
+- [ ] **D.** `+` concatène aussi les chaînes, comme en JavaScript
+
+### Question 66
+
+Quelles affirmations sur `??`, `?:` et le filtre `default` sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** `{{ result ?? 'no' }}` retourne `result` si défini et non null, `'no'` sinon
+- [ ] **B.** `{{ result ?: 'no' }}` est équivalent à `{{ result ? result : 'no' }}`
+- [ ] **C.** Sur un booléen valant `false`, `{{ value|default(true) }}` affiche `true` — le filtre traite `false` comme vide ; préférer `??` dans ce cas
+- [ ] **D.** `??` et `|default()` sont strictement équivalents
+
+### Question 67
+
+Que produit `{{ user?.address.city }}` quand `user` vaut `null` ? *(une seule bonne réponse)*
+
+- [ ] **A.** Une exception `RuntimeError`
+- [ ] **B.** `null` — et le reste de la chaîne (`address.city`) n'est pas évalué
+- [ ] **C.** Une chaîne vide, mais `address.city` est quand même évalué
+- [ ] **D.** Une erreur de syntaxe : l'opérateur `?.` n'existe pas en Twig
+
+### Question 68
+
+Quelles affirmations sur le contrôle des espaces (whitespace control) sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** Le modificateur `-` supprime tous les espaces, sauts de ligne compris
+- [ ] **B.** Le modificateur `~` supprime les espaces **sans** les sauts de ligne
+- [ ] **C.** Les modificateurs s'utilisent de chaque côté des tags : `{%-`, `-%}`, et aussi sur les commentaires (`{#- -#}`)
+- [ ] **D.** Par défaut, le premier saut de ligne après un tag est conservé
+
+### Question 69
+
+Quelles affirmations sur l'opérateur de test `is` sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** Il applique un test à une variable : `{{ name is odd }}`
+- [ ] **B.** Les tests peuvent accepter des arguments : `{% if post.status is constant('Post::PUBLISHED') %}`
+- [ ] **C.** Un test se nie avec `is not`
+- [ ] **D.** L'opérateur `===` provoque une erreur de syntaxe en Twig
+
+### Question 70
+
+Que vaut `{{ true in ['foo', 'bar'] }}` ? *(une seule bonne réponse)*
+
+- [ ] **A.** `false` : `true` ne figure pas dans la liste
+- [ ] **B.** `true` — l'opérateur `in` fait une comparaison **lâche** (comme `in_array()`, `true == 'foo'`) ; utiliser le test `same as` pour du strict
+- [ ] **C.** Une erreur : `in` n'accepte pas de booléen
+- [ ] **D.** `null`
+
+## Structures de contrôle et boucles
+
+### Question 71
+
+Quelles affirmations sur la variable `loop` disponible dans un `{% for %}` sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** `loop.index` est l'itération courante, indexée à partir de **1** (`loop.index0` à partir de 0)
+- [ ] **B.** `loop.first` et `loop.last` indiquent la première et la dernière itération
+- [ ] **C.** `loop.revindex` compte le nombre d'itérations depuis la fin, et `loop.parent` donne le contexte parent
+- [ ] **D.** `loop.length` et `loop.last` sont disponibles pour n'importe quel itérable, y compris les générateurs
+
+### Question 72
+
+Dans un `{% for %}`, quand la clause `{% else %}` est-elle rendue ? *(une seule bonne réponse)*
+
+- [ ] **A.** À la dernière itération de la boucle
+- [ ] **B.** Quand une condition `if` interne à la boucle échoue
+- [ ] **C.** Quand aucune itération n'a eu lieu, la séquence étant vide
+- [ ] **D.** Jamais : la clause `else` n'existe pas pour `for`
+
+### Question 73
+
+Quelle syntaxe itère à la fois sur les clés et les valeurs d'un mapping ? *(une seule bonne réponse)*
+
+- [ ] **A.** `{% for key, user in users %}`
+- [ ] **B.** `{% for users as key => user %}`
+- [ ] **C.** `{% for key of users %}`
+- [ ] **D.** `{% foreach users key user %}`
+
+### Question 74
+
+Une variable est définie par `{% set %}` **à l'intérieur** d'un `{% for %}`. Est-elle accessible après la boucle ? *(une seule bonne réponse)*
+
+- [ ] **A.** Oui, comme en PHP
+- [ ] **B.** Oui, mais seulement si la boucle a itéré au moins une fois
+- [ ] **C.** Non, sauf à utiliser `{% set global %}`
+- [ ] **D.** Non — les boucles sont scopées en Twig ; il faut déclarer la variable **avant** la boucle pour y accéder après
+
+### Question 75
+
+Quelles affirmations sur le tag `{% set %}` sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** Il permet des assignations multiples : `{% set first, last = 'Fabien', 'Potencier' %}`
+- [ ] **B.** Il peut capturer un bloc de contenu : `{% set content %} … {% endset %}`
+- [ ] **C.** Avec l'échappement automatique activé, le contenu ainsi capturé est considéré comme **sûr**
+- [ ] **D.** Il ne peut assigner que des chaînes de caractères
+
+## Macros
+
+### Question 76
+
+Quelles affirmations sur les macros Twig sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** Les arguments d'une macro sont toujours optionnels
+- [ ] **B.** Les arguments positionnels supplémentaires arrivent dans la variable spéciale `varargs`
+- [ ] **C.** Un argument peut définir une valeur par défaut : `{% macro input(name, value, type = "text") %}`
+- [ ] **D.** Comme les fonctions PHP, les macros n'ont **pas** accès aux variables du template courant
+
+### Question 77
+
+Quelles affirmations sur l'import de macros sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** `{% import "forms.html.twig" as forms %}` importe toutes les macros comme attributs de la variable `forms`
+- [ ] **B.** `{% from 'forms.html.twig' import input as input_field, textarea %}` importe des macros précises, avec alias possible
+- [ ] **C.** Dans le template où elles sont définies, les macros sont automatiquement disponibles via `_self`, sans import
+- [ ] **D.** Les macros importées sont disponibles dans les templates inclus et enfants, sans ré-import
+
+### Question 78
+
+Comment une macro peut-elle accéder à l'ensemble des variables du template appelant ? *(une seule bonne réponse)*
+
+- [ ] **A.** C'est impossible : une macro est complètement isolée
+- [ ] **B.** En ajoutant le suffixe `with context` lors de l'import
+- [ ] **C.** En lui passant la variable spéciale `_context` en argument
+- [ ] **D.** Le contexte est transmis automatiquement, comme pour `include`
+
+## Héritage avancé et réutilisation
+
+### Question 79
+
+Quelles affirmations sur le tag `{% extends %}` sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** Il devrait être le premier tag du template
+- [ ] **B.** Twig ne supporte pas l'héritage multiple : un seul `extends` par rendu
+- [ ] **C.** Un block non surchargé par l'enfant garde le contenu défini dans le parent
+- [ ] **D.** On peut définir deux `{% block %}` du même nom dans un même template
+
+### Question 80
+
+Comment afficher le contenu d'un block à plusieurs endroits d'un template ? *(une seule bonne réponse)*
+
+- [ ] **A.** En définissant deux `{% block %}` du même nom
+- [ ] **B.** Avec `{{ parent() }}`
+- [ ] **C.** Avec la fonction `block` : `{{ block('title') }}`
+- [ ] **D.** Ce n'est pas possible
+
+### Question 81
+
+Quelles formes dynamiques le tag `{% extends %}` accepte-t-il ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** Une variable : `{% extends some_var %}` (y compris une instance `\Twig\Template` ou `\Twig\TemplateWrapper`)
+- [ ] **B.** Une liste de templates : `{% extends ['layout.html.twig', 'base_layout.html.twig'] %}` — le premier qui existe est utilisé
+- [ ] **C.** Une expression conditionnelle : `{% extends standalone ? "minimum.html.twig" : "base.html.twig" %}`
+- [ ] **D.** Aucune : le nom du parent doit être une chaîne littérale
+
+### Question 82
+
+Quelles affirmations sur le tag `{% use %}` (réutilisation horizontale) sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** Il importe les **blocks** d'un autre template — « comme les macros, mais pour les blocks »
+- [ ] **B.** Le template importé ne doit pas étendre d'autre template, ne pas définir de macros, et avoir un corps vide
+- [ ] **C.** On peut renommer les blocks importés : `{% use "blocks.html.twig" with sidebar as base_sidebar %}`
+- [ ] **D.** La référence du template peut être une expression dynamique
+
+### Question 83
+
+Quelles affirmations sur le tag `{% embed %}` sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** Il combine les comportements d'`include` et d'`extends`
+- [ ] **B.** Il permet de surcharger les blocks définis dans le template embarqué
+- [ ] **C.** Il accepte exactement les mêmes arguments qu'`include` : `with`, `only`, `ignore missing`
+- [ ] **D.** Les macros importées dans le template hôte restent disponibles dans le corps du `embed`
+
+### Question 84
+
+Quelles affirmations sur l'inclusion de templates sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** La documentation Twig recommande la **fonction** `include()` plutôt que le tag `{% include %}` (plus correcte sémantiquement, plus composable)
+- [ ] **B.** `ignore missing`, placé juste après le nom du template, fait ignorer silencieusement un template manquant
+- [ ] **C.** On peut passer une liste : `{% include ['page_detailed.html.twig', 'page.html.twig'] %}` — le premier template existant est inclus
+- [ ] **D.** Le mot-clé `only` rend accessibles **toutes** les variables du contexte courant
+
+## Échappement et syntaxe avancée
+
+### Question 85
+
+Quelles affirmations sur l'échappement manuel avec le filtre `escape` sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** `e` est un alias du filtre `escape` : `{{ user.username|e }}`
+- [ ] **B.** La stratégie par défaut est `html`
+- [ ] **C.** D'autres stratégies existent selon le contexte : `e('js')`, `e('css')`, `e('url')`, `e('html_attr')`
+- [ ] **D.** Une stratégie `e('sql')` protège des injections SQL
+
+### Question 86
+
+Comment désactiver l'échappement automatique pour toute une section de template ? *(une seule bonne réponse)*
+
+- [ ] **A.** `{% raw %} … {% endraw %}`
+- [ ] **B.** Ce n'est possible que variable par variable, avec `|raw`
+- [ ] **C.** `{% escape false %} … {% endescape %}`
+- [ ] **D.** `{% autoescape false %} … {% endautoescape %}`
+
+### Question 87
+
+Comment afficher les délimiteurs Twig (`{{`, `{% … %}`) comme du texte brut, sans que Twig les interprète ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** Encadrer la section avec `{% verbatim %} … {% endverbatim %}`
+- [ ] **B.** Afficher le délimiteur via une expression chaîne : `{{ '{{' }}`
+- [ ] **C.** Encadrer la section avec `{% raw %} … {% endraw %}`
+- [ ] **D.** Préfixer les délimiteurs d'un antislash : `\{{`
+
+### Question 88
+
+Avec `{% set greeting = 'Hello ' %}` et `{% set name = 'Fabien' %}`, qu'affiche `{{ greeting ~ name|lower }}` ? *(une seule bonne réponse)*
+
+- [ ] **A.** `hello fabien`
+- [ ] **B.** `Hello fabien`
+- [ ] **C.** `Hello Fabien`
+- [ ] **D.** Une erreur de syntaxe
+
+### Question 89
+
+Quelles affirmations sur les fonctions fléchées (`=>`) sont vraies ? *(plusieurs bonnes réponses)*
+
+- [ ] **A.** `{{ people|map(p => p.first_name)|join(', ') }}` extrait le prénom de chaque élément
+- [ ] **B.** Les filtres natifs `map`, `reduce`, `sort`, `filter` et `find` acceptent des fonctions fléchées
+- [ ] **C.** Une fonction fléchée peut être stockée dans une variable puis passée à un filtre
+- [ ] **D.** Les fonctions fléchées ne fonctionnent qu'avec le filtre `map`
+
+### Question 90
+
+Que fait le tag `{% do %}` ? *(une seule bonne réponse)*
+
+- [ ] **A.** Il évalue une expression exactement comme `{{ … }}`, mais sans rien afficher
+- [ ] **B.** Il répète un bloc tant qu'une condition est vraie
+- [ ] **C.** C'est un équivalent du `dump()` de débogage
+- [ ] **D.** Il exécute du code PHP arbitraire
+
+---
+
 ## Corrigé
 
-Les références *(§ …)* renvoient aux sections de la [page Creating and Using Templates de la documentation Symfony 8.0](https://symfony.com/doc/8.0/templates.html).
+Les références *(§ …)* renvoient aux sections de la [page Creating and Using Templates de la documentation Symfony 8.0](https://symfony.com/doc/8.0/templates.html). Pour les questions 61 à 90, elles renvoient à la [documentation Twig 3.x](https://twig.symfony.com/doc/3.x/) : *(Twig — Templates, § …)* désigne la page « Twig for Template Designers », *(Twig — tag `xxx`)* la page du tag correspondant.
 
 **Question 1 : B** — « run the following command to install both Twig language support and its integration with Symfony applications: `composer require symfony/twig-bundle` ». *(§ Installation)*
 
@@ -698,4 +982,64 @@ Les références *(§ …)* renvoient aux sections de la [page Creating and Usin
 **Question 59 : D** — « execute this command to confirm that your new filter was successfully registered: `php bin/console debug:twig --filter=price`. » *(§ Register an Extension as a Service)*
 
 **Question 60 : B** — L'exemple de la doc : `blog/index.html.twig` « overrides blocks of different parent templates: `page_contents` from `blog/layout.html.twig` and `title` from `base.html.twig` » — trois templates participent au rendu final. *(§ Template Inheritance and Layouts)*
+
+**Question 61 : A, B, C** — « The following variables are always available in templates: `_self` (references the current template name), `_context` (references the current context), `_charset` (references the current charset). » `_env` (D) n'existe pas. *(Twig — Templates, § Global Variables)*
+
+**Question 62 : D** — « String interpolation (`#{expression}`) allows any valid expression to appear within a *double-quoted string*. » Les guillemets simples ne l'activent pas (et n'ont aucun impact sur les performances) ; on peut la neutraliser avec un antislash : `\#{1 + 2}`. *(Twig — Templates, § String Interpolation)*
+
+**Question 63 : A, B, C** — `starts with`, `ends with`, et `matches` (« allows you to use regular expressions », PCRE). `contains` (D) n'existe pas : le test de contenance est l'opérateur `in` (`{{ 'cd' in 'abcde' }}`). *(Twig — Templates, § Containment Operators)*
+
+**Question 64 : A** — `//` « divides two numbers and returns the **floored** integer result » : `20 // 7` vaut `2` (et `-20 // 7` vaut `-3`) — sucre syntaxique du filtre `round`. Ne pas confondre avec `/`, qui retourne un flottant, ni `%` (reste de la division). *(Twig — Templates, § Math)*
+
+**Question 65 : A, B, C** — `~` « converts all operands into strings and concatenates them » ; `..` est « syntactic sugar for the `range` function » ; et comme l'opérateur de filtre a la précédence la plus haute, `(1..5)|join(', ')` exige les parenthèses. D est faux : `+` caste ses opérandes en **nombres**, il ne concatène jamais. *(Twig — Templates, § Math / Other Operators)*
+
+**Question 66 : A, B, C** — `??` : « returns the value of result if it is defined and not null, 'no' otherwise » ; `result ?: 'no'` ≡ `result ? result : 'no'` ; et la doc du filtre `default` avertit : « using the `default` filter on a boolean variable might trigger unexpected behavior, as `false` is treated as an empty value. Consider using `??` instead » — `{{ false|default(true) }}` affiche `true`, `{{ false ?? true }}` affiche `false`. D est donc faux. *(Twig — Templates, § Other Operators ; filtre `default`)*
+
+**Question 67 : B** — L'opérateur null-safe (Twig 3.23+) « works like the dot operator but returns `null` instead of throwing an exception when the left operand is `null`. If the operand is part of a chain, the rest of the chain is skipped. » *(Twig — Templates, § dot operator)*
+
+**Question 68 : A, B, C** — `-` : « removes all whitespace (including newlines) » ; `~` : « removes all whitespace (excluding newlines) » ; utilisables d'un côté ou des deux (`{%-`, `-%}`), y compris sur les commentaires (`{#--#}` pour coller deux tags). D est l'inverse de la règle : « The first newline after a template tag is removed automatically (like in PHP). » *(Twig — Templates, § Whitespace Control)*
+
+**Question 69 : A, B, C** — `is` applique un test, avec arguments possibles (`is constant(…)`) et négation `is not`. D est faux : « the `===` and `!==` strict comparison operators are supported (they are equivalent to the `same as` and `not same as` tests) ». *(Twig — Templates, § Test Operator / Comparisons)*
+
+**Question 70 : B** — Note de la doc : « returns true because `true == 'foo'` under PHP loose comparison » — `in` compare de façon lâche, « like PHP's `in_array()` » ; utiliser `same as` pour une comparaison stricte. *(Twig — Templates, § Containment Operators)*
+
+**Question 71 : A, B, C** — Le tableau documenté : `loop.index`/`index0`, `loop.revindex`/`revindex0`, `loop.first`, `loop.last`, `loop.length`, `loop.parent`. D est faux : « The `loop.length`, `loop.revindex`, `loop.revindex0`, and `loop.last` variables are only available for PHP arrays, or objects that implement the `Countable` interface. » *(Twig — tag `for`)*
+
+**Question 72 : C** — « If no iteration took place because the sequence was empty, you can render a replacement block by using `else`. » *(Twig — tag `for`)*
+
+**Question 73 : A** — `{% for key, user in users %}` itère sur clés et valeurs. Pour les clés seules : `{% for key in users|keys %}`. Les autres syntaxes n'existent pas en Twig. *(Twig — tag `for`)*
+
+**Question 74 : D** — « Loops are scoped in Twig; therefore a variable declared inside a `for` loop is not accessible outside the loop itself. If you want to access the variable, just declare it before the loop. » *(Twig — tag `set`)*
+
+**Question 75 : A, B, C** — Assignations multiples, capture de bloc `{% set content %}…{% endset %}`, et le caution : « If you enable automatic output escaping, Twig will only consider the content to be safe when capturing chunks of text. » D est faux : « The assigned value can be any valid Twig expression. » *(Twig — tag `set`)*
+
+**Question 76 : A, B, C, D** — Les quatre sont vraies : « Arguments of a macro are always optional » ; « if extra positional arguments are passed to a macro, they end up in the special `varargs` variable » ; les valeurs par défaut (`type = "text"`) ; et « as with PHP functions, macros don't have access to the current template variables » (le tip : passer la variable spéciale `_context` en argument). *(Twig — tag `macro`)*
+
+**Question 77 : A, B, C** — `import` importe toutes les macros « as attributes of the `forms` local variable » ; `from … import … as …` importe des macros ciblées (attention : elles peuvent masquer des fonctions natives) ; et « when macro usages and definitions are in the same template, you don't need to import the macros as they are automatically available under the special `_self` variable ». D est faux : « Imported macros are always **local** to the current template […] they are not available in included templates or child templates; you need to explicitly re-import macros in each template. » *(Twig — tag `macro`)*
+
+**Question 78 : C** — Tip de la doc : « You can pass the whole context as an argument by using the special `_context` variable. » (`with context` (B) est la syntaxe d'import de Twig 1/2, retirée en Twig 3.) *(Twig — tag `macro`)*
+
+**Question 79 : A, B, C** — « The extends tag should be the first tag in the template » ; « Like PHP, Twig does not support multiple inheritance. So you can only have one extends tag called per rendering » ; et un block non surchargé garde « the value from the parent template ». D est faux : « You can't define multiple `block` tags with the same name in the same template » — un block remplit aussi le slot du parent, deux homonymes seraient ambigus. *(Twig — tag `extends`)*
+
+**Question 80 : C** — « If you want to print a block multiple times you can however use the `block` function: `<h1>{{ block('title') }}</h1>` ». `parent()` (B) affiche le contenu du block **parent**, c'est un autre usage. *(Twig — tag `extends`)*
+
+**Question 81 : A, B, C** — L'héritage dynamique accepte une variable (y compris une instance `\Twig\Template`/`\Twig\TemplateWrapper`), une liste (« The first template that exists will be used as a parent ») et toute expression valide, dont le ternaire conditionnel. *(Twig — tag `extends`, § Dynamic/Conditional Inheritance)*
+
+**Question 82 : A, B, C** — « The `use` statement tells Twig to import the blocks defined in `blocks.html.twig` into the current template (it's like macros, but for blocks) » ; conditions : « only imports a template if it does not extend another template, if it does not define macros, and if the body is empty » ; renommage avec `with sidebar as base_sidebar`. D est faux : « Because `use` statements are resolved independently of the context passed to the template, the template reference cannot be an expression. » *(Twig — tag `use`)*
+
+**Question 83 : A, B, C** — « The `embed` tag combines the behavior of `include` and `extends` » : il inclut un template **et** permet d'en surcharger les blocks (« micro layout skeleton ») ; « the `embed` tag takes the exact same arguments as the `include` tag ». D est faux : « Imported macros are not available in the body of `embed` tags, you need to explicitly re-import macros inside the tag. » *(Twig — tags `embed` et `macro`)*
+
+**Question 84 : A, B, C** — La note du tag `include` : « It is recommended to use the `include` **function** instead as it provides the same features with a bit more flexibility » (sémantiquement plus correcte, composable, arguments nommés) ; `ignore missing` « has to be placed just after the template name » ; avec une liste, « the first template that exists will be included » (exception si aucun n'existe, sauf `ignore missing`). D est l'inverse : `only` **restreint** le template inclus aux seules variables passées via `with`. *(Twig — tag `include`)*
+
+**Question 85 : A, B, C** — « Escaping works by using the `escape` or `e` filter » ; « by default, the `escape` filter uses the `html` strategy » ; selon le contexte : `js`, `css`, `url`, `html_attr`. `e('sql')` (D) n'existe pas — l'échappement SQL n'est pas le rôle du moteur de templates. *(Twig — Templates, § Working with Manual Escaping)*
+
+**Question 86 : D** — `{% autoescape false %} … {% endautoescape %}` : « Everything will be outputted as is in this block. » Le tag accepte aussi une stratégie : `{% autoescape 'js' %}`. `{% raw %}` (A) n'existe pas en Twig 3, et `verbatim` a un autre rôle (question 87). *(Twig — tag `autoescape`)*
+
+**Question 87 : A, B** — « The easiest way is to output the variable delimiter (`{{`) by using a variable expression: `{{ '{{' }}` » ; « for bigger sections it makes sense to mark a block `verbatim` ». `{% raw %}` (C) est l'ancien nom du tag, retiré ; l'antislash (D) ne neutralise que l'interpolation `\#{…}`. *(Twig — Templates, § Escaping)*
+
+**Question 88 : B** — L'exemple exact de la doc : `{{ greeting ~ name|lower }}` affiche `Hello fabien` — le filtre, prioritaire, ne s'applique qu'à `name`. Pour tout passer en minuscules, grouper : `{{ (greeting ~ name)|lower }}` → `hello fabien`. *(Twig — Templates, § Operators)*
+
+**Question 89 : A, B, C** — « The built-in `map`, `reduce`, `sort`, `filter`, and `find` filters accept arrow functions as arguments » ; « arrow functions can be stored in variables » puis passées à un filtre. D est faux — et depuis Twig 3.15, les fonctions fléchées sont aussi acceptées par les fonctions, macros et appels de méthodes. *(Twig — Templates, § Other Operators)*
+
+**Question 90 : A** — « The `do` tag works exactly like the regular variable expression (`{{ … }}`) just that it doesn't print anything. » Utile pour évaluer une expression pour ses effets (assignation, appel de méthode…). *(Twig — tag `do`)*
 
