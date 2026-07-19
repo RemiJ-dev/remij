@@ -15,10 +15,10 @@
 
 Quelles sont les bonnes méthodes parmi celles-ci pour déclarer une route dans Symfony 8.0 ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Avec un attribut PHP `#[Route]` sur la méthode du contrôleur
-- [ ] **B.** Dans un fichier de configuration YAML
+- [X] **A.** Avec un attribut PHP `#[Route]` sur la méthode du contrôleur
+- [X] **B.** Dans un fichier de configuration YAML
 - [ ] **C.** Avec une annotation PHPDoc `/** @Route(...) */`
-- [ ] **D.** Dans un fichier de configuration PHP
+- [X] **D.** Dans un fichier de configuration PHP
 
 ### Question 2
 
@@ -26,7 +26,7 @@ Quelle méthode de déclaration des routes la documentation Symfony recommande-t
 
 - [ ] **A.** Le YAML, pour séparer la configuration du code
 - [ ] **B.** Le PHP, pour bénéficier du typage
-- [ ] **C.** Les attributs PHP, car la route et le contrôleur sont définis au même endroit
+- [X] **C.** Les attributs PHP, car la route et le contrôleur sont définis au même endroit
 - [ ] **D.** Aucune : les formats n'étant pas équivalents en fonctionnalités, le choix dépend du projet
 
 ### Question 3
@@ -34,7 +34,7 @@ Quelle méthode de déclaration des routes la documentation Symfony recommande-t
 Quelle est la bonne classe à importer pour utiliser l'attribut `#[Route]` ? *(une seule bonne réponse)*
 
 - [ ] **A.** `Symfony\Component\Routing\Annotation\Route`
-- [ ] **B.** `Symfony\Component\Routing\Attribute\Route`
+- [X] **B.** `Symfony\Component\Routing\Attribute\Route`
 - [ ] **C.** `Symfony\Bundle\FrameworkBundle\Attribute\Route`
 - [ ] **D.** `Sensio\Bundle\FrameworkExtraBundle\Configuration\Route`
 
@@ -45,7 +45,7 @@ Votre projet n'utilise pas Symfony Flex. Quelle est la bonne configuration pour 
 - [ ] **A.** Rien à faire : les attributs sont toujours détectés automatiquement
 - [ ] **B.** Ajouter `attributes: true` sous `framework.router` dans `config/packages/framework.yaml`
 - [ ] **C.** Installer `sensio/framework-extra-bundle`
-- [ ] **D.** Créer le fichier suivant :
+- [X] **D.** Créer le fichier suivant :
 
   ```yaml
   # config/routes.yaml
@@ -57,8 +57,8 @@ Votre projet n'utilise pas Symfony Flex. Quelle est la bonne configuration pour 
 
 Une route est déclarée avec `#[Route('/blog', name: 'blog_list')]`. Quelles URLs matchent cette route ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `/blog`
-- [ ] **B.** `/blog?foo=bar&bar=foo`
+- [X] **A.** `/blog`
+- [X] **B.** `/blog?foo=bar&bar=foo`
 - [ ] **C.** `/blog/1`
 - [ ] **D.** `/BLOG`
 
@@ -66,7 +66,7 @@ Une route est déclarée avec `#[Route('/blog', name: 'blog_list')]`. Quelles UR
 
 Que se passe-t-il si deux classes de contrôleur sont définies dans le même fichier PHP ? *(une seule bonne réponse)*
 
-- [ ] **A.** Symfony ne charge que les routes de la première classe et ignore toutes les autres
+- [X] **A.** Symfony ne charge que les routes de la première classe et ignore toutes les autres
 - [ ] **B.** Symfony charge les routes de toutes les classes du fichier
 - [ ] **C.** Symfony ne charge que les routes ayant une option `name` explicite
 - [ ] **D.** Symfony lève une exception au démarrage
@@ -77,7 +77,7 @@ Une même route est déclarée à la fois en YAML et via un attribut `#[Route]`.
 
 - [ ] **A.** Celle du YAML, les fichiers de configuration étant prioritaires
 - [ ] **B.** Aucune : Symfony lève une erreur « route already defined »
-- [ ] **C.** Celle de l'attribut, qui gagne toujours sur les routes définies en YAML ou PHP
+- [X] **C.** Celle de l'attribut, qui gagne toujours sur les routes définies en YAML ou PHP
 - [ ] **D.** La dernière chargée par le kernel
 
 ### Question 8
@@ -91,7 +91,7 @@ Quelle est la bonne déclaration YAML d'une route associant `/blog` à l'action 
       url: /blog
       action: App\Controller\BlogController::list
   ```
-- [ ] **B.**
+- [X] **B.**
 
   ```yaml
   blog_list:
@@ -117,7 +117,7 @@ Quelle est la bonne déclaration YAML d'une route associant `/blog` à l'action 
 
 Le contrôleur implémente son action via la méthode `__invoke()`. Quelle est la bonne façon de le référencer dans l'option `controller` en YAML ? *(une seule bonne réponse)*
 
-- [ ] **A.** `controller: App\Controller\BlogController` — la partie `::method_name` peut être omise
+- [X] **A.** `controller: App\Controller\BlogController` — la partie `::method_name` peut être omise
 - [ ] **B.** `controller: App\Controller\BlogController::invoke`
 - [ ] **C.** Il faut ajouter `invokable: true` à la définition de la route
 - [ ] **D.** Impossible : une route YAML exige toujours un nom de méthode explicite
@@ -131,14 +131,14 @@ Par défaut, sans option `methods`, à quelles méthodes HTTP une route répond-
 - [ ] **A.** `GET` uniquement
 - [ ] **B.** `GET` et `HEAD`
 - [ ] **C.** `GET`, `HEAD` et `POST`
-- [ ] **D.** Toutes les méthodes HTTP (`GET`, `POST`, `PUT`, etc.)
+- [X] **D.** Toutes les méthodes HTTP (`GET`, `POST`, `PUT`, etc.)
 
 ### Question 11
 
 Quelles sont les bonnes syntaxes parmi celles-ci pour restreindre une route aux méthodes `GET` et `HEAD` ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `#[Route('/api/posts/{id}', methods: ['GET', 'HEAD'])]`
-- [ ] **B.** En YAML : `methods: GET|HEAD`
+- [X] **A.** `#[Route('/api/posts/{id}', methods: ['GET', 'HEAD'])]`
+- [X] **B.** En YAML : `methods: GET|HEAD`
 - [ ] **C.** `#[Route('/api/posts/{id}', method: 'GET|HEAD')]`
 - [ ] **D.** En YAML : `verbs: [GET, HEAD]`
 
@@ -146,9 +146,9 @@ Quelles sont les bonnes syntaxes parmi celles-ci pour restreindre une route aux 
 
 Un formulaire HTML doit appeler une route restreinte à la méthode `PUT`. Quelles affirmations sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Les formulaires HTML ne supportent nativement que les méthodes `GET` et `POST`
-- [ ] **B.** On peut ajouter un champ caché nommé `_method` avec la valeur `PUT`
-- [ ] **C.** Avec Symfony Forms, ce champ est ajouté automatiquement quand l'option `framework.http_method_override` vaut `true`
+- [X] **A.** Les formulaires HTML ne supportent nativement que les méthodes `GET` et `POST`
+- [X] **B.** On peut ajouter un champ caché nommé `_method` avec la valeur `PUT`
+- [X] **C.** Avec Symfony Forms, ce champ est ajouté automatiquement quand l'option `framework.http_method_override` vaut `true`
 - [ ] **D.** Il suffit d'écrire `<form method="put">` : le navigateur enverra la requête en `PUT`
 
 ## Environnements et expressions
@@ -157,8 +157,8 @@ Un formulaire HTML doit appeler une route restreinte à la méthode `PUT`. Quell
 
 Quelles sont les bonnes méthodes parmi celles-ci pour n'enregistrer une route que dans l'environnement `dev` ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** En YAML, déclarer la route sous la clé `when@dev:`
-- [ ] **B.** En attribut : `#[Route('/tools', name: 'tools', env: 'dev')]`
+- [X] **A.** En YAML, déclarer la route sous la clé `when@dev:`
+- [X] **B.** En attribut : `#[Route('/tools', name: 'tools', env: 'dev')]`
 - [ ] **C.** En attribut : `#[Route('/tools', name: 'tools', only: 'dev')]`
 - [ ] **D.** En YAML, ajouter `defaults: { env: dev }` à la route
 
@@ -166,37 +166,37 @@ Quelles sont les bonnes méthodes parmi celles-ci pour n'enregistrer une route q
 
 Quelles variables Symfony met-il à disposition dans une expression de l'option `condition` ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `request` — l'objet `Request` de la requête courante
-- [ ] **B.** `context` — une instance de `RequestContext`
+- [X] **A.** `request` — l'objet `Request` de la requête courante
+- [X] **B.** `context` — une instance de `RequestContext`
 - [ ] **C.** `session` — la session de l'utilisateur courant
-- [ ] **D.** `params` — les paramètres de la route matchée
+- [X] **D.** `params` — les paramètres de la route matchée
 
 ### Question 15
 
 Quelles fonctions peut-on utiliser dans une expression `condition` ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `env('APP_MAIN_HOST')` — lire une variable d'environnement
+- [X] **A.** `env('APP_MAIN_HOST')` — lire une variable d'environnement
 - [ ] **B.** `param('app.allowed_browsers')` — lire un paramètre du container
-- [ ] **C.** `service('route_checker')` — appeler un service de condition de routing
+- [X] **C.** `service('route_checker')` — appeler un service de condition de routing
 - [ ] **D.** `date('Y-m-d')` — obtenir la date courante
 
 ### Question 16
 
 Pour qu'un service soit utilisable via la fonction `service()` dans une condition de route, que faut-il faire ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Lui ajouter l'attribut `#[AsRoutingConditionService]`
+- [X] **A.** Lui ajouter l'attribut `#[AsRoutingConditionService]`
 - [ ] **B.** Lui faire implémenter une interface `RoutingConditionInterface`
-- [ ] **C.** Lui ajouter le tag `routing.condition_service`
+- [X] **C.** Lui ajouter le tag `routing.condition_service`
 - [ ] **D.** Rien : tout service public du container est utilisable
 
 ### Question 17
 
 Quelles affirmations sur l'option `condition` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Les expressions sont compilées en PHP brut : la clé `condition` n'ajoute pas de surcoût notable
+- [X] **A.** Les expressions sont compilées en PHP brut : la clé `condition` n'ajoute pas de surcoût notable
 - [ ] **B.** Les conditions sont prises en compte lors de la génération d'URLs
-- [ ] **C.** Une expression peut inclure un paramètre de configuration, ex. `"request.headers.get('User-Agent') matches '%app.allowed_browsers%'"`
-- [ ] **D.** Une expression peut lire les valeurs des paramètres de la route via la variable `params`
+- [X] **C.** Une expression peut inclure un paramètre de configuration, ex. `"request.headers.get('User-Agent') matches '%app.allowed_browsers%'"`
+- [X] **D.** Une expression peut lire les valeurs des paramètres de la route via la variable `params`
 
 ## Débogage
 
