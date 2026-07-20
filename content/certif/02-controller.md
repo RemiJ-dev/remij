@@ -15,9 +15,9 @@
 
 Techniquement, que peut être un contrôleur Symfony ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Une fonction PHP
-- [ ] **B.** Une méthode d'un objet
-- [ ] **C.** Une `Closure`
+- [X] **A.** Une fonction PHP
+- [X] **B.** Une méthode d'un objet
+- [X] **C.** Une `Closure`
 - [ ] **D.** Uniquement une méthode d'une classe dont le nom se termine par `Controller`
 
 ### Question 2
@@ -26,7 +26,7 @@ Que doit retourner une action de contrôleur dans Symfony ? *(une seule bonne r�
 
 - [ ] **A.** Une chaîne de caractères contenant le HTML
 - [ ] **B.** Un tableau de données pour le template
-- [ ] **C.** Un objet `Response`
+- [X] **C.** Un objet `Response`
 - [ ] **D.** Rien (`void`) : Symfony construit la réponse tout seul
 
 ### Question 3
@@ -34,7 +34,7 @@ Que doit retourner une action de contrôleur dans Symfony ? *(une seule bonne r�
 Quelle affirmation sur le nom de la classe de contrôleur est vraie ? *(une seule bonne réponse)*
 
 - [ ] **A.** Le suffixe `Controller` est imposé par le framework, sinon la classe n'est pas détectée
-- [ ] **B.** La classe peut techniquement s'appeler n'importe comment ; le suffixe `Controller` est une convention
+- [X] **B.** La classe peut techniquement s'appeler n'importe comment ; le suffixe `Controller` est une convention
 - [ ] **C.** Le nom doit obligatoirement être préfixé par `App`
 - [ ] **D.** Le nom de la classe doit correspondre au nom du template rendu
 
@@ -45,7 +45,7 @@ Quelle affirmation sur `AbstractController` est vraie ? *(une seule bonne répon
 - [ ] **A.** Tout contrôleur doit obligatoirement en hériter
 - [ ] **B.** C'est une interface à implémenter
 - [ ] **C.** Elle est dépréciée en Symfony 8.0 au profit de `ControllerHelper`
-- [ ] **D.** C'est une classe de base **optionnelle** qui donne accès à des méthodes helpers (`render()`, etc.)
+- [X] **D.** C'est une classe de base **optionnelle** qui donne accès à des méthodes helpers (`render()`, etc.)
 
 ### Question 5
 
@@ -53,7 +53,7 @@ Quel est le FQCN d'`AbstractController` ? *(une seule bonne réponse)*
 
 - [ ] **A.** `Symfony\Component\HttpKernel\Controller\AbstractController`
 - [ ] **B.** `Symfony\Component\Controller\AbstractController`
-- [ ] **C.** `Symfony\Bundle\FrameworkBundle\Controller\AbstractController`
+- [X] **C.** `Symfony\Bundle\FrameworkBundle\Controller\AbstractController`
 - [ ] **D.** `App\Controller\AbstractController`
 
 ## Générer des contrôleurs
@@ -62,8 +62,8 @@ Quel est le FQCN d'`AbstractController` ? *(une seule bonne réponse)*
 
 Quelles commandes de génération la documentation mentionne-t-elle (via Symfony Maker) ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `php bin/console make:controller BrandNewController`
-- [ ] **B.** `php bin/console make:crud Product` — un CRUD complet à partir d'une entité Doctrine
+- [X] **A.** `php bin/console make:controller BrandNewController`
+- [X] **B.** `php bin/console make:crud Product` — un CRUD complet à partir d'une entité Doctrine
 - [ ] **C.** `php bin/console make:action`
 - [ ] **D.** `php bin/console generate:controller`
 
@@ -74,7 +74,7 @@ Quelles commandes de génération la documentation mentionne-t-elle (via Symfony
 Que fait `$this->generateUrl('app_lucky_number', ['max' => 10])` ? *(une seule bonne réponse)*
 
 - [ ] **A.** Il redirige l'utilisateur vers la route `app_lucky_number`
-- [ ] **B.** Il génère l'URL de la route `app_lucky_number` avec ses paramètres
+- [X] **B.** Il génère l'URL de la route `app_lucky_number` avec ses paramètres
 - [ ] **C.** Il déclare une nouvelle route nommée `app_lucky_number`
 - [ ] **D.** Il rend le template associé à cette route
 

@@ -457,14 +457,14 @@ Le paramètre `{token}` de la route `/share/{token}` doit pouvoir contenir des `
 
 - [ ] **A.** Rien à faire : les paramètres acceptent le caractère `/` par défaut
 - [ ] **B.** Ajouter `allow_slash: true` à la définition de la route
-- [ ] **C.** Ajouter le requirement permissif `requirements: ['token' => '.+']`
+- [X] **C.** Ajouter le requirement permissif `requirements: ['token' => '.+']`
 - [ ] **D.** C'est impossible, le `/` étant réservé au découpage des URLs
 
 ### Question 43
 
 La route est `/share/{token}.{_format}` et `token` doit accepter des slashes. Quel requirement la documentation recommande-t-elle pour `token` ? *(une seule bonne réponse)*
 
-- [ ] **A.** `[^.]+` — tout caractère sauf le point
+- [X] **A.** `[^.]+` — tout caractère sauf le point
 - [ ] **B.** `.+` — tout caractère
 - [ ] **C.** `.*` — tout caractère, y compris rien
 - [ ] **D.** `\S+` — tout caractère non blanc
@@ -475,13 +475,13 @@ La route est `/share/{token}.{_format}` et `token` doit accepter des slashes. Qu
 
 Quelles sont les bonnes syntaxes parmi celles-ci pour créer un alias `product_details` de la route `product_show` ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** En YAML :
+- [X] **A.** En YAML :
 
   ```yaml
   product_details:
       alias: product_show
   ```
-- [ ] **B.** En attribut : `#[Route('/product/{id}', name: 'product_show', alias: ['product_details'])]`
+- [X] **B.** En attribut : `#[Route('/product/{id}', name: 'product_show', alias: ['product_details'])]`
 - [ ] **C.** En YAML :
 
   ```yaml
@@ -494,18 +494,18 @@ Quelles sont les bonnes syntaxes parmi celles-ci pour créer un alias `product_d
 
 Vous voulez créer un alias d'une route définie par un bundle tiers (une route « que vous ne possédez pas »). Quels formats le permettent ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Les fichiers YAML
+- [X] **A.** Les fichiers YAML
 - [ ] **B.** Les attributs PHP
-- [ ] **C.** Les fichiers PHP
+- [X] **C.** Les fichiers PHP
 - [ ] **D.** Aucun : seul le bundle propriétaire peut aliaser ses routes
 
 ### Question 46
 
 Quelles affirmations sur la dépréciation d'un alias de route sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** En YAML, on ajoute la clé `deprecated` (avec `package` et `version`) sous la définition de l'alias
-- [ ] **B.** En attribut, on utilise `alias: new DeprecatedAlias(aliasName: 'product_show', package: 'acme/package', version: '1.2')`
-- [ ] **C.** Un message de dépréciation personnalisé doit contenir au moins une fois le placeholder `%alias_id%`
+- [X] **A.** En YAML, on ajoute la clé `deprecated` (avec `package` et `version`) sous la définition de l'alias
+- [X] **B.** En attribut, on utilise `alias: new DeprecatedAlias(aliasName: 'product_show', package: 'acme/package', version: '1.2')`
+- [X] **C.** Un message de dépréciation personnalisé doit contenir au moins une fois le placeholder `%alias_id%`
 - [ ] **D.** La dépréciation se déclare sur la route concrète, pas sur l'alias
 
 ## Groupes de routes et préfixes
@@ -528,18 +528,18 @@ class BlogController extends AbstractController
 
 Quelles affirmations sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** La route de `index()` s'appelle `blog_index`
-- [ ] **B.** Son URL est `/blog/{_locale}`
-- [ ] **C.** Le requirement `_locale` défini sur la classe s'applique aussi à cette route
+- [X] **A.** La route de `index()` s'appelle `blog_index`
+- [X] **B.** Son URL est `/blog/{_locale}`
+- [X] **C.** Le requirement `_locale` défini sur la classe s'applique aussi à cette route
 - [ ] **D.** Son URL est `/{_locale}/blog`, le préfixe étant ajouté à la fin
 
 ### Question 48
 
 Quelles options sont disponibles lors de l'import de routes (ex. clé `controllers` de `config/routes.yaml`) ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `prefix` — ajouté au début de toutes les URLs importées
-- [ ] **B.** `name_prefix` — ajouté au début de tous les noms de routes importés
-- [ ] **C.** `exclude` — exclure des fichiers/sous-dossiers du chargement des attributs
+- [X] **A.** `prefix` — ajouté au début de toutes les URLs importées
+- [X] **B.** `name_prefix` — ajouté au début de tous les noms de routes importés
+- [X] **C.** `exclude` — exclure des fichiers/sous-dossiers du chargement des attributs
 - [ ] **D.** `suffix` — ajouté à la fin de toutes les URLs importées
 
 ### Question 49
@@ -547,7 +547,7 @@ Quelles options sont disponibles lors de l'import de routes (ex. clé `controlle
 Des routes sont importées avec `prefix: '/blog'`. Que devient une route importée dont le path est vide ? *(une seule bonne réponse)*
 
 - [ ] **A.** `/blog`, sans slash final
-- [ ] **B.** `/blog/` (slash final ajouté) — évitable avec l'option `trailing_slash_on_root: false`
+- [X] **B.** `/blog/` (slash final ajouté) — évitable avec l'option `trailing_slash_on_root: false`
 - [ ] **C.** Une erreur de configuration, un path vide étant interdit
 - [ ] **D.** `/blog/index`
 
@@ -558,7 +558,7 @@ Dans quel cas l'option `exclude` d'un import de routes est-elle ignorée ? *(une
 - [ ] **A.** Jamais : elle est toujours appliquée
 - [ ] **B.** En environnement `prod`
 - [ ] **C.** Quand `exclude` contient une expression régulière
-- [ ] **D.** Quand la valeur de `resource` est une chaîne simple et non un motif glob
+- [X] **D.** Quand la valeur de `resource` est une chaîne simple et non un motif glob
 
 ## Route courante
 
@@ -566,9 +566,9 @@ Dans quel cas l'option `exclude` d'un import de routes est-elle ignorée ? *(une
 
 Quelles sont les bonnes méthodes parmi celles-ci pour récupérer le nom de la route courante et ses paramètres ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Dans un contrôleur : `$request->attributes->get('_route')`
-- [ ] **B.** Dans un contrôleur : `$request->attributes->get('_route_params')`
-- [ ] **C.** Dans un template Twig : `app.current_route` et `app.current_route_parameters`
+- [X] **A.** Dans un contrôleur : `$request->attributes->get('_route')`
+- [X] **B.** Dans un contrôleur : `$request->attributes->get('_route_params')`
+- [X] **C.** Dans un template Twig : `app.current_route` et `app.current_route_parameters`
 - [ ] **D.** Dans un contrôleur : `$request->query->get('_route')`
 
 ## Routes spéciales et redirections
@@ -577,19 +577,19 @@ Quelles sont les bonnes méthodes parmi celles-ci pour récupérer le nom de la 
 
 Quelles affirmations sur le `RedirectController` de Symfony sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Le default `route` permet de rediriger vers une autre route (avec d'éventuels arguments)
-- [ ] **B.** Le default `path` accepte un chemin absolu ou une URL absolue
-- [ ] **C.** Les redirections sont temporaires (302) par défaut ; `permanent: true` les rend permanentes (301)
-- [ ] **D.** `keepRequestMethod: true` change les codes : 307 au lieu de 302, 308 au lieu de 301
+- [X] **A.** Le default `route` permet de rediriger vers une autre route (avec d'éventuels arguments)
+- [X] **B.** Le default `path` accepte un chemin absolu ou une URL absolue
+- [X] **C.** Les redirections sont temporaires (302) par défaut ; `permanent: true` les rend permanentes (301)
+- [X] **D.** `keepRequestMethod: true` change les codes : 307 au lieu de 302, 308 au lieu de 301
 
 ### Question 53
 
 La route définit le path `/foo`. Quelles affirmations sur les slashes finaux sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Une requête `GET /foo/` provoque une redirection `301` vers `/foo`
+- [X] **A.** Une requête `GET /foo/` provoque une redirection `301` vers `/foo`
 - [ ] **B.** Cette redirection s'applique aussi aux requêtes `POST`
-- [ ] **C.** Cette redirection ne s'applique qu'aux requêtes `GET` et `HEAD`
-- [ ] **D.** Ce comportement est automatique, sans configuration à activer
+- [X] **C.** Cette redirection ne s'applique qu'aux requêtes `GET` et `HEAD`
+- [X] **D.** Ce comportement est automatique, sans configuration à activer
 
 ## Routing par sous-domaine
 
@@ -599,23 +599,23 @@ Quelle option d'une route exige que le host HTTP de la requête corresponde à `
 
 - [ ] **A.** `domain: 'm.example.com'`
 - [ ] **B.** `subdomain: 'm'`
-- [ ] **C.** `host: 'm.example.com'`
+- [X] **C.** `host: 'm.example.com'`
 - [ ] **D.** `server: 'm.example.com'`
 
 ### Question 55
 
 Quelles affirmations sur l'option `host` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Le host peut contenir des paramètres, ex. `host: '{subdomain}.example.com'`
-- [ ] **B.** Ces paramètres peuvent être validés via `requirements`
-- [ ] **C.** Donner une valeur par défaut à `subdomain` évite de devoir la fournir à chaque génération d'URL
-- [ ] **D.** La syntaxe en ligne est utilisable dans le host : `{subdomain<m|mobile>?m}.example.com`
+- [X] **A.** Le host peut contenir des paramètres, ex. `host: '{subdomain}.example.com'`
+- [X] **B.** Ces paramètres peuvent être validés via `requirements`
+- [X] **C.** Donner une valeur par défaut à `subdomain` évite de devoir la fournir à chaque génération d'URL
+- [X] **D.** La syntaxe en ligne est utilisable dans le host : `{subdomain<m|mobile>?m}.example.com`
 
 ### Question 56
 
 En tests fonctionnels, que faut-il faire pour qu'une route restreinte au host `m.example.com` matche ? *(une seule bonne réponse)*
 
-- [ ] **A.** Passer le header : `$client->request('GET', '/', [], [], ['HTTP_HOST' => 'm.example.com'])`
+- [X] **A.** Passer le header : `$client->request('GET', '/', [], [], ['HTTP_HOST' => 'm.example.com'])`
 - [ ] **B.** Rien : le host est ignoré dans l'environnement de test
 - [ ] **C.** Configurer `framework.test.host` dans `config/packages/test/framework.yaml`
 - [ ] **D.** Mocker le service `RequestContext`
@@ -629,7 +629,7 @@ Quelle est la bonne syntaxe pour déclarer une route localisée en attribut ? *(
 - [ ] **A.** `#[Route('/about-us', translations: ['nl' => '/over-ons'])]`
 - [ ] **B.** `#[Route(en: '/about-us', nl: '/over-ons', name: 'about_us')]`
 - [ ] **C.** Déclarer deux attributs `#[Route]` avec le même nom, un par locale
-- [ ] **D.**
+- [X] **D.**
 
   ```php
   #[Route(path: [
@@ -642,16 +642,16 @@ Quelle est la bonne syntaxe pour déclarer une route localisée en attribut ? *(
 
 Quelles affirmations sur les routes localisées sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Quand une route localisée matche, Symfony utilise automatiquement cette locale pendant toute la requête
-- [ ] **B.** On peut ajouter un path sans clé de locale, utilisé pour toute locale non listée
-- [ ] **C.** À l'import, on peut préfixer les URLs par locale : `prefix: { en: '', nl: '/nl' }`
+- [X] **A.** Quand une route localisée matche, Symfony utilise automatiquement cette locale pendant toute la requête
+- [X] **B.** On peut ajouter un path sans clé de locale, utilisé pour toute locale non listée
+- [X] **C.** À l'import, on peut préfixer les URLs par locale : `prefix: { en: '', nl: '/nl' }`
 - [ ] **D.** Une route définissant `locale: 'en'`, importée avec les préfixes `en` et `nl`, est disponible dans les deux locales
 
 ### Question 59
 
 Quelle est la bonne méthode pour servir le site sur un domaine différent par locale ? *(une seule bonne réponse)*
 
-- [ ] **A.** À l'import des routes :
+- [X] **A.** À l'import des routes :
 
   ```yaml
   controllers:
@@ -670,9 +670,9 @@ Quelle est la bonne méthode pour servir le site sur un domaine différent par l
 
 Une route est déclarée avec `stateless: true` mais la session est quand même utilisée pendant la requête. Quelles affirmations sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** L'option déclare que la session ne devrait pas être utilisée lors du matching de cette route
-- [ ] **B.** Si `kernel.debug` est activé, Symfony lève une `UnexpectedSessionUsageException`
-- [ ] **C.** Si `kernel.debug` est désactivé, Symfony écrit un warning dans les logs
+- [X] **A.** L'option déclare que la session ne devrait pas être utilisée lors du matching de cette route
+- [X] **B.** Si `kernel.debug` est activé, Symfony lève une `UnexpectedSessionUsageException`
+- [X] **C.** Si `kernel.debug` est désactivé, Symfony écrit un warning dans les logs
 - [ ] **D.** La session est rendue inaccessible : toute tentative d'accès retourne `null`
 
 ## Génération d'URLs
@@ -683,17 +683,17 @@ Une route est déclarée sans option `name`. Que fait Symfony ? *(une seule bonn
 
 - [ ] **A.** Il lève une exception : le nom est obligatoire
 - [ ] **B.** Il utilise le path comme nom de route
-- [ ] **C.** Il génère un nom automatique basé sur le contrôleur et l'action
+- [X] **C.** Il génère un nom automatique basé sur le contrôleur et l'action
 - [ ] **D.** La route fonctionne au matching mais ne peut pas servir à générer des URLs
 
 ### Question 62
 
 Quelles affirmations sur les alias de routes basés sur le FQCN sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Toute méthode qui définit exactement une route reçoit un alias du type `App\Controller\MainController::homepage`
-- [ ] **B.** Une classe invokable qui ajoute exactement une route reçoit un alias correspondant à son FQCN
+- [X] **A.** Toute méthode qui définit exactement une route reçoit un alias du type `App\Controller\MainController::homepage`
+- [X] **B.** Une classe invokable qui ajoute exactement une route reçoit un alias correspondant à son FQCN
 - [ ] **C.** Ces alias doivent être déclarés manuellement dans `config/routes.yaml`
-- [ ] **D.** `debug:router --show-aliases` permet de les afficher
+- [X] **D.** `debug:router --show-aliases` permet de les afficher
 
 ### Question 63
 
@@ -702,13 +702,13 @@ Dans un contrôleur héritant d'`AbstractController`, quelle est la bonne métho
 - [ ] **A.** `$this->generateUrl('sign_up', ['_absolute' => true])`
 - [ ] **B.** `$this->generateUrl('sign_up', [], true)`
 - [ ] **C.** `$this->absoluteUrl('sign_up')`
-- [ ] **D.** `$this->generateUrl('sign_up', [], UrlGeneratorInterface::ABSOLUTE_URL)`
+- [X] **D.** `$this->generateUrl('sign_up', [], UrlGeneratorInterface::ABSOLUTE_URL)`
 
 ### Question 64
 
 La route `blog` ne définit que le paramètre `{page}`. Que génère `$this->generateUrl('blog', ['page' => 2, 'category' => 'Symfony'])` ? *(une seule bonne réponse)*
 
-- [ ] **A.** `/blog/2?category=Symfony` — les paramètres hors route partent en query string
+- [X] **A.** `/blog/2?category=Symfony` — les paramètres hors route partent en query string
 - [ ] **B.** `/blog/2/Symfony`
 - [ ] **C.** Une exception « paramètre inconnu : category »
 - [ ] **D.** `/blog/2` — `category` est ignoré
@@ -717,9 +717,9 @@ La route `blog` ne définit que le paramètre `{page}`. Que génère `$this->gen
 
 Quelles affirmations sur les objets passés à la génération d'URLs sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Utilisés comme valeur d'un placeholder de la route, ils sont convertis en chaîne
+- [X] **A.** Utilisés comme valeur d'un placeholder de la route, ils sont convertis en chaîne
 - [ ] **B.** Utilisés comme paramètre extra, ils sont aussi convertis automatiquement en chaîne
-- [ ] **C.** Pour un paramètre extra (ex. un `Uuid`), il faut caster explicitement : `(string) $entity->getUuid()`
+- [X] **C.** Pour un paramètre extra (ex. un `Uuid`), il faut caster explicitement : `(string) $entity->getUuid()`
 - [ ] **D.** Les objets sont interdits, même comme valeur de placeholder
 
 ### Question 66
@@ -728,14 +728,14 @@ Quelle est la bonne méthode documentée pour générer des URLs dans un service
 
 - [ ] **A.** Faire hériter le service d'`AbstractController` pour profiter de `generateUrl()`
 - [ ] **B.** Injecter la `RequestStack` et appeler `getCurrentRequest()->generateUrl()`
-- [ ] **C.** Injecter `UrlGeneratorInterface` (le service `router`) et appeler sa méthode `generate()`
+- [X] **C.** Injecter `UrlGeneratorInterface` (le service `router`) et appeler sa méthode `generate()`
 - [ ] **D.** Lancer une sous-requête au kernel HTTP
 
 ### Question 67
 
 À la génération d'une URL vers une route localisée, quelle locale Symfony utilise-t-il ? *(une seule bonne réponse)*
 
-- [ ] **A.** La locale de la requête courante par défaut ; on peut en imposer une autre en passant un paramètre `_locale`
+- [X] **A.** La locale de la requête courante par défaut ; on peut en imposer une autre en passant un paramètre `_locale`
 - [ ] **B.** Toujours la `default_locale` de la configuration
 - [ ] **C.** La locale du navigateur, lue dans le header `Accept-Language`
 - [ ] **D.** Aucune par défaut : le paramètre `_locale` est obligatoire à chaque appel
@@ -744,8 +744,8 @@ Quelle est la bonne méthode documentée pour générer des URLs dans un service
 
 Quelles affirmations sur la génération d'URLs en JavaScript sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Dans un template Twig, on peut stocker `{{ path('blog_show', {slug: 'my-blog-post'})|escape('js') }}` dans une variable JavaScript
-- [ ] **B.** Pour du JavaScript pur ou des URLs dynamiques, la documentation renvoie vers le FOSJsRoutingBundle
+- [X] **A.** Dans un template Twig, on peut stocker `{{ path('blog_show', {slug: 'my-blog-post'})|escape('js') }}` dans une variable JavaScript
+- [X] **B.** Pour du JavaScript pur ou des URLs dynamiques, la documentation renvoie vers le FOSJsRoutingBundle
 - [ ] **C.** Symfony expose nativement toutes les routes dans un objet global `window.SymfonyRoutes`
 - [ ] **D.** Il suffit d'importer `{ path } from '@symfony/routing'` dans son fichier JS
 
@@ -756,7 +756,7 @@ Dans une commande console, les URLs absolues sont générées avec `http://local
 - [ ] **A.** C'est impossible à changer hors contexte HTTP
 - [ ] **B.** Injecter l'objet `Request` dans la commande
 - [ ] **C.** Passer l'option `--host` à `bin/console`
-- [ ] **D.** Configurer le « request context » :
+- [X] **D.** Configurer le « request context » :
 
   ```yaml
   # config/packages/routing.yaml
@@ -771,7 +771,7 @@ Hors contexte HTTP (commandes…), quelle valeur de `_locale` est utilisée pour
 
 - [ ] **A.** `en`, en dur
 - [ ] **B.** La locale du système d'exploitation
-- [ ] **C.** La `default_locale` configurée — surchargeable en passant un `_locale` à chaque génération
+- [X] **C.** La `default_locale` configurée — surchargeable en passant un `_locale` à chaque génération
 - [ ] **D.** Aucune : une exception est levée
 
 ### Question 71
@@ -779,7 +779,7 @@ Hors contexte HTTP (commandes…), quelle valeur de `_locale` est utilisée pour
 Quelle est la bonne méthode documentée pour vérifier qu'une route existe avant de générer son URL ? *(une seule bonne réponse)*
 
 - [ ] **A.** Appeler `$router->getRouteCollection()->get($routeName)`
-- [ ] **B.** Tenter la génération et attraper la `RouteNotFoundException`
+- [X] **B.** Tenter la génération et attraper la `RouteNotFoundException`
 - [ ] **C.** Appeler `$router->has($routeName)`
 - [ ] **D.** Lister les routes au runtime via la commande `debug:router`
 
@@ -787,18 +787,18 @@ Quelle est la bonne méthode documentée pour vérifier qu'une route existe avan
 
 La route `login` est déclarée avec `schemes: ['https']`. Quelles affirmations sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Les URLs générées pour cette route utilisent toujours HTTPS
-- [ ] **B.** `path('login')` peut retourner une URL absolue si la requête courante est en HTTP
-- [ ] **C.** Une requête entrante en HTTP sur `/login` est automatiquement redirigée vers la même URL en HTTPS
+- [X] **A.** Les URLs générées pour cette route utilisent toujours HTTPS
+- [X] **B.** `path('login')` peut retourner une URL absolue si la requête courante est en HTTP
+- [X] **C.** Une requête entrante en HTTP sur `/login` est automatiquement redirigée vers la même URL en HTTPS
 - [ ] **D.** Le scheme n'est vérifié qu'à la génération d'URL, jamais au matching
 
 ### Question 73
 
 En Symfony 8.0, quels moyens la documentation donne-t-elle pour définir le scheme/contexte des URLs générées dans les commandes console ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Le paramètre de container `router.request_context.scheme: 'https'`
-- [ ] **B.** L'option de configuration `framework.router.default_uri`
-- [ ] **C.** Par commande, via la méthode `getContext()` du router
+- [X] **A.** Le paramètre de container `router.request_context.scheme: 'https'`
+- [X] **B.** L'option de configuration `framework.router.default_uri`
+- [X] **C.** Par commande, via la méthode `getContext()` du router
 - [ ] **D.** L'option `--scheme=https` de `bin/console`
 
 ## URIs signées
@@ -809,16 +809,16 @@ Que fait la méthode `sign()` du service `UriSigner` ? *(une seule bonne répons
 
 - [ ] **A.** Elle ajoute un paramètre de query string `_signature` à l'URL
 - [ ] **B.** Elle ajoute un header HTTP `X-Signature` à la réponse
-- [ ] **C.** Elle ajoute un paramètre de query string `_hash` à l'URL
+- [X] **C.** Elle ajoute un paramètre de query string `_hash` à l'URL
 - [ ] **D.** Elle chiffre l'URL complète en AES
 
 ### Question 75
 
 Quels types accepte l'argument `$expiration` de `UriSigner::sign()` pour faire expirer une URI signée ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Un objet date, ex. `new \DateTimeImmutable('2050-01-01')`
-- [ ] **B.** Un `\DateInterval` (durée à partir de maintenant), ex. `new \DateInterval('PT10S')`
-- [ ] **C.** Un timestamp Unix (entier), ex. `4070908800`
+- [X] **A.** Un objet date, ex. `new \DateTimeImmutable('2050-01-01')`
+- [X] **B.** Un `\DateInterval` (durée à partir de maintenant), ex. `new \DateInterval('PT10S')`
+- [X] **C.** Un timestamp Unix (entier), ex. `4070908800`
 - [ ] **D.** Une chaîne relative, ex. `'+10 seconds'`
 
 ### Question 76
@@ -828,24 +828,24 @@ Quelle est la différence entre `check()` et `verify()` du `UriSigner` ? *(une s
 - [ ] **A.** Aucune : `verify()` est un simple alias de `check()`
 - [ ] **B.** `check()` lève des exceptions, `verify()` retourne un booléen
 - [ ] **C.** `verify()` ne prend pas en compte l'expiration de l'URI
-- [ ] **D.** `verify()` lève des exceptions expliquant pourquoi la signature est invalide ; `check()` retourne un booléen
+- [X] **D.** `verify()` lève des exceptions expliquant pourquoi la signature est invalide ; `check()` retourne un booléen
 
 ### Question 77
 
 Quelles exceptions `UriSigner::verify()` peut-elle lever ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `UnsignedUriException` — l'URI n'est pas signée
-- [ ] **B.** `ExpiredSignedUriException` — l'URI est signée mais expirée
-- [ ] **C.** `UnverifiedSignedUriException` — l'URI est signée mais la signature est invalide
+- [X] **A.** `UnsignedUriException` — l'URI n'est pas signée
+- [X] **B.** `ExpiredSignedUriException` — l'URI est signée mais expirée
+- [X] **C.** `UnverifiedSignedUriException` — l'URI est signée mais la signature est invalide
 - [ ] **D.** `InvalidSignatureException` — la signature est mal formée
 
 ### Question 78
 
 Quelles affirmations sur l'attribut `#[IsSignatureValid]` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Il valide déclarativement la signature des requêtes entrantes, sans appeler `check()`/`verify()` soi-même
-- [ ] **B.** Il peut s'appliquer au niveau de la classe pour couvrir toutes les actions du contrôleur
-- [ ] **C.** Son option `methods` limite la validation à certaines méthodes HTTP, ex. `#[IsSignatureValid(methods: ['POST', 'PUT'])]`
+- [X] **A.** Il valide déclarativement la signature des requêtes entrantes, sans appeler `check()`/`verify()` soi-même
+- [X] **B.** Il peut s'appliquer au niveau de la classe pour couvrir toutes les actions du contrôleur
+- [X] **C.** Son option `methods` limite la validation à certaines méthodes HTTP, ex. `#[IsSignatureValid(methods: ['POST', 'PUT'])]`
 - [ ] **D.** Il est fourni par le composant Routing
 
 ## Dépannage
@@ -854,16 +854,16 @@ Quelles affirmations sur l'attribut `#[IsSignatureValid]` sont vraies ? *(plusie
 
 Vous obtenez l'erreur : *« Controller "App\Controller\BlogController::show()" requires that you provide a value for the "$slug" argument »*. Quelles affirmations sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Cause probable : le path de la route ne contient pas de paramètre `{slug}`
-- [ ] **B.** Solution possible : ajouter `{slug}` au path, ex. `/blog/show/{slug}`
-- [ ] **C.** Solution possible : donner une valeur par défaut à l'argument, ex. `$slug = null`
+- [X] **A.** Cause probable : le path de la route ne contient pas de paramètre `{slug}`
+- [X] **B.** Solution possible : ajouter `{slug}` au path, ex. `/blog/show/{slug}`
+- [X] **C.** Solution possible : donner une valeur par défaut à l'argument, ex. `$slug = null`
 - [ ] **D.** Cause probable : le cache de routing est corrompu, il faut le vider
 
 ### Question 80
 
 Vous obtenez l'erreur : *« Some mandatory parameters are missing ("slug") to generate a URL for route "blog_show" »*. Quelle est la bonne solution ? *(une seule bonne réponse)*
 
-- [ ] **A.** Passer la valeur à la génération : `$this->generateUrl('blog_show', ['slug' => 'slug-value'])` ou `{{ path('blog_show', {slug: 'slug-value'}) }}`
+- [X] **A.** Passer la valeur à la génération : `$this->generateUrl('blog_show', ['slug' => 'slug-value'])` ou `{{ path('blog_show', {slug: 'slug-value'}) }}`
 - [ ] **B.** Vider le cache de routing avec `cache:clear`
 - [ ] **C.** Utiliser `url()` au lieu de `path()` dans le template
 - [ ] **D.** Déclarer `slug` dans les `requirements` de la route
