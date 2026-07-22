@@ -82,9 +82,9 @@ Que fait `$this->generateUrl('app_lucky_number', ['max' => 10])` ? *(une seule b
 
 Quelles affirmations sur `redirectToRoute()` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Par défaut, la redirection est temporaire (302)
-- [ ] **B.** `$this->redirectToRoute('homepage', [], 301)` effectue une redirection permanente
-- [ ] **C.** C'est un raccourci pour `new RedirectResponse($this->generateUrl('homepage'))`
+- [X] **A.** Par défaut, la redirection est temporaire (302)
+- [X] **B.** `$this->redirectToRoute('homepage', [], 301)` effectue une redirection permanente
+- [X] **C.** C'est un raccourci pour `new RedirectResponse($this->generateUrl('homepage'))`
 - [ ] **D.** Elle accepte aussi des URLs externes complètes en premier argument
 
 ### Question 9
@@ -92,7 +92,7 @@ Quelles affirmations sur `redirectToRoute()` sont vraies ? *(plusieurs bonnes r�
 Quelle constante de `Response` peut remplacer le code `301` en dur dans `redirectToRoute()` ? *(une seule bonne réponse)*
 
 - [ ] **A.** `Response::HTTP_PERMANENTLY_REDIRECT`
-- [ ] **B.** `Response::HTTP_MOVED_PERMANENTLY`
+- [X] **B.** `Response::HTTP_MOVED_PERMANENTLY`
 - [ ] **C.** `Response::HTTP_REDIRECT_PERMANENT`
 - [ ] **D.** `Response::STATUS_301`
 
@@ -103,13 +103,13 @@ Quelle est la bonne méthode pour rediriger vers une URL externe ? *(une seule b
 - [ ] **A.** `$this->redirectToRoute('http://symfony.com/doc')`
 - [ ] **B.** `$this->forward('http://symfony.com/doc')`
 - [ ] **C.** `return new Response('http://symfony.com/doc', 301)`
-- [ ] **D.** `$this->redirect('http://symfony.com/doc')`
+- [X] **D.** `$this->redirect('http://symfony.com/doc')`
 
 ### Question 11
 
 Pourquoi la documentation met-elle en garde contre l'usage de `redirect()` avec une URL fournie par l'utilisateur ? *(une seule bonne réponse)*
 
-- [ ] **A.** `redirect()` ne vérifie en rien sa destination : l'application peut être exposée à la vulnérabilité des « unvalidated redirects »
+- [X] **A.** `redirect()` ne vérifie en rien sa destination : l'application peut être exposée à la vulnérabilité des « unvalidated redirects »
 - [ ] **B.** `redirect()` n'accepte que des URLs internes et lèverait une exception
 - [ ] **C.** Les redirections externes sont bloquées par la politique CORS
 - [ ] **D.** `redirect()` écrit un warning dans les logs à chaque appel
@@ -118,10 +118,10 @@ Pourquoi la documentation met-elle en garde contre l'usage de `redirect()` avec 
 
 Quelles affirmations sur les possibilités de `redirectToRoute()` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `['_fragment' => 'result']` génère une URL pointant directement sur l'ancre `#result`
+- [X] **A.** `['_fragment' => 'result']` génère une URL pointant directement sur l'ancre `#result`
 - [ ] **B.** L'option `'external' => true` autorise la redirection vers une URL externe
-- [ ] **C.** `$this->redirectToRoute('blog_show', $request->query->all())` conserve les paramètres de query string d'origine
-- [ ] **D.** `$this->redirectToRoute($request->attributes->get('_route'))` redirige vers la route courante (pattern Post/Redirect/Get)
+- [X] **C.** `$this->redirectToRoute('blog_show', $request->query->all())` conserve les paramètres de query string d'origine
+- [X] **D.** `$this->redirectToRoute($request->attributes->get('_route'))` redirige vers la route courante (pattern Post/Redirect/Get)
 
 ### Question 13
 
@@ -129,7 +129,7 @@ Que fait `$this->render('lucky/number.html.twig', ['number' => $number])` ? *(un
 
 - [ ] **A.** Il retourne la chaîne HTML produite par le template
 - [ ] **B.** Il affiche directement le template (`echo`) sans retour
-- [ ] **C.** Il rend le template **et** place son contenu dans un objet `Response`
+- [X] **C.** Il rend le template **et** place son contenu dans un objet `Response`
 - [ ] **D.** Il retourne le chemin du template compilé dans le cache
 
 ## Récupérer des services
@@ -139,7 +139,7 @@ Que fait `$this->render('lucky/number.html.twig', ['number' => $number])` ? *(un
 Quelle est la bonne méthode documentée pour obtenir un service (ex. `LoggerInterface`) dans une action ? *(une seule bonne réponse)*
 
 - [ ] **A.** `$this->get('logger')`
-- [ ] **B.** Type-hinter un argument de l'action avec la classe (ou l'interface) du service
+- [X] **B.** Type-hinter un argument de l'action avec la classe (ou l'interface) du service
 - [ ] **C.** `$this->container->get(LoggerInterface::class)`
 - [ ] **D.** `LoggerFactory::create()`
 
@@ -149,17 +149,17 @@ Quelle commande liste tous les services que l'on peut type-hinter (autowirer) ? 
 
 - [ ] **A.** `php bin/console debug:services`
 - [ ] **B.** `php bin/console container:show`
-- [ ] **C.** `php bin/console debug:autowiring`
+- [X] **C.** `php bin/console debug:autowiring`
 - [ ] **D.** `php bin/console autowire:list`
 
 ### Question 16
 
 Quelles affirmations sur l'attribut `#[Autowire]` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `#[Autowire(service: 'monolog.logger.request')]` injecte un service précis
+- [X] **A.** `#[Autowire(service: 'monolog.logger.request')]` injecte un service précis
 - [ ] **B.** Il ne peut s'utiliser que sur les arguments du constructeur, pas sur ceux d'une action
-- [ ] **C.** `#[Autowire('%kernel.project_dir%')]` injecte la valeur d'un paramètre de configuration
-- [ ] **D.** L'attribut vient de `Symfony\Component\DependencyInjection\Attribute\Autowire`
+- [X] **C.** `#[Autowire('%kernel.project_dir%')]` injecte la valeur d'un paramètre de configuration
+- [X] **D.** L'attribut vient de `Symfony\Component\DependencyInjection\Attribute\Autowire`
 
 ## Erreurs et pages 404
 
@@ -167,7 +167,7 @@ Quelles affirmations sur l'attribut `#[Autowire]` sont vraies ? *(plusieurs bonn
 
 Quelle est la bonne façon documentée de déclencher une erreur 404 depuis un contrôleur ? *(une seule bonne réponse)*
 
-- [ ] **A.** `throw $this->createNotFoundException('The product does not exist');`
+- [X] **A.** `throw $this->createNotFoundException('The product does not exist');`
 - [ ] **B.** `return $this->createNotFoundException('The product does not exist');`
 - [ ] **C.** `throw new NotFoundException('The product does not exist');`
 - [ ] **D.** `$this->abort(404);`
@@ -176,10 +176,10 @@ Quelle est la bonne façon documentée de déclencher une erreur 404 depuis un c
 
 Quelles affirmations sur la gestion des erreurs sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `createNotFoundException()` est un raccourci pour créer une `NotFoundHttpException`
-- [ ] **B.** Une exception qui étend (ou est une) `HttpException` produit le code de statut HTTP approprié
+- [X] **A.** `createNotFoundException()` est un raccourci pour créer une `NotFoundHttpException`
+- [X] **B.** Une exception qui étend (ou est une) `HttpException` produit le code de statut HTTP approprié
 - [ ] **C.** Toute autre exception (ex. `\Exception`) produit une réponse 400
-- [ ] **D.** En mode debug, le développeur voit une page d'erreur détaillée
+- [X] **D.** En mode debug, le développeur voit une page d'erreur détaillée
 
 ## L'objet Request en argument
 
@@ -190,13 +190,13 @@ Comment accéder à l'objet `Request` dans une action ? *(une seule bonne répon
 - [ ] **A.** `$this->getRequest()`
 - [ ] **B.** `Request::createFromGlobals()`
 - [ ] **C.** `$this->container->get('request')`
-- [ ] **D.** Type-hinter un argument de l'action avec `Symfony\Component\HttpFoundation\Request`
+- [X] **D.** Type-hinter un argument de l'action avec `Symfony\Component\HttpFoundation\Request`
 
 ### Question 20
 
 Quelle est la bonne méthode pour lire le paramètre GET `page`, avec `1` comme valeur par défaut ? *(une seule bonne réponse)*
 
-- [ ] **A.** `$request->query->get('page', 1)`
+- [X] **A.** `$request->query->get('page', 1)`
 - [ ] **B.** `$request->getQuery('page', 1)`
 - [ ] **C.** `$request->query('page', 1)`
 - [ ] **D.** `$request->GET['page'] ?? 1`
@@ -208,7 +208,7 @@ Quelle est la bonne méthode pour lire le paramètre GET `page`, avec `1` comme 
 Que fait l'attribut `#[MapQueryParameter]` ? *(une seule bonne réponse)*
 
 - [ ] **A.** Il mappe l'ensemble de la query string vers un objet DTO
-- [ ] **B.** Il mappe individuellement un paramètre de la query string sur un argument du contrôleur
+- [X] **B.** Il mappe individuellement un paramètre de la query string sur un argument du contrôleur
 - [ ] **C.** Il ajoute un paramètre de query string aux URLs générées
 - [ ] **D.** Il valide la query string sans la mapper
 
@@ -216,9 +216,9 @@ Que fait l'attribut `#[MapQueryParameter]` ? *(une seule bonne réponse)*
 
 Quels types d'arguments `#[MapQueryParameter]` supporte-t-il ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Les scalaires `bool`, `float`, `int` et `string`
-- [ ] **B.** `array`
-- [ ] **C.** `\BackedEnum` et les objets étendant `Symfony\Component\Uid\AbstractUid`
+- [X] **A.** Les scalaires `bool`, `float`, `int` et `string`
+- [X] **B.** `array`
+- [X] **C.** `\BackedEnum` et les objets étendant `Symfony\Component\Uid\AbstractUid`
 - [ ] **D.** `\DateTimeImmutable`
 
 ### Question 23
@@ -227,14 +227,14 @@ Quels types d'arguments `#[MapQueryParameter]` supporte-t-il ? *(plusieurs bonne
 
 - [ ] **A.** D'une liste de regex prédéfinies par Symfony
 - [ ] **B.** Des contraintes du composant Validator
-- [ ] **C.** Des constantes de validation de PHP (« Validate Filters » de `filter_var()`)
+- [X] **C.** Des constantes de validation de PHP (« Validate Filters » de `filter_var()`)
 - [ ] **D.** Des formats du composant Serializer
 
 ### Question 24
 
 Que fait l'attribut `#[MapQueryString]` ? *(une seule bonne réponse)*
 
-- [ ] **A.** Il mappe l'**ensemble** de la query string vers un objet DTO, avec d'éventuelles contraintes de validation
+- [X] **A.** Il mappe l'**ensemble** de la query string vers un objet DTO, avec d'éventuelles contraintes de validation
 - [ ] **B.** Il mappe chaque paramètre de query string individuellement
 - [ ] **C.** Il mappe le payload JSON de la requête vers un DTO
 - [ ] **D.** Il sérialise un DTO en query string pour générer une URL
@@ -244,27 +244,27 @@ Que fait l'attribut `#[MapQueryString]` ? *(une seule bonne réponse)*
 Quelles options de `#[MapQueryString]` existent en Symfony 8.0 ? *(plusieurs bonnes réponses)*
 
 - [ ] **A.** `mapWhenEmpty: true` — invoquer le serializer même sans données
-- [ ] **B.** `validationGroups` — les groupes de validation à appliquer
-- [ ] **C.** `validationFailedStatusCode` — le statut HTTP en cas d'échec de validation
-- [ ] **D.** `key` — mapper l'objet depuis une clé imbriquée de la query string
+- [X] **B.** `validationGroups` — les groupes de validation à appliquer
+- [X] **C.** `validationFailedStatusCode` — le statut HTTP en cas d'échec de validation
+- [X] **D.** `key` — mapper l'objet depuis une clé imbriquée de la query string
 
 ### Question 26
 
 Quel est le code de statut HTTP retourné **par défaut** quand la validation de `#[MapQueryString]` échoue ? *(une seule bonne réponse)*
 
 - [ ] **A.** 400
-- [ ] **B.** 404
+- [X] **B.** 404
 - [ ] **C.** 422
 - [ ] **D.** 500
 
 ### Question 27
 
-La query string est vide mais l'action a besoin d'un DTO valide. Quelle est la solution documentée en Symfony 8.0 ? *(une seule bonne réponse)*
+La query string est vide, mais l'action a besoin d'un DTO valide. Quelle est la solution documentée en Symfony 8.0 ? *(une seule bonne réponse)*
 
 - [ ] **A.** Ajouter l'option `mapWhenEmpty: true` à l'attribut
 - [ ] **B.** Retirer le type de l'argument
 - [ ] **C.** Attraper l'exception levée par le resolver
-- [ ] **D.** Donner une valeur par défaut à l'argument : `#[MapQueryString] UserDto $userDto = new UserDto()`
+- [X] **D.** Donner une valeur par défaut à l'argument : `#[MapQueryString] UserDto $userDto = new UserDto()`
 
 ### Question 28
 
@@ -272,23 +272,23 @@ Quand utilise-t-on `#[MapRequestPayload]` plutôt que `#[MapQueryString]` ? *(un
 
 - [ ] **A.** Pour les requêtes `GET` avec beaucoup de paramètres
 - [ ] **B.** Jamais : les deux attributs sont des alias
-- [ ] **C.** Pour mapper les données du **corps** de la requête (`POST`, `PUT`… — ex. payload JSON) vers un DTO
+- [X] **C.** Pour mapper les données du **corps** de la requête (`POST`, `PUT`… — ex. payload JSON) vers un DTO
 - [ ] **D.** Pour mapper les headers HTTP vers un DTO
 
 ### Question 29
 
 Quelles options de `#[MapRequestPayload]` existent en Symfony 8.0 ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `acceptFormat: 'json'` — les formats de payload acceptés
-- [ ] **B.** `resolver: App\Resolver\UserDtoResolver` — la classe responsable du mapping
+- [X] **A.** `acceptFormat: 'json'` — les formats de payload acceptés
+- [X] **B.** `resolver: App\Resolver\UserDtoResolver` — la classe responsable du mapping
 - [ ] **C.** `validationGroups: [new Expression('args["user"].getType()')]` — des groupes de validation dynamiques
-- [ ] **D.** `validationFailedStatusCode: Response::HTTP_NOT_FOUND` — le statut en cas d'échec de validation
+- [X] **D.** `validationFailedStatusCode: Response::HTTP_NOT_FOUND` — le statut en cas d'échec de validation
 
 ### Question 30
 
 Quel est le code de statut HTTP retourné **par défaut** quand la validation de `#[MapRequestPayload]` échoue ? *(une seule bonne réponse)*
 
-- [ ] **A.** 422
+- [X] **A.** 422
 - [ ] **B.** 404
 - [ ] **C.** 400
 - [ ] **D.** 500
@@ -298,7 +298,7 @@ Quel est le code de statut HTTP retourné **par défaut** quand la validation de
 Dans une API JSON, comment s'assurer que les erreurs de validation produisent une réponse JSON plutôt qu'une page HTML ? *(une seule bonne réponse)*
 
 - [ ] **A.** Le client doit obligatoirement envoyer le header `Accept: application/json`
-- [ ] **B.** Déclarer la route avec le format JSON : `#[Route('/dashboard', name: 'dashboard', format: 'json')]`
+- [X] **B.** Déclarer la route avec le format JSON : `#[Route('/dashboard', name: 'dashboard', format: 'json')]`
 - [ ] **C.** Ajouter l'option `jsonErrors: true` à `#[MapRequestPayload]`
 - [ ] **D.** Écrire un event listener sur `kernel.exception`
 
@@ -309,13 +309,13 @@ Pour mapper un tableau imbriqué de DTOs typé par PHPDoc (`@param UserDto[] $us
 - [ ] **A.** `symfony/property-info` uniquement
 - [ ] **B.** `jms/serializer`
 - [ ] **C.** `symfony/maker-bundle`
-- [ ] **D.** `phpstan/phpdoc-parser` et `phpdocumentor/type-resolver`
+- [X] **D.** `phpstan/phpdoc-parser` et `phpdocumentor/type-resolver`
 
 ### Question 33
 
 En Symfony 8.0, le payload de la requête est un **tableau JSON racine** d'objets « user ». Quelle est la bonne signature pour le mapper ? *(une seule bonne réponse)*
 
-- [ ] **A.** `#[MapRequestPayload(type: UserDto::class)] array $users`
+- [X] **A.** `#[MapRequestPayload(type: UserDto::class)] array $users`
 - [ ] **B.** `#[MapRequestPayload] UserDto ...$users`
 - [ ] **C.** `#[MapRequestPayload] array $users` — le type est déduit automatiquement
 - [ ] **D.** `#[MapRequestPayload(each: UserDto::class)] array $users`
@@ -324,28 +324,28 @@ En Symfony 8.0, le payload de la requête est un **tableau JSON racine** d'objet
 
 Le warning de la doc 8.0 sur les types personnalisés (ex. enums) dans les propriétés des DTO mappés : quelles affirmations sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Les erreurs de dénormalisation peuvent exposer des noms de classes internes à l'utilisateur final
-- [ ] **B.** Ce problème est corrigé en Symfony 8.1
-- [ ] **C.** Le contournement recommandé en 8.0 : utiliser des types PHP natifs (`string`, `int`…) et valider avec des contraintes, ex. `#[Assert\Choice(callback: [OrderStatus::class, 'values'])]`
+- [X] **A.** Les erreurs de dénormalisation peuvent exposer des noms de classes internes à l'utilisateur final
+- [X] **B.** Ce problème est corrigé en Symfony 8.1
+- [X] **C.** Le contournement recommandé en 8.0 : utiliser des types PHP natifs (`string`, `int`…) et valider avec des contraintes, ex. `#[Assert\Choice(callback: [OrderStatus::class, 'values'])]`
 - [ ] **D.** Les enums dans un DTO provoquent une erreur de compilation du container
 
 ### Question 35
 
 Quelles affirmations sur `#[MapUploadedFile]` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `#[MapUploadedFile] UploadedFile $picture` : le fichier est résolu d'après le **nom de l'argument** (`picture`)
-- [ ] **B.** Si aucun fichier n'est soumis, une `HttpException` est levée
-- [ ] **C.** Rendre l'argument nullable (`?UploadedFile $document`) évite cette exception
-- [ ] **D.** Les contraintes passées à l'attribut sont vérifiées **avant** l'injection : en cas de violation, l'action n'est pas exécutée
+- [X] **A.** `#[MapUploadedFile] UploadedFile $picture` : le fichier est résolu d'après le **nom de l'argument** (`picture`)
+- [X] **B.** Si aucun fichier n'est soumis, une `HttpException` est levée
+- [X] **C.** Rendre l'argument nullable (`?UploadedFile $document`) évite cette exception
+- [X] **D.** Les contraintes passées à l'attribut sont vérifiées **avant** l'injection : en cas de violation, l'action n'est pas exécutée
 
 ### Question 36
 
 Comment recevoir une **collection** de fichiers uploadés avec `#[MapUploadedFile]` ? *(plusieurs bonnes réponses)*
 
 - [ ] **A.** Impossible : il faut boucler manuellement sur `$request->files`
-- [ ] **B.** Mapper l'argument comme un tableau : `#[MapUploadedFile(...)] array $documents`
-- [ ] **C.** Utiliser un argument variadique : `#[MapUploadedFile(...)] UploadedFile ...$documents`
-- [ ] **D.** La contrainte donnée s'applique à tous les fichiers ; si un seul échoue, une `HttpException` est levée
+- [X] **B.** Mapper l'argument comme un tableau : `#[MapUploadedFile(...)] array $documents`
+- [X] **C.** Utiliser un argument variadique : `#[MapUploadedFile(...)] UploadedFile ...$documents`
+- [X] **D.** La contrainte donnée s'applique à tous les fichiers ; si un seul échoue, une `HttpException` est levée
 
 ### Question 37
 
@@ -353,7 +353,7 @@ Comment changer le code de statut HTTP levé quand un fichier uploadé viole ses
 
 - [ ] **A.** Il faut attraper l'`HttpException` soi-même dans l'action
 - [ ] **B.** C'est impossible : le code est toujours 500
-- [ ] **C.** `#[MapUploadedFile(constraints: new Assert\File(maxSize: '2M'), validationFailedStatusCode: Response::HTTP_REQUEST_ENTITY_TOO_LARGE)]`
+- [X] **C.** `#[MapUploadedFile(constraints: new Assert\File(maxSize: '2M'), validationFailedStatusCode: Response::HTTP_REQUEST_ENTITY_TOO_LARGE)]`
 - [ ] **D.** Avec l'option `statusCode` de l'attribut `#[Route]`
 
 ### Question 38
@@ -362,7 +362,7 @@ En Symfony **8.0**, quel attribut permet de mapper directement un header HTTP (e
 
 - [ ] **A.** `#[MapRequestHeader] string $acceptLanguage`
 - [ ] **B.** `#[MapHeader('accept-language')] string $acceptLanguage`
-- [ ] **C.** Aucun : `#[MapRequestHeader]` n'existe qu'à partir de Symfony 8.1 — en 8.0 on lit `$request->headers`
+- [X] **C.** Aucun : `#[MapRequestHeader]` n'existe qu'à partir de Symfony 8.1 — en 8.0 on lit `$request->headers`
 - [ ] **D.** `#[Autowire(header: 'accept-language')] string $acceptLanguage`
 
 ## Session et messages flash
