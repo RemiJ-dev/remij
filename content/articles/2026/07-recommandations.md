@@ -1,7 +1,7 @@
 ---
 title: "Recommandations culturelles"
 description: "Une pause hors-code pour partager ce qui m'inspire en ce moment : des podcasts et un média autour du dev, une newsletter et un livre sur le monde du travail, et une belle brassée de chaînes YouTube (jeux vidéo, histoire, sciences) que je suis avec assiduité."
-publishedAt: "2026-07-30"
+publishedAt: "2026-07-23"
 lastModified: ~
 tableOfContent: true
 authors: ["remij"]
