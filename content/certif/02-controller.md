@@ -372,7 +372,7 @@ En Symfony **8.0**, quel attribut permet de mapper directement un header HTTP (e
 Quelle est la bonne méthode documentée pour accéder à la session dans un contrôleur ? *(une seule bonne réponse)*
 
 - [ ] **A.** `$this->getSession()`
-- [ ] **B.** Via l'objet `Request` : `$session = $request->getSession();`
+- [X] **B.** Via l'objet `Request` : `$session = $request->getSession();`
 - [ ] **C.** `new Session()`
 - [ ] **D.** La superglobale `$_SESSION`
 
@@ -380,9 +380,9 @@ Quelle est la bonne méthode documentée pour accéder à la session dans un con
 
 Quelles affirmations sur la session sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `$session->set('user_id', 42)` stocke un attribut réutilisable lors d'une requête ultérieure
-- [ ] **B.** `$session->get('user_id', 0)` : le second argument est une valeur par défaut optionnelle
-- [ ] **C.** La session sert à stocker des informations sur l'utilisateur entre les requêtes
+- [X] **A.** `$session->set('user_id', 42)` stocke un attribut réutilisable lors d'une requête ultérieure
+- [X] **B.** `$session->get('user_id', 0)` : le second argument est une valeur par défaut optionnelle
+- [X] **C.** La session sert à stocker des informations sur l'utilisateur entre les requêtes
 - [ ] **D.** Dans un service, on accède à la session en type-hintant directement `SessionInterface` dans le constructeur, comme le documente cette page
 
 ### Question 41
@@ -390,9 +390,9 @@ Quelles affirmations sur la session sont vraies ? *(plusieurs bonnes réponses)*
 Quelles affirmations sur les messages flash sont vraies ? *(plusieurs bonnes réponses)*
 
 - [ ] **A.** Ils persistent en session tant qu'on ne les supprime pas explicitement
-- [ ] **B.** Ils sont destinés à être utilisés exactement une fois
-- [ ] **C.** Ils disparaissent automatiquement de la session dès qu'on les récupère
-- [ ] **D.** `$this->addFlash('notice', '…')` est équivalent à `$request->getSession()->getFlashBag()->add('notice', '…')`
+- [X] **B.** Ils sont destinés à être utilisés exactement une fois
+- [X] **C.** Ils disparaissent automatiquement de la session dès qu'on les récupère
+- [X] **D.** `$this->addFlash('notice', '…')` est équivalent à `$request->getSession()->getFlashBag()->add('notice', '…')`
 
 ## Les objets Request et Response
 
@@ -400,9 +400,9 @@ Quelles affirmations sur les messages flash sont vraies ? *(plusieurs bonnes ré
 
 Quelles affirmations sur les propriétés publiques de l'objet `Request` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `$request->query->get('page')` lit les variables `GET`
-- [ ] **B.** `$request->getPayload()->get('page')` lit les données du corps de la requête
-- [ ] **C.** `$request->cookies->get('PHPSESSID')` lit la valeur d'un cookie
+- [X] **A.** `$request->query->get('page')` lit les variables `GET`
+- [X] **B.** `$request->getPayload()->get('page')` lit les données du corps de la requête
+- [X] **C.** `$request->cookies->get('PHPSESSID')` lit la valeur d'un cookie
 - [ ] **D.** `$request->server` permet de lire les headers HTTP avec des clés normalisées en minuscules
 
 ### Question 43
@@ -412,16 +412,16 @@ Quelle est la bonne méthode pour lire un header HTTP de la requête ? *(une seu
 - [ ] **A.** `$request->server->get('content-type')`
 - [ ] **B.** `$request->getHeader('Content-Type')`
 - [ ] **C.** `$request->cookies->get('content-type')`
-- [ ] **D.** `$request->headers->get('content-type')` — les clés sont normalisées en minuscules
+- [X] **D.** `$request->headers->get('content-type')` — les clés sont normalisées en minuscules
 
 ### Question 44
 
 Quelles affirmations sur l'objet `Response` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `new Response('Hello '.$name, Response::HTTP_OK)` — le code 200 est de toute façon le code par défaut
+- [X] **A.** `new Response('Hello '.$name, Response::HTTP_OK)` — le code 200 est de toute façon le code par défaut
 - [ ] **B.** Le contrôleur doit appeler `$response->send()` avant de terminer
-- [ ] **C.** `$response->headers` est un objet de type `ResponseHeaderBag`
-- [ ] **D.** Les noms de headers sont normalisés : `Content-Type` ≡ `content-type` ≡ `content_type`
+- [X] **C.** `$response->headers` est un objet de type `ResponseHeaderBag`
+- [X] **D.** Les noms de headers sont normalisés : `Content-Type` ≡ `content-type` ≡ `content_type`
 
 ### Question 45
 
@@ -429,14 +429,14 @@ Un contrôleur peut-il retourner autre chose qu'un objet `Response` ? *(une seul
 
 - [ ] **A.** Non, cela provoque systématiquement une erreur fatale
 - [ ] **B.** Oui, Symfony convertit automatiquement n'importe quelle valeur en `Response`
-- [ ] **C.** Techniquement oui, mais l'application doit alors transformer elle-même cette valeur en `Response`, via l'événement `kernel.view`
+- [X] **C.** Techniquement oui, mais l'application doit alors transformer elle-même cette valeur en `Response`, via l'événement `kernel.view`
 - [ ] **D.** Oui, mais uniquement des chaînes de caractères
 
 ### Question 46
 
 Que permet de savoir `$request->isXmlHttpRequest()` ? *(une seule bonne réponse)*
 
-- [ ] **A.** Si la requête est une requête Ajax
+- [X] **A.** Si la requête est une requête Ajax
 - [ ] **B.** Si le payload de la requête est du XML
 - [ ] **C.** Si la réponse attendue est du XML
 - [ ] **D.** Si la requête provient d'un robot d'indexation
@@ -445,9 +445,9 @@ Que permet de savoir `$request->isXmlHttpRequest()` ? *(une seule bonne réponse
 
 Quelles méthodes de l'objet `Request` la documentation présente-t-elle ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `$request->getPreferredLanguage(['en', 'fr'])`
-- [ ] **B.** `$request->files->get('foo')` — récupère une instance d'`UploadedFile`
-- [ ] **C.** `$request->headers->get('host')`
+- [X] **A.** `$request->getPreferredLanguage(['en', 'fr'])`
+- [X] **B.** `$request->files->get('foo')` — récupère une instance d'`UploadedFile`
+- [X] **C.** `$request->headers->get('host')`
 - [ ] **D.** `$request->getBody()`
 
 ## Configuration, JSON et fichiers
@@ -457,7 +457,7 @@ Quelles méthodes de l'objet `Request` la documentation présente-t-elle ? *(plu
 Comment lire un paramètre de configuration (ex. `kernel.project_dir`) depuis un contrôleur ? *(une seule bonne réponse)*
 
 - [ ] **A.** `$this->getConfig('kernel.project_dir')`
-- [ ] **B.** `$this->getParameter('kernel.project_dir')`
+- [X] **B.** `$this->getParameter('kernel.project_dir')`
 - [ ] **C.** `$_ENV['KERNEL_PROJECT_DIR']`
 - [ ] **D.** `Config::get('kernel.project_dir')`
 
@@ -465,16 +465,16 @@ Comment lire un paramètre de configuration (ex. `kernel.project_dir`) depuis un
 
 Quelles affirmations sur le helper `json()` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Il retourne un objet `JsonResponse` qui encode les données et pose le bon header `Content-Type`
-- [ ] **B.** Sa signature complète est `json($data, $status = 200, $headers = [], $context = [])`
+- [X] **A.** Il retourne un objet `JsonResponse` qui encode les données et pose le bon header `Content-Type`
+- [X] **B.** Sa signature complète est `json($data, $status = 200, $headers = [], $context = [])`
 - [ ] **C.** Il faut définir manuellement le header `Content-Type: application/json` sur la réponse
-- [ ] **D.** Si le service serializer est activé dans l'application, il est utilisé pour la sérialisation ; sinon, c'est `json_encode()`
+- [X] **D.** Si le service serializer est activé dans l'application, il est utilisé pour la sérialisation ; sinon, c'est `json_encode()`
 
 ### Question 50
 
 Que fait `return $this->file('/path/to/some_file.pdf');` ? *(une seule bonne réponse)*
 
-- [ ] **A.** Il retourne une `BinaryFileResponse` qui envoie le fichier en forçant son téléchargement par le navigateur
+- [X] **A.** Il retourne une `BinaryFileResponse` qui envoie le fichier en forçant son téléchargement par le navigateur
 - [ ] **B.** Il retourne le contenu du fichier sous forme de chaîne
 - [ ] **C.** Il retourne une `StreamedResponse` qui affiche le fichier dans le navigateur
 - [ ] **D.** Il exige un objet `SplFileInfo` en argument, jamais une chaîne
@@ -486,7 +486,7 @@ Comment servir un fichier en l'affichant **dans le navigateur** plutôt qu'en le
 - [ ] **A.** Avec l'option `'inline' => true` en second argument de `file()`
 - [ ] **B.** C'est le comportement par défaut de `file()`
 - [ ] **C.** `$this->inline('invoice_3241.pdf')`
-- [ ] **D.** `$this->file('invoice_3241.pdf', 'my_invoice.pdf', ResponseHeaderBag::DISPOSITION_INLINE)`
+- [X] **D.** `$this->file('invoice_3241.pdf', 'my_invoice.pdf', ResponseHeaderBag::DISPOSITION_INLINE)`
 
 ### Question 52
 
@@ -494,7 +494,7 @@ Que sont les « Early Hints » évoqués par la documentation ? *(une seule bonn
 
 - [ ] **A.** Un mécanisme de cache HTTP côté serveur
 - [ ] **B.** Des réponses `100 Continue` envoyées pendant l'upload
-- [ ] **C.** Des réponses HTTP `103` envoyées avant la réponse complète, pour que le navigateur commence à télécharger des assets
+- [X] **C.** Des réponses HTTP `103` envoyées avant la réponse complète, pour que le navigateur commence à télécharger des assets
 - [ ] **D.** Des suggestions de performance affichées par le profiler
 
 ## Server-Sent Events (SSE)
@@ -504,7 +504,7 @@ Que sont les « Early Hints » évoqués par la documentation ? *(une seule bonn
 Quelle classe permet de streamer des événements vers le client selon le protocole SSE ? *(une seule bonne réponse)*
 
 - [ ] **A.** `Symfony\Component\HttpFoundation\StreamedResponse`
-- [ ] **B.** `Symfony\Component\HttpFoundation\EventStreamResponse`
+- [X] **B.** `Symfony\Component\HttpFoundation\EventStreamResponse`
 - [ ] **C.** `Symfony\Component\HttpFoundation\ServerSentEventsResponse`
 - [ ] **D.** `Symfony\Component\Mercure\MercureResponse`
 
@@ -513,18 +513,18 @@ Quelle classe permet de streamer des événements vers le client selon le protoc
 Quels headers `EventStreamResponse` pose-t-il automatiquement ? *(plusieurs bonnes réponses)*
 
 - [ ] **A.** `Transfer-Encoding: chunked`
-- [ ] **B.** `Content-Type: text/event-stream`
-- [ ] **C.** `Cache-Control: no-cache`
-- [ ] **D.** `Connection: keep-alive`
+- [X] **B.** `Content-Type: text/event-stream`
+- [X] **C.** `Cache-Control: no-cache`
+- [X] **D.** `Connection: keep-alive`
 
 ### Question 55
 
 Quels arguments du constructeur de `ServerEvent` la documentation présente-t-elle ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `type` — un type d'événement personnalisé, écouté côté client via `addEventListener('my-event', …)`
-- [ ] **B.** `id` — un identifiant, utile pour reprendre un flux avec le header `Last-Event-ID`
-- [ ] **C.** `retry` — le délai de reconnexion demandé au client, en millisecondes
-- [ ] **D.** `comment` — un commentaire, utilisable comme keep-alive
+- [X] **A.** `type` — un type d'événement personnalisé, écouté côté client via `addEventListener('my-event', …)`
+- [X] **B.** `id` — un identifiant, utile pour reprendre un flux avec le header `Last-Event-ID`
+- [X] **C.** `retry` — le délai de reconnexion demandé au client, en millisecondes
+- [X] **D.** `comment` — un commentaire, utilisable comme keep-alive
 
 ### Question 56
 
