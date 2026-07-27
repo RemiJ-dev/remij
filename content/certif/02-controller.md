@@ -530,7 +530,7 @@ Quels arguments du constructeur de `ServerEvent` la documentation présente-t-el
 
 Quand les générateurs (`yield`) ne sont pas pratiques, comment envoyer manuellement un événement SSE ? *(une seule bonne réponse)*
 
-- [ ] **A.** Avec `$response->sendEvent(new ServerEvent($message))` dans le callback de l'`EventStreamResponse`
+- [X] **A.** Avec `$response->sendEvent(new ServerEvent($message))` dans le callback de l'`EventStreamResponse`
 - [ ] **B.** Avec `echo` suivi de `flush()`
 - [ ] **C.** Avec `$response->push($message)`
 - [ ] **D.** C'est impossible : l'API impose un générateur
@@ -539,10 +539,10 @@ Quand les générateurs (`yield`) ne sont pas pratiques, comment envoyer manuell
 
 Quelles affirmations sur les SSE côté client et leurs limites sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Côté client, on écoute le flux avec l'API native `EventSource`
-- [ ] **B.** `eventSource.onmessage` reçoit les événements sans type ; `addEventListener('my-event', …)` ceux d'un type précis
+- [X] **A.** Côté client, on écoute le flux avec l'API native `EventSource`
+- [X] **B.** `eventSource.onmessage` reçoit les événements sans type ; `addEventListener('my-event', …)` ceux d'un type précis
 - [ ] **C.** `EventStreamResponse` est la solution recommandée pour diffuser à un très grand nombre de clients simultanés
-- [ ] **D.** Chaque client SSE garde une connexion HTTP ouverte et consomme des ressources serveur
+- [X] **D.** Chaque client SSE garde une connexion HTTP ouverte et consomme des ressources serveur
 
 ## Découpler les contrôleurs de Symfony
 
@@ -553,22 +553,22 @@ Quelle classe expose tous les helpers d'`AbstractController` sous forme de méth
 - [ ] **A.** `ControllerUtils`
 - [ ] **B.** `AbstractHelper`
 - [ ] **C.** `ControllerTrait`
-- [ ] **D.** `ControllerHelper`
+- [X] **D.** `ControllerHelper`
 
 ### Question 59
 
 Quelles affirmations sur `#[AutowireMethodOf]` sont vraies ? *(plusieurs bonnes réponses)*
 
 - [ ] **A.** L'attribut est fourni par le composant HttpKernel
-- [ ] **B.** `#[AutowireMethodOf(ControllerHelper::class)] private \Closure $render` injecte la méthode `render()` sous forme de `\Closure`
-- [ ] **C.** On peut typer l'argument avec une interface (dont `__invoke()` reprend la signature du helper) pour profiter de l'analyse statique et de l'autocomplétion
-- [ ] **D.** Injecter uniquement les helpers nécessaires est plus efficace qu'injecter la classe `ControllerHelper` entière
+- [X] **B.** `#[AutowireMethodOf(ControllerHelper::class)] private \Closure $render` injecte la méthode `render()` sous forme de `\Closure`
+- [X] **C.** On peut typer l'argument avec une interface (dont `__invoke()` reprend la signature du helper) pour profiter de l'analyse statique et de l'autocomplétion
+- [X] **D.** Injecter uniquement les helpers nécessaires est plus efficace qu'injecter la classe `ControllerHelper` entière
 
 ### Question 60
 
 Que recommande la documentation pour la majorité des applications ? *(une seule bonne réponse)*
 
-- [ ] **A.** Étendre `AbstractController`, le découplage étant réservé à des usages avancés (testabilité, design framework-agnostique)
+- [X] **A.** Étendre `AbstractController`, le découplage étant réservé à des usages avancés (testabilité, design framework-agnostique)
 - [ ] **B.** Découpler systématiquement les contrôleurs du framework
 - [ ] **C.** Faire hériter les contrôleurs de `ControllerHelper`
 - [ ] **D.** Implémenter l'interface `ControllerInterface`
@@ -583,18 +583,18 @@ Que recommande la documentation pour la majorité des applications ? *(une seule
 
 Comment le renderer d'erreur Twig choisit-il le template d'erreur en production ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Il cherche d'abord un template nommé d'après le code de statut, ex. `error404.html.twig`
-- [ ] **B.** Si ce template n'existe pas, il retombe sur le template générique `error.html.twig`
-- [ ] **C.** Les templates de remplacement se placent dans `templates/bundles/TwigBundle/Exception/`
+- [X] **A.** Il cherche d'abord un template nommé d'après le code de statut, ex. `error404.html.twig`
+- [X] **B.** Si ce template n'existe pas, il retombe sur le template générique `error.html.twig`
+- [X] **C.** Les templates de remplacement se placent dans `templates/bundles/TwigBundle/Exception/`
 - [ ] **D.** Les templates de remplacement se placent dans `templates/exception/`
 
 ### Question 62
 
 Quelles variables sont disponibles dans un template d'erreur personnalisé ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `status_code` — le code de statut HTTP
-- [ ] **B.** `status_text` — le message associé au code de statut
-- [ ] **C.** `exception` — ex. `{{ exception.message }}`, voire `{{ exception.traceAsString }}` (déconseillé pour l'utilisateur final)
+- [X] **A.** `status_code` — le code de statut HTTP
+- [X] **B.** `status_text` — le message associé au code de statut
+- [X] **C.** `exception` — ex. `{{ exception.message }}`, voire `{{ exception.traceAsString }}` (déconseillé pour l'utilisateur final)
 - [ ] **D.** `logger` — pour journaliser depuis le template
 
 ### Question 63
@@ -603,7 +603,7 @@ Quelle affirmation sur la sécurité et les pages 404 est vraie ? *(une seule bo
 
 - [ ] **A.** Les informations de sécurité sont disponibles normalement sur les pages 404
 - [ ] **B.** Elles ne sont indisponibles que si le firewall est `stateless`
-- [ ] **C.** À cause de l'ordre de chargement du routing et de la sécurité, elles ne sont **pas** disponibles : l'utilisateur apparaît déconnecté sur la page 404
+- [X] **C.** À cause de l'ordre de chargement du routing et de la sécurité, elles ne sont **pas** disponibles : l'utilisateur apparaît déconnecté sur la page 404
 - [ ] **D.** Leur disponibilité dépend de l'option `framework.error_controller`
 
 ### Question 64
@@ -611,7 +611,7 @@ Quelle affirmation sur la sécurité et les pages 404 est vraie ? *(une seule bo
 Comment prévisualiser ses pages d'*erreur* pendant le développement, où Symfony affiche la page d'*exception* à la place ? *(une seule bonne réponse)*
 
 - [ ] **A.** `php bin/console error:preview 404`
-- [ ] **B.** En chargeant les routes dédiées de FrameworkBundle, puis en visitant `http://localhost/_error/{statusCode}` (ou `/_error/{statusCode}.{format}`)
+- [X] **B.** En chargeant les routes dédiées de FrameworkBundle, puis en visitant `http://localhost/_error/{statusCode}` (ou `/_error/{statusCode}.{format}`)
 - [ ] **C.** En passant temporairement `APP_ENV=prod`
 - [ ] **D.** Ce n'est pas possible sans désactiver le mode debug
 
@@ -622,33 +622,33 @@ Comment personnaliser le contenu des erreurs dans les formats non-HTML (JSON, XM
 - [ ] **A.** Surcharger le template `error.json.twig`
 - [ ] **B.** Configurer l'option `framework.serializer.error_format`
 - [ ] **C.** C'est impossible sans écrire un listener `kernel.exception`
-- [ ] **D.** Créer un normalizer qui supporte l'entrée `FlattenException` (le composant Serializer étant installé)
+- [X] **D.** Créer un normalizer qui supporte l'entrée `FlattenException` (le composant Serializer étant installé)
 
 ### Question 66
 
 Quelles affirmations sur la surcharge de l'`ErrorController` par défaut sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** On désigne son propre contrôleur via l'option de configuration `framework.error_controller`
-- [ ] **B.** Le contrôleur reçoit un paramètre `exception` : l'instance `Throwable` originale
-- [ ] **C.** Le contrôleur reçoit un paramètre `logger` (`DebugLoggerInterface`), qui peut être `null`
+- [X] **A.** On désigne son propre contrôleur via l'option de configuration `framework.error_controller`
+- [X] **B.** Le contrôleur reçoit un paramètre `exception` : l'instance `Throwable` originale
+- [X] **C.** Le contrôleur reçoit un paramètre `logger` (`DebugLoggerInterface`), qui peut être `null`
 - [ ] **D.** La prévisualisation `/_error/{statusCode}` ne fonctionne pas avec un contrôleur d'erreur personnalisé
 
 ### Question 67
 
 Quelles affirmations sur l'événement `kernel.exception` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Quand une exception est levée, `HttpKernel` l'attrape et dispatche l'événement `kernel.exception`
-- [ ] **B.** Si un listener appelle `setResponse()` sur l'`ExceptionEvent`, la propagation est stoppée et la réponse envoyée au client
-- [ ] **C.** Cette approche permet une gestion d'erreurs centralisée et en couches, au lieu d'attraper les mêmes exceptions dans chaque contrôleur
+- [X] **A.** Quand une exception est levée, `HttpKernel` l'attrape et dispatche l'événement `kernel.exception`
+- [X] **B.** Si un listener appelle `setResponse()` sur l'`ExceptionEvent`, la propagation est stoppée et la réponse envoyée au client
+- [X] **C.** Cette approche permet une gestion d'erreurs centralisée et en couches, au lieu d'attraper les mêmes exceptions dans chaque contrôleur
 - [ ] **D.** Ce mécanisme ne s'applique qu'aux exceptions héritant de `HttpException`
 
 ### Question 68
 
 Quelles affirmations sur la commande `error:dump` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Elle génère les pages d'erreur de l'application sous forme de fichiers HTML statiques
-- [ ] **B.** Par défaut, elle génère les pages de toutes les erreurs 4xx et 5xx, mais on peut lui passer une liste de codes
-- [ ] **C.** Elle permet au serveur web (ex. `error_page` de Nginx) de servir vos pages même quand l'erreur survient avant d'atteindre l'application Symfony
+- [X] **A.** Elle génère les pages d'erreur de l'application sous forme de fichiers HTML statiques
+- [X] **B.** Par défaut, elle génère les pages de toutes les erreurs 4xx et 5xx, mais on peut lui passer une liste de codes
+- [X] **C.** Elle permet au serveur web (ex. `error_page` de Nginx) de servir vos pages même quand l'erreur survient avant d'atteindre l'application Symfony
 - [ ] **D.** Elle génère et installe automatiquement la configuration Nginx correspondante
 
 ## Forward vers un autre contrôleur
@@ -657,9 +657,9 @@ Quelles affirmations sur la commande `error:dump` sont vraies ? *(plusieurs bonn
 
 Quelles affirmations sur `$this->forward()` sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Elle effectue une sous-requête « interne » au lieu de rediriger le navigateur de l'utilisateur
-- [ ] **B.** Elle retourne l'objet `Response` retourné par le contrôleur cible
-- [ ] **C.** Le tableau passé en second argument devient les arguments du contrôleur cible, appariés par **nom**
+- [X] **A.** Elle effectue une sous-requête « interne » au lieu de rediriger le navigateur de l'utilisateur
+- [X] **B.** Elle retourne l'objet `Response` retourné par le contrôleur cible
+- [X] **C.** Le tableau passé en second argument devient les arguments du contrôleur cible, appariés par **nom**
 - [ ] **D.** L'ordre des arguments de la méthode cible doit correspondre à l'ordre des clés du tableau
 
 ### Question 70
@@ -668,7 +668,7 @@ Après un `$this->forward(...)`, que valent `app.current_route` et `_route_param
 
 - [ ] **A.** Les valeurs de la requête d'origine
 - [ ] **B.** Les valeurs de la route du contrôleur cible
-- [ ] **C.** Ils sont vides — sauf à les définir manuellement via les clés `_route` et `_route_params` du tableau d'arguments
+- [X] **C.** Ils sont vides — sauf à les définir manuellement via les clés `_route` et `_route_params` du tableau d'arguments
 - [ ] **D.** Une exception est levée si on y accède
 
 ## Contrôleurs définis comme services
@@ -677,18 +677,18 @@ Après un `$this->forward(...)`, que valent `app.current_route` et `_route_param
 
 Un contrôleur n'étend pas `AbstractController`. Par quels moyens documentés peut-on l'enregistrer comme service (avec l'injection de services dans les arguments d'action) ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Avec l'attribut `#[Route]`
-- [ ] **B.** Avec l'attribut `#[AsController]`
-- [ ] **C.** Avec le tag de service `controller.service_arguments`
+- [X] **A.** Avec l'attribut `#[Route]`
+- [X] **B.** Avec l'attribut `#[AsController]`
+- [X] **C.** Avec le tag de service `controller.service_arguments`
 - [ ] **D.** Avec l'attribut `#[AsService]`
 
 ### Question 72
 
 Quelles affirmations sur les contrôleurs enregistrés comme services sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Avec la configuration `services.yaml` par défaut, les contrôleurs qui étendent `AbstractController` sont automatiquement enregistrés comme services
-- [ ] **B.** Le service contrôleur est marqué **public** et **non-lazy**
-- [ ] **C.** Il est public parce que le controller resolver le récupère du container par son id de service à l'exécution
+- [X] **A.** Avec la configuration `services.yaml` par défaut, les contrôleurs qui étendent `AbstractController` sont automatiquement enregistrés comme services
+- [X] **B.** Le service contrôleur est marqué **public** et **non-lazy**
+- [X] **C.** Il est public parce que le controller resolver le récupère du container par son id de service à l'exécution
 - [ ] **D.** Quand on utilise déjà `#[Route]`, ajouter `#[AsController]` est nécessaire pour activer l'injection dans les actions
 
 ### Question 73
@@ -696,7 +696,7 @@ Quelles affirmations sur les contrôleurs enregistrés comme services sont vraie
 Quelle syntaxe référence un contrôleur-service dans la configuration de routing ? *(une seule bonne réponse)*
 
 - [ ] **A.** `service_id:method_name` (un seul deux-points)
-- [ ] **B.** `service_id::method_name` — identique à `App\Controller\HelloController::index` quand l'id de service est le FQCN
+- [X] **B.** `service_id::method_name` — identique à `App\Controller\HelloController::index` quand l'id de service est le FQCN
 - [ ] **C.** `service_id->method_name`
 - [ ] **D.** `@service_id/method_name`
 
@@ -704,18 +704,18 @@ Quelle syntaxe référence un contrôleur-service dans la configuration de routi
 
 Quelles affirmations sur les contrôleurs invokables sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Un contrôleur peut définir une action unique via la méthode `__invoke()`
-- [ ] **B.** C'est une pratique courante du pattern **ADR** (Action-Domain-Responder)
-- [ ] **C.** Avec `#[Route]` posé sur la classe, `__invoke()` bénéficie de l'injection de services dans ses arguments, comme n'importe quelle action
+- [X] **A.** Un contrôleur peut définir une action unique via la méthode `__invoke()`
+- [X] **B.** C'est une pratique courante du pattern **ADR** (Action-Domain-Responder)
+- [X] **C.** Avec `#[Route]` posé sur la classe, `__invoke()` bénéficie de l'injection de services dans ses arguments, comme n'importe quelle action
 - [ ] **D.** Dans la configuration de routing, il faut référencer explicitement `App\Controller\HelloController::__invoke`
 
 ### Question 75
 
 Pour des raisons de sécurité, Symfony maintient une allowlist de contrôleurs. Lesquels sont automatiquement autorisés ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Les classes portant l'attribut `#[AsController]`
-- [ ] **B.** Les classes étendant `AbstractController`
-- [ ] **C.** Le `TemplateController` natif et tous les services tagués `controller.service_arguments`
+- [X] **A.** Les classes portant l'attribut `#[AsController]`
+- [X] **B.** Les classes étendant `AbstractController`
+- [X] **C.** Le `TemplateController` natif et tous les services tagués `controller.service_arguments`
 - [ ] **D.** Tous les callables PHP, sans restriction
 
 ## Upload de fichiers
@@ -724,27 +724,27 @@ Pour des raisons de sécurité, Symfony maintient une allowlist de contrôleurs.
 
 Un formulaire doit uploader une brochure PDF pour une entité `Product` qui ne stocke que le **nom** du fichier. Quelles affirmations sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Le champ du formulaire doit être un `FileType`, pour que le navigateur affiche le widget d'upload
-- [ ] **B.** Le champ se déclare `'mapped' => false`, pour que Symfony ne tente pas de lire/écrire la valeur depuis l'entité
-- [ ] **C.** Les contraintes de validation se posent alors via l'option `constraints` du champ (ex. `new Assert\File(maxSize: '1024k', extensions: ['pdf'])`)
+- [X] **A.** Le champ du formulaire doit être un `FileType`, pour que le navigateur affiche le widget d'upload
+- [X] **B.** Le champ se déclare `'mapped' => false`, pour que Symfony ne tente pas de lire/écrire la valeur depuis l'entité
+- [X] **C.** Les contraintes de validation se posent alors via l'option `constraints` du champ (ex. `new Assert\File(maxSize: '1024k', extensions: ['pdf'])`)
 - [ ] **D.** La colonne Doctrine doit être de type `blob` pour stocker le fichier
 
 ### Question 77
 
 Quelles affirmations sur la sécurité des fichiers uploadés sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `getClientOriginalName()`, `getClientOriginalExtension()` et `getSize()` sont considérées **non sûres**, car un utilisateur malveillant peut falsifier ces informations
-- [ ] **B.** Il est recommandé de générer soi-même un nom de fichier unique
-- [ ] **C.** `guessExtension()` laisse Symfony deviner la bonne extension d'après le type MIME du fichier
+- [X] **A.** `getClientOriginalName()`, `getClientOriginalExtension()` et `getSize()` sont considérées **non sûres**, car un utilisateur malveillant peut falsifier ces informations
+- [X] **B.** Il est recommandé de générer soi-même un nom de fichier unique
+- [X] **C.** `guessExtension()` laisse Symfony deviner la bonne extension d'après le type MIME du fichier
 - [ ] **D.** `getClientOriginalName()` est fiable, car le navigateur valide le nom du fichier
 
 ### Question 78
 
 Comment permettre l'upload de plusieurs fichiers à la fois ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Passer l'option `'multiple' => true` au `FileType`
-- [ ] **B.** La donnée du champ devient alors un tableau d'instances `UploadedFile`
-- [ ] **C.** Envelopper la contrainte `File` dans la contrainte `All` pour valider chaque fichier
+- [X] **A.** Passer l'option `'multiple' => true` au `FileType`
+- [X] **B.** La donnée du champ devient alors un tableau d'instances `UploadedFile`
+- [X] **C.** Envelopper la contrainte `File` dans la contrainte `All` pour valider chaque fichier
 - [ ] **D.** Modifier le template pour ajouter l'attribut HTML `multiple` sur l'`<input type="file">`
 
 ### Question 79
@@ -754,13 +754,13 @@ Comment permettre l'upload de plusieurs fichiers à la fois ? *(plusieurs bonnes
 - [ ] **A.** La chaîne du chemin relatif stockée en base
 - [ ] **B.** Une instance d'`UploadedFile`
 - [ ] **C.** `null` — le champ est ignoré à l'édition
-- [ ] **D.** Une instance de `File`, construite en concaténant le répertoire d'upload configuré et le nom de fichier stocké
+- [X] **D.** Une instance de `File`, construite en concaténant le répertoire d'upload configuré et le nom de fichier stocké
 
 ### Question 80
 
 Que dit la documentation de la gestion des uploads via des listeners **Doctrine** ? *(une seule bonne réponse)*
 
-- [ ] **A.** Ce n'est plus recommandé : les événements Doctrine ne devraient pas être utilisés pour la logique métier ; préférer les événements et listeners Symfony
+- [X] **A.** Ce n'est plus recommandé : les événements Doctrine ne devraient pas être utilisés pour la logique métier ; préférer les événements et listeners Symfony
 - [ ] **B.** C'est la méthode mise en avant par la documentation
 - [ ] **C.** C'est obligatoire pour utiliser VichUploaderBundle
 - [ ] **D.** C'est techniquement impossible depuis Doctrine 3
@@ -771,9 +771,9 @@ Que dit la documentation de la gestion des uploads via des listeners **Doctrine*
 
 Quelles affirmations sur les value resolvers natifs du composant HttpKernel sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `BackedEnumValueResolver` résout un case d'enum depuis un paramètre de route ; une valeur invalide produit une réponse 404
-- [ ] **B.** `UidValueResolver` convertit un paramètre de route en objet UID ; une valeur invalide produit une réponse 404
-- [ ] **C.** `DateTimeValueResolver` injecte un objet `DateTimeInterface`, dont le format accepté peut être restreint via l'attribut `#[MapDateTime]`
+- [X] **A.** `BackedEnumValueResolver` résout un case d'enum depuis un paramètre de route ; une valeur invalide produit une réponse 404
+- [X] **B.** `UidValueResolver` convertit un paramètre de route en objet UID ; une valeur invalide produit une réponse 404
+- [X] **C.** `DateTimeValueResolver` injecte un objet `DateTimeInterface`, dont le format accepté peut être restreint via l'attribut `#[MapDateTime]`
 - [ ] **D.** `EntityValueResolver` fait partie du composant HttpKernel
 
 ### Question 82
@@ -782,41 +782,41 @@ En Symfony **8.0**, comment une entité Doctrine est-elle injectée comme argume
 
 - [ ] **A.** Automatiquement, dès qu'un argument est type-hinté avec une classe d'entité
 - [ ] **B.** Via `#[MapRequestPayload]`
-- [ ] **C.** Le mapping automatique a été **retiré en 8.0** : il faut utiliser l'attribut `#[MapEntity]` ou la syntaxe de mapping de route `{param:argument}`
+- [X] **C.** Le mapping automatique a été **retiré en 8.0** : il faut utiliser l'attribut `#[MapEntity]` ou la syntaxe de mapping de route `{param:argument}`
 - [ ] **D.** Uniquement en appelant manuellement le repository dans l'action
 
 ### Question 83
 
 Quelles affirmations sur les value resolvers fournis par la sécurité sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** `UserValueResolver` injecte l'utilisateur connecté quand l'argument est type-hinté `UserInterface`
-- [ ] **B.** Pour type-hinter sa propre classe `User`, il faut ajouter l'attribut `#[CurrentUser]` à l'argument
-- [ ] **C.** Les union types sont supportés, ex. `#[CurrentUser] Admin|Member $user`
+- [X] **A.** `UserValueResolver` injecte l'utilisateur connecté quand l'argument est type-hinté `UserInterface`
+- [X] **B.** Pour type-hinter sa propre classe `User`, il faut ajouter l'attribut `#[CurrentUser]` à l'argument
+- [X] **C.** Les union types sont supportés, ex. `#[CurrentUser] Admin|Member $user`
 - [ ] **D.** Si l'argument est non nullable et qu'aucun utilisateur n'est connecté, le resolver injecte `null`
 
 ### Question 84
 
 Quelles affirmations sur la gestion et l'ordre des value resolvers sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Pour chaque argument, chaque resolver tagué `controller.argument_value_resolver` est appelé — dans l'ordre de leurs priorités — jusqu'à ce que l'un fournisse une valeur
-- [ ] **B.** `#[ValueResolver(SessionValueResolver::class)]` posé sur un argument fait appeler ce resolver en premier ; le nom des resolvers natifs est leur FQCN
-- [ ] **C.** L'argument `disabled: true` de `#[ValueResolver]` désactive un resolver ciblé — c'est ainsi que `MapEntity`, qui **étend** `ValueResolver`, permet de désactiver l'`EntityValueResolver`
+- [X] **A.** Pour chaque argument, chaque resolver tagué `controller.argument_value_resolver` est appelé — dans l'ordre de leurs priorités — jusqu'à ce que l'un fournisse une valeur
+- [X] **B.** `#[ValueResolver(SessionValueResolver::class)]` posé sur un argument fait appeler ce resolver en premier ; le nom des resolvers natifs est leur FQCN
+- [X] **C.** L'argument `disabled: true` de `#[ValueResolver]` désactive un resolver ciblé — c'est ainsi que `MapEntity`, qui **étend** `ValueResolver`, permet de désactiver l'`EntityValueResolver`
 - [ ] **D.** La commande `php bin/console debug:value-resolvers` liste les resolvers dans leur ordre d'exécution
 
 ### Question 85
 
 Quelles affirmations sur la création d'un value resolver personnalisé sont vraies ? *(plusieurs bonnes réponses)*
 
-- [ ] **A.** Il faut implémenter `ValueResolverInterface` et sa méthode `resolve()`, qui reçoit la `Request` et un `ArgumentMetadata`
-- [ ] **B.** `resolve()` retourne un tableau vide quand le resolver ne peut pas résoudre l'argument
-- [ ] **C.** `resolve()` doit toujours retourner un tableau, même pour une valeur unique — les arguments variadiques peuvent en recevoir plusieurs
+- [X] **A.** Il faut implémenter `ValueResolverInterface` et sa méthode `resolve()`, qui reçoit la `Request` et un `ArgumentMetadata`
+- [X] **B.** `resolve()` retourne un tableau vide quand le resolver ne peut pas résoudre l'argument
+- [X] **C.** `resolve()` doit toujours retourner un tableau, même pour une valeur unique — les arguments variadiques peuvent en recevoir plusieurs
 - [ ] **D.** Le tag `controller.argument_value_resolver` doit être ajouté manuellement au service
 
 ### Question 86
 
 Comment faire qu'un resolver personnalisé ne soit appelé que lorsqu'il est explicitement ciblé par un attribut `#[ValueResolver]` ? *(une seule bonne réponse)*
 
-- [ ] **A.** Le taguer `controller.targeted_value_resolver`, ou lui poser l'attribut `#[AsTargetedValueResolver('mon_nom')]`
+- [X] **A.** Le taguer `controller.targeted_value_resolver`, ou lui poser l'attribut `#[AsTargetedValueResolver('mon_nom')]`
 - [ ] **B.** Lui donner une priorité négative
 - [ ] **C.** Ce n'est pas possible : tous les resolvers sont appelés pour chaque argument
 - [ ] **D.** Le retirer de l'autoconfiguration dans `services.yaml`
