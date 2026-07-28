@@ -95,6 +95,7 @@ clear.cache:
 build.assets:
 	$(SYMFONY) cache:clear --env=prod
 	$(SYMFONY) asset-map:compile --env=prod
+	cp -r assets/images/ build/
 
 ## Build - Build static site
 build.content: clear.images clear.cache
@@ -121,6 +122,7 @@ build@dist:
 	rm -rf build
 	php bin/console stenope:build --env=prod
 	npm run build
+	cp -r assets/images/ build/
 
 ########
 # Lint #
