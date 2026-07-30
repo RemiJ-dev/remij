@@ -3,7 +3,7 @@ import:
 
 config:
   repository: 'git@github.com:RemiJ-dev/remij.git'
-  remote_user: debian
+  remote_user: ubuntu
   http_user: www-data
   writable_recursive: true
   ssh_multiplexing: true
@@ -33,7 +33,7 @@ config:
 
 hosts:
   prod:
-    hostname: 193.70.90.143
+    hostname: 162.19.44.51
     real_url: "https://remij.dev"
     stage: prod
     branch: main
