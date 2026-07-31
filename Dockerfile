@@ -85,7 +85,7 @@ COPY --from=node:24-bookworm-slim /usr/local/share/doc/node /usr/local/share/doc
 COPY --from=node:24-bookworm-slim /usr/local/bin/node /usr/local/bin/node
 RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
 	&& ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx \
-	&& npm install -g sass
+	&& npm install -g sass npm
 
 
 COPY --link .frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
