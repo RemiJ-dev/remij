@@ -35,6 +35,16 @@
             <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
             <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
         {% endif %}
+
+        {# Umami analytics (prod only, so the dev server never reports traffic).
+           Nginx proxies both the script and its collect endpoint under /stats/,
+           so they share the site's own origin: no third-party request, nothing
+           for tracker blocklists to match. The tracker derives its endpoint from
+           the script's directory, so /stats/script.js posts to /stats/api/send —
+           keep the two paths in sync (see snippets/umami-firstparty.conf). #}
+        {% if app.environment == 'prod' %}
+            <script defer src="/stats/script.js" data-website-id="0f2bea39-4a15-4503-b548-c3bec47f6981"></script>
+        {% endif %}
     </head>
     <body>
         {% block header %}
