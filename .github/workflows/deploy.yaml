@@ -36,7 +36,7 @@ jobs:
         with:
           coverage: "none"
           ini-values: "memory_limit=-1"
-          php-version: "8.4"
+          php-version: "8.5"
 
       - name: 'Determine composer cache directory'
         id: composer-cache
