@@ -32,6 +32,8 @@ Le **domaine** contient toute la logique métier. Toutes les règles sous-jacent
 
 Le **responder** récupère un résultat du domaine et le transcrit en une réponse adaptée. Dans mon cas, une réponse HTTP, mais on pourrait avoir des responders pour une application Console, tout aussi bien !
 
+![Diagramme de séquence du flux ADR pour l'affichage d'un article : le navigateur demande GET /articles/{slug}, l'ArgumentResolver résout le slug en Article via le ContentManager, ShowAction reçoit l'article et le passe à ShowResponder, qui calcule le Last-Modified et renvoie la réponse HTML.](images/articles/flux-adr.svg)
+
 ## Structurer le code
 
 Je vais prendre en exemple ce que j'ai mis en place sur ce site. Je vous mets une version condensée et choisie de la structure, ci-dessous. Vous pouvez aller [jeter directement un coup d'œil au code du site](https://github.com/RemiJ-dev/remij).
