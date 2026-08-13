@@ -32,15 +32,22 @@ NPX = $(PHP_CONT) npx
 D2_EXEC = $(if $(PHP_CONT),$(DOCKER_COMP) exec -u $(shell id -u):$(shell id -g) php)
 D2 = $(D2_EXEC) d2
 
+# `--scale=1` désactive le « fit to screen » de D2 (défaut `--scale=-1`), qui omet
+# `width`/`height` sur la racine du SVG. Sans taille intrinsèque, un SVG chargé via
+# `<img>` retombe sur la taille par défaut des éléments remplacés (300×150) : les
+# slides Marp affichaient le diagramme en ~100×150 px. Le dimensionnement responsive
+# reste géré en CSS (`max-width`), pas par l'absence d'attributs.
+D2_FLAGS_BASE = --scale=1
+
 # Thèmes D2 : 0 = Neutral default (clair), 200 = Dark Mauve (sombre).
 # Les deux palettes sont embarquées dans un seul SVG (media query), cf. build.diagrams.
 # Ces flags CLI écrasent tout bloc `d2-config` présent dans les sources : le thème
 # se pilote donc ici, et nulle part ailleurs.
-D2_FLAGS = --theme=0 --dark-theme=200
+D2_FLAGS = $(D2_FLAGS_BASE) --theme=0 --dark-theme=200
 
 # Les slides Marp sont rendues sur fond sombre (`class: invert`) et n'ont pas de
 # bascule clair/sombre : on force la palette sombre dans les deux cas.
-D2_FLAGS_SLIDES = --theme=200 --dark-theme=200
+D2_FLAGS_SLIDES = $(D2_FLAGS_BASE) --theme=200 --dark-theme=200
 
 # Sources des diagrammes : diagrams/<chemin>.d2 -> assets/images/<chemin>.svg
 D2_SOURCES := $(shell find diagrams -type f -name '*.d2' 2>/dev/null)
@@ -130,13 +137,25 @@ build.content.without-images: clear.cache
 build.diagrams: $(D2_TARGETS)
 .PHONY: build.diagrams
 
+# `d2` écrit sa cible en place : tué en cours d'écriture (OOM, conteneur arrêté,
+# disque plein), il laisserait un SVG tronqué avec un mtime frais, que le rendu
+# incrémental considérerait à jour. Les SVG étant versionnés et régénérés à la
+# main, ce fichier corrompu partirait en commit. On demande donc à make de
+# supprimer toute cible dont la recette a échoué.
+.DELETE_ON_ERROR:
+
+# Le Makefile est prérequis des deux règles : il porte les flags D2 (thème,
+# échelle), donc en changer doit suffire à déclencher un nouveau rendu. Sans
+# cette dépendance, `make build.diagrams` ne verrait que des sources inchangées
+# et laisserait les SVG de l'ancienne palette en place, sans rien signaler.
+
 # Règle plus spécifique (stem plus court) : GNU Make la préfère pour les slides.
-assets/images/slides/%.svg: diagrams/slides/%.d2
+assets/images/slides/%.svg: diagrams/slides/%.d2 Makefile
 	mkdir -p $(dir $@)
 	$(D2) $(D2_FLAGS_SLIDES) $< $@
 	chmod 644 $@
 
-assets/images/%.svg: diagrams/%.d2
+assets/images/%.svg: diagrams/%.d2 Makefile
 	mkdir -p $(dir $@)
 	$(D2) $(D2_FLAGS) $< $@
 	chmod 644 $@

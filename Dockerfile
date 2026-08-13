@@ -59,6 +59,9 @@ ENV FRANKENPHP_WORKER_CONFIG=watch
 # dev dependencies
 # hadolint ignore=DL3008
 RUN <<-EOF
+	# Sans `set -e`, seul le statut de la dernière commande du heredoc fait échouer
+	# le build : un `apt-get install` en erreur passerait ici totalement inaperçu.
+	set -eu
 	mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 	apt-get update
 	apt-get install -y --no-install-recommends \
@@ -92,6 +95,9 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
 # prod (qui build hors Docker) n'a pas besoin de D2.
 ARG D2_VERSION=0.7.1
 RUN <<-EOF
+	# Sans `set -e`, curl/tar/install pourraient tous échouer sans casser le build :
+	# seul le `d2 --version` final l'empêche, parce qu'il se trouve être en dernier.
+	set -eu
 	arch="$(dpkg --print-architecture)"
 	case "$arch" in
 		amd64|arm64) ;;
