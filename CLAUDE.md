@@ -337,7 +337,11 @@ diagrams/
 - `D2_FLAGS = $(D2_FLAGS_BASE) --theme=0 --dark-theme=200` — cas général : **les deux palettes dans un seul SVG**, séparées à la génération par une media query `prefers-color-scheme` que le `D2DiagramProcessor` remplace ensuite par `[data-bs-theme="dark"]`.
 - `D2_FLAGS_SLIDES = $(D2_FLAGS_BASE) --theme=200 --dark-theme=200` — les slides Marp sont rendues en `class: invert` (fond sombre) sans bascule de thème.
 
-**Les SVG générés sont versionnés.** Le build de prod tourne **sur le serveur** (Deployer → `make build@dist`), qui n'a donc pas besoin de D2. En contrepartie, `build.diagrams` est une commande d'écriture : après avoir touché un `.d2`, il faut la lancer et commiter le SVG. `build.static` l'appelle en local, mais **`build@dist` non**, volontairement.
+**Les SVG générés sont versionnés.** Le build de prod tourne **sur le serveur** (Deployer → `make build@dist`), qui n'a donc pas besoin de D2. En contrepartie, `build.diagrams` est une commande d'écriture : après avoir touché un `.d2`, il faut la lancer et commiter le SVG. `build.static` l'appelle en local, mais **`build@dist` non**, volontairement — le serveur consomme le SVG déjà compilé, arrivé par le `git clone` de Deployer. Ce fichier est load-bearing au build prod : `D2DiagramProcessor` le lit via `AssetMapper::getAsset()->sourcePath` pendant `stenope:build`, et son absence laisserait une `<img>` réécrite vers une URL 404.
+
+**Garde-fou CI (`tests.yaml`, étape « Check diagrams are up to date »).** Puisque rien côté serveur ne recompile les diagrammes, un `.d2` modifié sans son SVG régénéré déploierait silencieusement l'ancien schéma. La CI installe donc D2 — **version lue dans le `Dockerfile`** (`ARG D2_VERSION`), la régénérer avec une autre version produirait un diff permanent — relance le rendu et échoue sur `git diff --exit-code -- assets/images`. Deux pièges à connaître avant d'y toucher :
+- **`make -B` est indispensable.** Un checkout frais donne à tous les fichiers le même mtime : le rendu incrémental ne verrait aucune source plus récente que sa cible, ne régénérerait rien, et le contrôle ne détecterait jamais rien.
+- La sortie de D2 est **déterministe** à version et flags constants (identifiants de diagramme dérivés du contenu), c'est ce qui rend la comparaison octet à octet fiable.
 
 **Piège de syntaxe :** une accolade dans un label est parsée comme un bloc D2. Les libellés de routes doivent être quotés — `nav -> res: "résout {slug:article}"`, sinon `edge map keys must be reserved keywords`.
 
