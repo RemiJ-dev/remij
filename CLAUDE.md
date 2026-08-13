@@ -33,6 +33,7 @@ make build.assets     # Compile assets for production
 make build.content    # Build static site (APP_ENV=prod, clears image cache)
 make build.content.without-images  # Faster build, skips image resizing
 make build.slides     # Copy slide images, then compile Marp slides
+make build.diagrams   # Render D2 diagram sources (diagrams/**/*.d2) to SVG
 ```
 
 ### Lint
@@ -93,7 +94,7 @@ Site accessible sur **https://localhost** (port 443, certificat auto-signé Cadd
 
 **`Dockerfile`** (multi-stage, image de base `dunglas/frankenphp:1-php8.5`, Debian) :
 - **`frankenphp_base`** — installe les extensions PHP (apcu, intl, opcache, zip), Composer, et l'entrypoint `frankenphp/docker-entrypoint.sh`.
-- **`frankenphp_dev`** — hérite de `frankenphp_base`, ajoute les outils dev (curl, xdebug), Node 24 (copié depuis `node:24-bookworm-slim`), et Dart Sass (`npm install -g sass`).
+- **`frankenphp_dev`** — hérite de `frankenphp_base`, ajoute les outils dev (curl, xdebug), Node 24 (copié depuis `node:24-bookworm-slim`), Dart Sass (`npm install -g sass`), et **D2** (binaire Go statique, version épinglée par l'`ARG D2_VERSION`, architecture détectée via `dpkg --print-architecture`).
 
 **`.frankenphp/` config files** (remplace l'ancien `.docker/`) :
 - `.frankenphp/Caddyfile` — config Caddy (root `/app/public`, worker mode FrankenPHP, hub Mercure intégré requis pour le hot-reload dev, fichiers statiques).
@@ -215,6 +216,7 @@ src/
 - **`Infrastructure/Twig/MenuBuilder`** — construit le fil d'Ariane pour la requête courante. Lit `_route` et `_route_params` depuis `RequestStack`. Gère : `page_home`, `page_contact`, `page_content`, `article_list`, `article_show`, `tutorial_list`, `tutorial_show`, `tutorial_chapter`, `publication_list_by_tag`, `publication_list_by_author`. Pour `tutorial_chapter`, injecte `TutorialRepository` afin d'insérer un crumb intermédiaire « série » libellé avec le **titre** du tutoriel (flag `translate: false` dans l'item, honoré par `layout/_breadcrumb.html.twig` pour ne pas passer le titre dans `|trans`). Les routes non gérées (ex: `rss`, `seo_robots`, `seo_sitemap`) retournent uniquement l'entrée home.
 - **`Infrastructure/Twig/MenuExtension`** — expose `MenuBuilder::breadcrumb()` via la fonction Twig `breadcrumb()`.
 - **`Infrastructure/Stenope/Processor/AssetsProcessor`** — post-traite le HTML des articles pour résoudre les URLs d'assets locaux pour les éléments `<source>` et `<video>` via le composant Asset de Symfony.
+- **`Infrastructure/Stenope/Processor/D2DiagramProcessor`** — remplace les `<img>` pointant vers un SVG D2 (détecté par l'attribut `data-d2-version`) par le SVG **inliné**, et duplique ses règles sombres en les préfixant par `[data-bs-theme="dark"]`. Motif : un SVG chargé via `<img>` est rendu dans un contexte isolé — il ne voit pas l'attribut `data-bs-theme` du document et sa media query `prefers-color-scheme` suit l'OS, pas le thème choisi sur le site. Les règles d'origine restent dans la media query mais sont préfixées par `:root:not([data-bs-theme="light"])` pour ne pas s'appliquer quand le visiteur force le thème clair. Le `alt` de l'`<img>` est reporté en `role="img"` + `aria-label` (ou `aria-hidden` si vide). **Priorité `100` portée par `#[AsTaggedItem(priority: 100)]` sur la classe** : il doit passer avant l'`AssetsProcessor` de Stenope, qui réécrit les `src` en URL publique. Ne pas utiliser une méthode statique `getDefaultPriority()` : elle fonctionne mais est **dépréciée depuis symfony/dependency-injection 8.1** (« Calling …::getDefaultPriority() to get the "priority" index is deprecated, use the #[AsTaggedItem] attribute instead »). Le tag `stenope.processor` lui-même vient de l'autoconfiguration sur `ProcessorInterface` (Stenope) ; le `#[AutoconfigureTag]` explicite de la classe fait double emploi mais Symfony dédoublonne les tags identiques — pas besoin de `autoconfigure: false`. Côté style, le hook CSS est `svg[data-d2-version]` dans `app.scss`.
 
 ### Content Files Format
 
@@ -303,6 +305,30 @@ make serve.slides   # Watch mode via Docker (marpteam/marp-cli image, port 8080)
 make build.slides   # Copy images to slides/images/, then npx marp
 ```
 The `marp` config in `package.json`: `inputDir: ./content/videos`, `glob: **/slides.md`, `output: ./slides`, `themeSet: ./assets/styles/slides`, theme `remij`, lang `fr`.
+
+### Diagrammes (`diagrams/`)
+
+Les schémas des articles et des slides sont écrits en [D2](https://d2lang.com) — un langage texte rendu par un **binaire Go statique**, sans navigateur headless (contrairement à Mermaid, dont le CLI passe par Puppeteer/Chromium).
+
+**Règle de nommage :** `diagrams/<chemin>.d2` → `assets/images/<chemin>.svg`. Les sources vivent hors d'`assets/` pour ne pas être exposées par l'AssetMapper.
+
+```
+diagrams/
+├── articles/flux-adr.d2      → assets/images/articles/flux-adr.svg
+└── slides/symfony-mvc.d2     → assets/images/slides/symfony-mvc.svg
+```
+
+**Rendu :** `make build.diagrams`, bâti sur des règles à motif Make — le rendu est **incrémental** (seules les sources modifiées sont recompilées) et évite qu'un `docker compose exec` dans une boucle n'avale le `stdin`.
+
+**Thèmes — le Makefile est la source de vérité.** Les flags CLI **écrasent** tout bloc `vars.d2-config` présent dans une source : ne pas y déclarer de `theme-id`, ce serait un piège à contresens. Deux jeux de flags, sélectionnés par la spécificité des règles à motif (GNU Make préfère le stem le plus court) :
+- `D2_FLAGS = --theme=0 --dark-theme=200` — cas général : **les deux palettes dans un seul SVG**, séparées par une media query `prefers-color-scheme`.
+- `D2_FLAGS_SLIDES = --theme=200 --dark-theme=200` — les slides Marp sont rendues en `class: invert` (fond sombre) sans bascule de thème.
+
+**Les SVG générés sont versionnés.** Le build de prod tourne **sur le serveur** (Deployer → `make build@dist`), qui n'a donc pas besoin de D2. En contrepartie, `build.diagrams` est une commande d'écriture : après avoir touché un `.d2`, il faut la lancer et commiter le SVG. `build.static` l'appelle en local, mais **`build@dist` non**, volontairement.
+
+**Piège de syntaxe :** une accolade dans un label est parsée comme un bloc D2. Les libellés de routes doivent être quotés — `nav -> res: "résout {slug:article}"`, sinon `edge map keys must be reserved keywords`.
+
+**Usage dans un contenu Markdown :** `![Description du schéma](images/articles/flux-adr.svg)` — chemin logique AssetMapper, **sans** slash initial. (Les slides Marp utilisent une autre mécanique : `![](/images/symfony-mvc.svg)` avec slash, car `build.slides` copie `assets/images/slides/` vers `slides/images/`.)
 
 ### Responders (`src/Responder/`)
 

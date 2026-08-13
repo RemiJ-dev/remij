@@ -87,6 +87,23 @@ RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
 	&& ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx \
 	&& npm install -g sass npm
 
+# D2 — moteur de diagrammes (binaire Go statique, aucune dépendance à l'exécution).
+# Cf. `make build.diagrams` : les SVG générés sont versionnés, donc le serveur de
+# prod (qui build hors Docker) n'a pas besoin de D2.
+ARG D2_VERSION=0.7.1
+RUN <<-EOF
+	arch="$(dpkg --print-architecture)"
+	case "$arch" in
+		amd64|arm64) ;;
+		*) echo "Architecture non supportée par D2: $arch" >&2; exit 1 ;;
+	esac
+	curl -fsSL "https://github.com/terrastruct/d2/releases/download/v${D2_VERSION}/d2-v${D2_VERSION}-linux-${arch}.tar.gz" -o /tmp/d2.tar.gz
+	tar -xzf /tmp/d2.tar.gz -C /tmp
+	install -m 0755 "/tmp/d2-v${D2_VERSION}/bin/d2" /usr/local/bin/d2
+	rm -rf /tmp/d2.tar.gz "/tmp/d2-v${D2_VERSION}"
+	d2 --version
+EOF
+
 
 COPY --link .frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
 
