@@ -25,6 +25,27 @@ SYMFONY = $(PHP_CONT) bin/console
 NPM = $(PHP_CONT) npm
 NPX = $(PHP_CONT) npx
 
+# D2 crée ses fichiers en 0600. Exécuté en root dans le conteneur, les SVG générés
+# seraient illisibles depuis l'hôte (ni copiables, ni versionnables) : on force donc
+# l'UID/GID de l'hôte. Le `$(if $(PHP_CONT),…)` garantit qu'un `PHP_CONT=` (CI,
+# ou exécution depuis le conteneur) neutralise aussi ce chemin.
+D2_EXEC = $(if $(PHP_CONT),$(DOCKER_COMP) exec -u $(shell id -u):$(shell id -g) php)
+D2 = $(D2_EXEC) d2
+
+# Thèmes D2 : 0 = Neutral default (clair), 200 = Dark Mauve (sombre).
+# Les deux palettes sont embarquées dans un seul SVG (media query), cf. build.diagrams.
+# Ces flags CLI écrasent tout bloc `d2-config` présent dans les sources : le thème
+# se pilote donc ici, et nulle part ailleurs.
+D2_FLAGS = --theme=0 --dark-theme=200
+
+# Les slides Marp sont rendues sur fond sombre (`class: invert`) et n'ont pas de
+# bascule clair/sombre : on force la palette sombre dans les deux cas.
+D2_FLAGS_SLIDES = --theme=200 --dark-theme=200
+
+# Sources des diagrammes : diagrams/<chemin>.d2 -> assets/images/<chemin>.svg
+D2_SOURCES := $(shell find diagrams -type f -name '*.d2' 2>/dev/null)
+D2_TARGETS := $(patsubst diagrams/%.d2,assets/images/%.svg,$(D2_SOURCES))
+
 .DEFAULT_GOAL = help # make without any arguments will exec help task
 
 ###########
@@ -105,8 +126,23 @@ build.content: clear.images clear.cache
 build.content.without-images: clear.cache
 	$(SYMFONY) stenope:build --env=prod
 
+## Build - Render D2 diagram sources to SVG (incremental: only changed sources)
+build.diagrams: $(D2_TARGETS)
+.PHONY: build.diagrams
+
+# Règle plus spécifique (stem plus court) : GNU Make la préfère pour les slides.
+assets/images/slides/%.svg: diagrams/slides/%.d2
+	mkdir -p $(dir $@)
+	$(D2) $(D2_FLAGS_SLIDES) $< $@
+	chmod 644 $@
+
+assets/images/%.svg: diagrams/%.d2
+	mkdir -p $(dir $@)
+	$(D2) $(D2_FLAGS) $< $@
+	chmod 644 $@
+
 ## Build - Build static site with assets
-build.static: clear.cache build.assets build.content build.slides
+build.static: clear.cache build.diagrams build.assets build.content build.slides
 
 ## Build - Build slides with assets
 build.slides:
