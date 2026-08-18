@@ -33,6 +33,7 @@ make build.assets     # Compile assets for production
 make build.content    # Build static site (APP_ENV=prod, clears image cache)
 make build.content.without-images  # Faster build, skips image resizing
 make build.slides     # Copy slide images, then compile Marp slides
+make build.diagrams   # Render D2 diagram sources (diagrams/**/*.d2) to SVG
 ```
 
 ### Lint
@@ -93,7 +94,7 @@ Site accessible sur **https://localhost** (port 443, certificat auto-signé Cadd
 
 **`Dockerfile`** (multi-stage, image de base `dunglas/frankenphp:1-php8.5`, Debian) :
 - **`frankenphp_base`** — installe les extensions PHP (apcu, intl, opcache, zip), Composer, et l'entrypoint `frankenphp/docker-entrypoint.sh`.
-- **`frankenphp_dev`** — hérite de `frankenphp_base`, ajoute les outils dev (curl, xdebug), Node 24 (copié depuis `node:24-bookworm-slim`), et Dart Sass (`npm install -g sass`).
+- **`frankenphp_dev`** — hérite de `frankenphp_base`, ajoute les outils dev (curl, xdebug), Node 24 (copié depuis `node:24-bookworm-slim`), Dart Sass (`npm install -g sass`), et **D2** (binaire Go statique, version épinglée par l'`ARG D2_VERSION`, architecture détectée via `dpkg --print-architecture`).
 
 **`.frankenphp/` config files** (remplace l'ancien `.docker/`) :
 - `.frankenphp/Caddyfile` — config Caddy (root `/app/public`, worker mode FrankenPHP, hub Mercure intégré requis pour le hot-reload dev, fichiers statiques).
@@ -215,6 +216,19 @@ src/
 - **`Infrastructure/Twig/MenuBuilder`** — construit le fil d'Ariane pour la requête courante. Lit `_route` et `_route_params` depuis `RequestStack`. Gère : `page_home`, `page_contact`, `page_content`, `article_list`, `article_show`, `tutorial_list`, `tutorial_show`, `tutorial_chapter`, `publication_list_by_tag`, `publication_list_by_author`. Pour `tutorial_chapter`, injecte `TutorialRepository` afin d'insérer un crumb intermédiaire « série » libellé avec le **titre** du tutoriel (flag `translate: false` dans l'item, honoré par `layout/_breadcrumb.html.twig` pour ne pas passer le titre dans `|trans`). Les routes non gérées (ex: `rss`, `seo_robots`, `seo_sitemap`) retournent uniquement l'entrée home.
 - **`Infrastructure/Twig/MenuExtension`** — expose `MenuBuilder::breadcrumb()` via la fonction Twig `breadcrumb()`.
 - **`Infrastructure/Stenope/Processor/AssetsProcessor`** — post-traite le HTML des articles pour résoudre les URLs d'assets locaux pour les éléments `<source>` et `<video>` via le composant Asset de Symfony.
+- **`Infrastructure/Stenope/Processor/D2DiagramProcessor`** — remplace les `<img>` pointant vers un SVG D2 (détecté par l'attribut `data-d2-version`) par le SVG **inliné**, et réécrit sa feuille de style. Motif : un SVG chargé via `<img>` est rendu dans un contexte isolé — il ne voit pas l'attribut `data-bs-theme` du document et sa media query `prefers-color-scheme` suit l'OS, pas le thème choisi sur le site.
+
+  **Deux transformations, indissociables :**
+  1. **Scoping.** Inliner fait perdre au SVG l'isolation de son propre document. Or D2 laisse une vingtaine de règles **non qualifiées** de chaque côté du thème (`.shape`, `.connection`, `.blend`, `.md`, `.light-code`, `.dark-code`, `.appendix text.text`, `.sketch-overlay-*`) : inertes dans une `<img>`, elles s'appliqueraient à toute la page une fois inlinées. Chaque sélecteur est donc préfixé par `svg[data-d2-version]`. Ça règle aussi la collision des `.sketch-overlay-*` entre deux diagrammes d'une même page (dégradés identifiés par diagramme, sélecteurs communs).
+  2. **Thème.** La media query sombre est **remplacée** — et non conservée — par des règles préfixées `[data-bs-theme="dark"]`. `assets/app.js` résout toujours le thème en `light`/`dark` explicite avant de le poser sur `<html>`, la media query n'apporte donc rien ; la garder ferait diverger le diagramme de sa page tant que le JS n'a pas tourné (fond clair par défaut Bootstrap, schéma sombre) et doublerait le poids des règles sombres.
+
+  La réécriture passe par un **parcours de la CSS**, pas une regex plate : les at-rules doivent être distinguées des règles de style. Préfixer un `@font-face` produirait une règle que les navigateurs jettent — les polices du diagramme disparaîtraient sans la moindre erreur. Les at-rules « conteneurs » (`@media`, `@supports`, `@layer`, `@container`) sont parcourues récursivement ; les autres (`@font-face`, `@keyframes`, `@page`) sont laissées intactes. Les listes de sélecteurs sont découpées sur les virgules de **premier niveau** seulement, pour ne pas casser `:is(.a,.b)` ni `[attr="a,b"]`.
+
+  Le balisage réécrit est **mémoïsé** par fichier source + date de modification (un même diagramme peut être référencé par plusieurs contenus ; un SVG étranger à D2 serait sinon relu en entier à chaque occurrence). La date entre dans la clé car en mode worker le processus survit aux éditions de fichiers.
+
+  Le `alt` de l'`<img>` est reporté en `role="img"` + `aria-label` (ou `aria-hidden` si vide). **Priorité `100` portée par `#[AsTaggedItem(priority: 100)]` sur la classe** : il doit passer avant l'`AssetsProcessor` de Stenope, qui réécrit les `src` en URL publique. Ne pas utiliser une méthode statique `getDefaultPriority()` : elle fonctionne mais est **dépréciée depuis symfony/dependency-injection 8.1** (« Calling …::getDefaultPriority() to get the "priority" index is deprecated, use the #[AsTaggedItem] attribute instead »). Le tag `stenope.processor` vient de l'autoconfiguration sur `ProcessorInterface` (Stenope) — **ne pas ajouter de `#[AutoconfigureTag]`**, ce serait un doublon sans effet. Côté style, le hook CSS est `svg[data-d2-version]` dans `app.scss`.
+
+  **Coût assumé :** inliner échange une image cacheable (31 Ko) contre ~38 Ko de HTML non cacheable, dont ~13 Ko de polices WOFF en base64 que D2 embarque et namespace par diagramme. Elles ne sont pas retirables sans risque : D2 positionne son texte avec les métriques de ces polices. Si les diagrammes se multiplient sur une même page, c'est le premier levier à revoir (extraction des polices en asset externe).
 
 ### Content Files Format
 
@@ -303,6 +317,35 @@ make serve.slides   # Watch mode via Docker (marpteam/marp-cli image, port 8080)
 make build.slides   # Copy images to slides/images/, then npx marp
 ```
 The `marp` config in `package.json`: `inputDir: ./content/videos`, `glob: **/slides.md`, `output: ./slides`, `themeSet: ./assets/styles/slides`, theme `remij`, lang `fr`.
+
+### Diagrammes (`diagrams/`)
+
+Les schémas des articles et des slides sont écrits en [D2](https://d2lang.com) — un langage texte rendu par un **binaire Go statique**, sans navigateur headless (contrairement à Mermaid, dont le CLI passe par Puppeteer/Chromium).
+
+**Règle de nommage :** `diagrams/<chemin>.d2` → `assets/images/<chemin>.svg`. Les sources vivent hors d'`assets/` pour ne pas être exposées par l'AssetMapper.
+
+```
+diagrams/
+├── articles/flux-adr.d2      → assets/images/articles/flux-adr.svg
+└── slides/symfony-mvc.d2     → assets/images/slides/symfony-mvc.svg
+```
+
+**Rendu :** `make build.diagrams`, bâti sur des règles à motif Make — le rendu est **incrémental** (seules les sources modifiées sont recompilées) et évite qu'un `docker compose exec` dans une boucle n'avale le `stdin`. Le `Makefile` est **prérequis des deux règles** : il porte les flags, donc en changer suffit à déclencher un nouveau rendu. Un `.DELETE_ON_ERROR:` garantit qu'un `d2` interrompu ne laisse pas un SVG tronqué — avec un mtime frais, il serait considéré à jour par le rendu incrémental et partirait en commit.
+
+**Thèmes — le Makefile est la source de vérité.** Les flags CLI **écrasent** tout bloc `vars.d2-config` présent dans une source : ne pas y déclarer de `theme-id`, ce serait un piège à contresens. Deux jeux de flags, sélectionnés par la spécificité des règles à motif (GNU Make préfère le stem le plus court), partageant un socle commun :
+- `D2_FLAGS_BASE = --scale=1` — **obligatoire**. Le défaut de D2 (`--scale=-1`, « fit to screen ») omet `width`/`height` sur la racine du SVG. Sans taille intrinsèque, un SVG chargé via `<img>` retombe sur la taille par défaut des éléments remplacés (300×150) : les slides Marp affichaient un diagramme de 430×642 en ~100×150 px. Le dimensionnement responsive se fait en CSS (`max-width`), pas par l'absence d'attributs.
+- `D2_FLAGS = $(D2_FLAGS_BASE) --theme=0 --dark-theme=200` — cas général : **les deux palettes dans un seul SVG**, séparées à la génération par une media query `prefers-color-scheme` que le `D2DiagramProcessor` remplace ensuite par `[data-bs-theme="dark"]`.
+- `D2_FLAGS_SLIDES = $(D2_FLAGS_BASE) --theme=200 --dark-theme=200` — les slides Marp sont rendues en `class: invert` (fond sombre) sans bascule de thème.
+
+**Les SVG générés sont versionnés.** Le build de prod tourne **sur le serveur** (Deployer → `make build@dist`), qui n'a donc pas besoin de D2. En contrepartie, `build.diagrams` est une commande d'écriture : après avoir touché un `.d2`, il faut la lancer et commiter le SVG. `build.static` l'appelle en local, mais **`build@dist` non**, volontairement — le serveur consomme le SVG déjà compilé, arrivé par le `git clone` de Deployer. Ce fichier est load-bearing au build prod : `D2DiagramProcessor` le lit via `AssetMapper::getAsset()->sourcePath` pendant `stenope:build`, et son absence laisserait une `<img>` réécrite vers une URL 404.
+
+**Garde-fou CI (`tests.yaml`, étape « Check diagrams are up to date »).** Puisque rien côté serveur ne recompile les diagrammes, un `.d2` modifié sans son SVG régénéré déploierait silencieusement l'ancien schéma. La CI installe donc D2 — **version lue dans le `Dockerfile`** (`ARG D2_VERSION`), la régénérer avec une autre version produirait un diff permanent — relance le rendu et échoue sur `git diff --exit-code -- assets/images`. Deux pièges à connaître avant d'y toucher :
+- **`make -B` est indispensable.** Un checkout frais donne à tous les fichiers le même mtime : le rendu incrémental ne verrait aucune source plus récente que sa cible, ne régénérerait rien, et le contrôle ne détecterait jamais rien.
+- La sortie de D2 est **déterministe** à version et flags constants (identifiants de diagramme dérivés du contenu), c'est ce qui rend la comparaison octet à octet fiable.
+
+**Piège de syntaxe :** une accolade dans un label est parsée comme un bloc D2. Les libellés de routes doivent être quotés — `nav -> res: "résout {slug:article}"`, sinon `edge map keys must be reserved keywords`.
+
+**Usage dans un contenu Markdown :** `![Description du schéma](images/articles/flux-adr.svg)` — chemin logique AssetMapper, **sans** slash initial. (Les slides Marp utilisent une autre mécanique : `![](/images/symfony-mvc.svg)` avec slash, car `build.slides` copie `assets/images/slides/` vers `slides/images/`.)
 
 ### Responders (`src/Responder/`)
 

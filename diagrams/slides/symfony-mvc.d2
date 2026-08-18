@@ -1,0 +1,18 @@
+# Rendu en palette sombre pour les slides Marp (`class: invert`).
+# Le thème est piloté par D2_FLAGS_SLIDES dans le Makefile.
+
+direction: down
+
+utilisateur: Utilisateur {
+  shape: person
+}
+controller: Controller
+modele: Modèle
+vue: Vue
+
+utilisateur -> controller: 1
+controller -> modele: 2
+modele -> controller: 3
+controller -> vue: 4
+vue -> controller: 5
+controller -> utilisateur: 6
