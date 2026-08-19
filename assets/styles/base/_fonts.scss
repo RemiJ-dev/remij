@@ -1,0 +1,35 @@
+///////////////////
+////// Fonts //////
+///////////////////
+
+@font-face {
+    font-weight: 400;
+    font-family: Gotham;
+    font-style: normal;
+    font-display: swap;
+    src: url('../../fonts/gotham/gotham-book.woff2');
+}
+
+@font-face {
+    font-weight: 500;
+    font-family: Gotham;
+    font-style: normal;
+    font-display: swap;
+    src: url('../../fonts/gotham/gotham-medium.woff2');
+}
+
+@font-face {
+    font-weight: 700;
+    font-family: Gotham;
+    font-style: normal;
+    font-display: swap;
+    src: url('../../fonts/gotham/gotham-bold.woff2');
+}
+
+@font-face {
+    font-weight: 300;
+    font-family: Gotham-Light;
+    font-style: normal;
+    font-display: swap;
+    src: url('../../fonts/gotham/gotham-light.woff2');
+}

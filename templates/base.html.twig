@@ -48,19 +48,19 @@
     </head>
     <body>
         {% block header %}
-            {% include 'layout/_header.html.twig' %}
+            {{ include('layout/_header.html.twig') }}
         {% endblock %}
 
         <main class="container main">
-            {% include 'layout/_breadcrumb.html.twig' %}
+            {{ include('layout/_breadcrumb.html.twig') }}
 
-            {% include 'layout/_flashes.html.twig' %}
+            {{ include('layout/_flashes.html.twig') }}
 
-            {% block content %}{% endblock %}
+            {% block content '' %}
         </main>
 
         {% block footer %}
-            {% include 'layout/_footer.html.twig' %}
+            {{ include('layout/_footer.html.twig') }}
         {% endblock %}
     </body>
 </html>

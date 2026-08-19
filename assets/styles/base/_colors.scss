@@ -1,0 +1,60 @@
+////////////////
+//// Colors ////
+////////////////
+
+////////////////
+//// Colors ////
+////////////////
+
+@use 'sass:map';
+
+$theme-colors: (
+    'black': #000,
+    'white': #fff,
+    'gray': #6c757d,
+    'gray-dark': #343a40,
+    'gray-100': #f8f9fa,
+    'gray-200': #e9ecef,
+    'gray-300': #dee2e6,
+    'gray-400': #ced4da,
+    'gray-500': #adb5bd,
+    'gray-600': #6c757d,
+    'gray-700': #495057,
+    'gray-800': #343a40,
+    'gray-900': #212529,
+    'light': #f8f9fa,
+    'dark': #212529,
+    'red': #dc3545,
+    'orange': #fd7e14,
+    'yellow': #ffc107,
+    'cyan': #0dcaf0,
+    'primary': #0d6efd,
+    'secondary': #6c757d,
+    'success': #198754,
+    'info': #0dcaf0,
+    'warning': #ffc107,
+    'danger': #dc3545,
+    'bg': #eee,
+);
+
+$theme-colors-dark-overrides: (
+    'bg': #404040,
+);
+
+$theme-colors-dark: map.merge(
+    $theme-colors,
+    $theme-colors-dark-overrides
+);
+
+:root,
+[data-bs-theme='light'] {
+    @each $name, $value in $theme-colors {
+        --color-#{$name}: #{$value};
+    }
+}
+
+[data-bs-theme='dark'] {
+    @each $name, $value in $theme-colors-dark-overrides {
+        --color-#{$name}: #{$value};
+    }
+}

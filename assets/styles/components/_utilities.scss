@@ -1,0 +1,23 @@
+///////////////////
+//// Utilities ////
+///////////////////
+
+.disabled {
+    cursor: not-allowed !important;
+    opacity: 0.3;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.anchor {
+    position: relative;
+    top: -15rem;
+}
+
+[class*="columns"] {
+    > * {
+        break-inside: avoid-column;
+    }
+}
