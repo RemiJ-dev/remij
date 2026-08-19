@@ -1,7 +1,6 @@
 // start the Stimulus application
 import './stimulus_bootstrap.js';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
 // Applied immediately to prevent flash of wrong theme

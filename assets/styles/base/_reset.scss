@@ -1,0 +1,165 @@
+//////////////
+//// Base ////
+//////////////
+
+// base border-box-model
+*,
+::before,
+::after {
+    box-sizing: inherit;
+}
+
+// base elements
+html {
+    box-sizing: border-box;
+    font-size: calc(1em * 0.625);
+    min-height: 100vh;
+    overflow: hidden !important;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--color-gray-500);
+    color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    height: 100dvh;
+    min-height: 100vh;
+    overflow: hidden scroll;
+    scroll-behavior: smooth;
+}
+
+main {
+    flex-grow: 1;
+    min-height: calc(100vh - 7rem);
+    padding-bottom: var(--bs-gutter-x);
+    padding-top: var(--bs-gutter-x);
+}
+
+::selection {
+    background: var(--color-secondary);
+    text-shadow: none;
+}
+
+a {
+    color: var(--color-secondary);
+    text-decoration: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+        color: var(--color-secondary);
+    }
+}
+
+ul,
+ol {
+    padding-left: 1.2rem;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+ol ol {
+    list-style-type: lower-latin;
+}
+
+img {
+    height: auto;
+    vertical-align: middle;
+}
+
+blockquote,
+figure {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+section {
+    transition: all 0.25s;
+}
+
+// base typography
+p,
+.c-p,
+ul,
+ol,
+dl,
+blockquote,
+pre,
+td,
+th,
+caption,
+details,
+figure {
+    line-height: var(--line-height-base);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-family-base);
+    font-weight: var(--font-weight-normal);
+}
+
+h2 + p {
+    margin-top: var(--spacer-3);
+}
+
+code,
+pre,
+samp,
+kbd {
+    font-family: var(--font-family-monospace);
+    line-height: normal;
+    white-space: pre-wrap;
+}
+
+em,
+address,
+cite,
+i,
+var {
+    font-style: italic;
+}
+
+a,
+p {
+    font-family: var(--font-family-base);
+}
+
+mark {
+    padding: 0.075em 0.25em;
+    color: var(--color-secondary);
+}
+
+// base max values
+img,
+table,
+td,
+blockquote,
+code,
+pre,
+textarea,
+input,
+video,
+svg {
+    max-width: 100%;
+}
+
+hr {
+    border-color: var(--color-gray-300);
+    margin: var(--spacer-6) 0;
+    opacity: 1;
+}
+
+b, strong {
+    font-weight: var(--font-weight-medium);
+}

@@ -1,0 +1,65 @@
+///////////////////
+//// Variables ////
+///////////////////
+
+$spacer: 1rem;
+
+$spacers: (
+    n1: -($spacer * 0.25),
+    n2: -($spacer * 0.5),
+    n3: -$spacer,
+    n4: -($spacer * 1.5),
+    n5: -($spacer * 3),
+    0: 0,
+    1: ($spacer * 0.25),
+    2: ($spacer * 0.5),
+    3: $spacer,
+    4: ($spacer * 1.5),
+    5: ($spacer * 2),
+    6: ($spacer * 3),
+    7: ($spacer * 4),
+    8: ($spacer * 5),
+    9: ($spacer * 7),
+    10: ($spacer * 10)
+);
+
+:root {
+    // Spacers
+    @each $name, $value in $spacers {
+        --spacer-#{$name}: #{$value};
+    }
+
+    // Shadows
+    --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+    --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+
+    // Fonts/Text
+    --font-family-base: Gotham, sans-serif;
+    --font-family-monospace: consolas, courier, monospace;
+
+    --font-size-base: 1rem;
+    --font-size-xs: calc(0.6 * var(--font-size-base));
+    --font-size-sm: calc(0.8 * var(--font-size-base));
+    --font-size-md: calc(1.5 * var(--font-size-base));
+    --font-size-lg: calc(2 * var(--font-size-base));
+    --font-size-xl: calc(3 * var(--font-size-base));
+    --font-size-xxl: calc(4 * var(--font-size-base));
+
+    --font-weight-lighter: 100;
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+    --font-weight-bolder: 900;
+
+    --line-height-base: 1.3;
+
+    // Delays
+    --delay-resize-transition: 0.25s;
+    --delay-button-transition: 0.15s;
+
+    // Header
+    --header-height: 6rem;
+}
