@@ -1,0 +1,68 @@
+/////////////////////////////////
+//// BS Custom Configuration ////
+/////////////////////////////////
+
+@use 'sass:map';
+
+@use '../../base/colors' as colors;
+@use '../../base/variables' as variables;
+
+// Colors
+$primary: map.get(colors.$theme-colors, 'primary');
+$secondary: map.get(colors.$theme-colors, 'secondary');
+$success: map.get(colors.$theme-colors, 'success');
+$info: map.get(colors.$theme-colors, 'info');
+$warning: map.get(colors.$theme-colors, 'warning');
+$danger: map.get(colors.$theme-colors, 'danger');
+$light: map.get(colors.$theme-colors, 'light');
+$dark: map.get(colors.$theme-colors, 'dark');
+
+$theme-colors: colors.$theme-colors;
+
+
+// Body colors
+$body-bg: map.get(colors.$theme-colors, 'white');
+$body-color: map.get(colors.$theme-colors, 'dark');
+
+$body-bg-dark: map.get(colors.$theme-colors-dark, 'dark');
+$body-color-dark: map.get(colors.$theme-colors-dark, 'white');
+
+
+// Root / Typography
+$font-family-sans-serif: variables.$font-family-base;
+$font-family-monospace: variables.$font-family-monospace;
+$font-family-base: variables.$font-family-base;
+
+$font-size-base: variables.$font-size-base;
+
+$font-weight-lighter: variables.$font-weight-lighter;
+$font-weight-light: variables.$font-weight-light;
+$font-weight-normal: variables.$font-weight-normal;
+$font-weight-medium: variables.$font-weight-medium;
+$font-weight-bold: variables.$font-weight-bold;
+$font-weight-bolder: variables.$font-weight-bolder;
+$font-weight-base: variables.$font-weight-normal;
+
+$line-height-base: variables.$line-height-base;
+
+
+// Headings
+$headings-font-family: variables.$font-family-base;
+$headings-font-weight: variables.$font-weight-normal;
+
+
+// Links
+$link-color: $primary;
+$link-hover-color: $primary;
+$link-decoration: none;
+
+
+// Global spacing
+$spacer: variables.$spacer;
+
+
+// Shadows
+$box-shadow: variables.$shadow;
+$box-shadow-sm: variables.$shadow-sm;
+$box-shadow-lg: variables.$shadow-lg;
+$box-shadow-inset: variables.$shadow-inset;

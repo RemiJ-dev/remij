@@ -1,7 +1,3 @@
-@use 'sass:map';
-@use '../../base/colors' as colors;
-
-
 // -------------------------------------
 // 1. Bootstrap functions
 // -------------------------------------
@@ -13,14 +9,7 @@
 // 2. Project → Bootstrap configuration
 // -------------------------------------
 
-$primary: map.get(colors.$theme-colors, 'primary');
-$secondary: map.get(colors.$theme-colors, 'secondary');
-$success: map.get(colors.$theme-colors, 'success');
-$info: map.get(colors.$theme-colors, 'info');
-$warning: map.get(colors.$theme-colors, 'warning');
-$danger: map.get(colors.$theme-colors, 'danger');
-
-$theme-colors: colors.$theme-colors;
+@import 'configuration';
 
 
 // -------------------------------------

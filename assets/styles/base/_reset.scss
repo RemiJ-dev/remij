@@ -1,18 +1,17 @@
-//////////////
-//// Base ////
-//////////////
+///////////////
+//// Reset ////
+///////////////
 
-// base border-box-model
+// border-box-model
 *,
 ::before,
 ::after {
     box-sizing: inherit;
 }
 
-// base elements
+// elements
 html {
     box-sizing: border-box;
-    font-size: calc(1em * 0.625);
     min-height: 100vh;
     overflow: hidden !important;
 }
@@ -20,12 +19,8 @@ html {
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--color-gray-500);
-    color: var(--color-white);
     display: flex;
     flex-direction: column;
-    font-family: var(--font-family-base);
-    font-size: var(--font-size-base);
     height: 100dvh;
     min-height: 100vh;
     overflow: hidden scroll;
@@ -40,13 +35,14 @@ main {
 }
 
 ::selection {
-    background: var(--color-secondary);
+    background: var(--color-primary);
+    color: var(--color-white);
     text-shadow: none;
 }
 
 a {
-    color: var(--color-secondary);
-    text-decoration: none;
+    color: var(--color-primary);
+    text-decoration: underline;
 
     &:hover,
     &:focus,
@@ -83,7 +79,7 @@ section {
     transition: all 0.25s;
 }
 
-// base typography
+// typography
 p,
 .c-p,
 ul,
@@ -140,7 +136,7 @@ mark {
     color: var(--color-secondary);
 }
 
-// base max values
+// max values
 img,
 table,
 td,
@@ -160,6 +156,7 @@ hr {
     opacity: 1;
 }
 
-b, strong {
+b,
+strong {
     font-weight: var(--font-weight-medium);
 }
