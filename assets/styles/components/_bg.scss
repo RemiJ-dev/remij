@@ -1,0 +1,47 @@
+////////////////////
+//// Background ////
+////////////////////
+
+.bg-visual {
+    position: absolute;
+    z-index: -1;
+
+    &--top {
+        right: 0;
+        width: 20%;
+    }
+
+    &--left-1 {
+        padding-right: var(--spacer-5);
+        top: 25vw;
+        width: var(--container-margin);
+    }
+
+    &--right-1 {
+        right: 0;
+        top: 40vw;
+        width: 40%;
+    }
+
+    &--active-menu {
+        top: 0;
+        transition: all 0.25s;
+        width: 31rem;
+
+        &-1 {
+            right: calc(var(--container-margin) + 36rem);
+        }
+
+        &-2 {
+            right: calc(var(--container-margin) + 25rem);
+        }
+
+        &-3 {
+            right: calc(var(--container-margin) + 15rem);
+        }
+
+        &-4 {
+            right: calc(var(--container-margin) + 3rem);
+        }
+    }
+}

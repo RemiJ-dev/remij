@@ -4,9 +4,9 @@ layout:
     header:
         toggle_navigation: "Ouvrir la navigation"
         theme:
-            toggle: "Couleurs"
-            light: "Claires"
-            dark: "Sombres"
+            toggle: "Thème"
+            light: "Clair"
+            dark: "Sombre"
             auto: "Auto"
     flashes:
         close: "Fermer"

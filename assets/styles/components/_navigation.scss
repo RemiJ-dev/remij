@@ -1,3 +1,38 @@
 ////////////////////
 //// Navigation ////
 ////////////////////
+
+.navbar-brand__logo--dark {
+    display: none;
+}
+
+[data-bs-theme='dark'] {
+    .navbar-brand__logo--light {
+        display: none;
+    }
+
+    .navbar-brand__logo--dark {
+        display: block;
+    }
+}
+
+.nav-link {
+    color: var(--color-white);
+    font-size: 1.1em;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:not(.active) {
+        &:hover,
+        &:active,
+        &:focus {
+            color: var(--color-primary);
+        }
+    }
+}
+
+.navbar-nav {
+    &--main {
+        gap: 5rem;
+    }
+}

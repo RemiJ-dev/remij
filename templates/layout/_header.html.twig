@@ -1,8 +1,19 @@
-<header class="container navbar navbar-expand-lg sticky-top bg-primary-subtle">
+<header
+    class="container navbar navbar-expand-lg sticky-top"
+    {{ stimulus_controller('toggle-class') }}
+>
     <nav class="container-fluid">
         <a href="{{ path('page_home') }}" class="navbar-brand">
-            <img src="{{ asset('images/logo/logo_inline.svg') }}" alt="">
-{#            {{ site.title }}#}
+            <img
+                src="{{ asset('images/logo/logo_inline.svg') }}"
+                alt="{{ site.title }}"
+                class="navbar-brand__logo navbar-brand__logo--light w-50"
+            >
+            <img
+                src="{{ asset('images/logo/logo_inline-dark.svg') }}"
+                alt="{{ site.title }}"
+                class="navbar-brand__logo navbar-brand__logo--dark w-50"
+            >
         </a>
         <button type="button"
                 class="navbar-toggler"
@@ -14,16 +25,23 @@
         >
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-            <ul class="navbar-nav">
+
+        <div class="collapse navbar-collapse justify-content-end position-relative" id="navbarNav">
+            <ul class="navbar-nav navbar-nav--main">
+                {% set route = app.request.attributes.get('_route') %}
+                {% set activeMenuPosition = null %}
+
                 {% for item in site.menu %}
-                    {% set route = app.request.attributes.get( '_route' ) %}
-                    {% set isActive = item.path is defined and route == item.path or route in item.children|default([]) %}
+                    {% set isActive = item.path is defined
+                        and route == item.path
+                        or route in item.children|default([])
+                    %}
 
                     <li class="nav-item">
-                        <a href="{{ item.url ?? path(item.path, item.params|default({})) }}"
-                           class="nav-link{% if isActive %} active{% endif %}"
-                           {% if item.url is defined %}target="_blank"{% endif %}
+                        <a
+                            href="{{ item.url ?? path(item.path, item.params|default({})) }}"
+                            class="nav-link{% if isActive %} active{% endif %}"
+                            {% if item.url is defined %}target="_blank"{% endif %}
                         >
                             {% if item.icon|default(false) %}
                                 <i class="icon icon--{{ item.icon }}" aria-hidden="true"></i>

@@ -2,6 +2,8 @@
 //// Variables ////
 ///////////////////
 
+@use 'sass:map';
+
 // Spacers
 $spacer: 1rem;
 
@@ -24,11 +26,37 @@ $spacers: (
     10: ($spacer * 10)
 );
 
+// Grid
+$grid-breakpoints: (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 992px,
+    xl: 1200px,
+    xxl: 1400px
+);
+
+$grid-gutter-width: 1.5rem;
+
+// Containers
+$container-max-widths: (
+    sm: 540px,
+    md: 720px,
+    lg: 960px,
+    xl: 1140px,
+    xxl: 1320px
+);
+
+$container-padding-x: $grid-gutter-width * 0.5;
+$container-padding-x-total: $container-padding-x * 2;
+
+
 // Shadows
 $shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 $shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 $shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
 $shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+
 
 // Fonts / Text
 $font-family-base: Gotham, sans-serif;
@@ -51,10 +79,37 @@ $font-weight-bolder: 900;
 
 $line-height-base: 1.3;
 
+
 :root {
     // Spacers
     @each $name, $value in $spacers {
         --spacer-#{$name}: #{$value};
+    }
+
+
+    // Grid
+    --grid-gutter-width: #{$grid-gutter-width};
+
+
+    // Containers
+    --container-padding-x: #{$container-padding-x};
+    --container-padding-x-total: #{$container-padding-x-total};
+    --container-max-width: 100vw;
+    --container-margin: calc((100vw - var(--container-max-width)) / 2);
+
+    // Largeur maximale réellement disponible pour le contenu
+    --container-content-max-width: calc(var(--container-max-width) - var(--container-padding-x-total));
+
+    // Distance entre le bord du viewport et le bord extérieur du container
+    --container-viewport-gap: max(0px, calc((100vw - var(--container-max-width)) / 2));
+
+    // Distance entre le bord du viewport et le début réel du contenu
+    --container-content-viewport-gap: calc(var(--container-viewport-gap) + var(--container-padding-x));
+
+    @each $breakpoint, $max-width in $container-max-widths {
+        @media (min-width: map.get($grid-breakpoints, $breakpoint)) {
+            --container-max-width: #{$max-width};
+        }
     }
 
     // Shadows
@@ -62,6 +117,7 @@ $line-height-base: 1.3;
     --shadow-sm: #{$shadow-sm};
     --shadow-lg: #{$shadow-lg};
     --shadow-inset: #{$shadow-inset};
+
 
     // Fonts / Text
     --font-family-base: #{$font-family-base};
@@ -84,9 +140,11 @@ $line-height-base: 1.3;
 
     --line-height-base: #{$line-height-base};
 
+
     // Delays
     --delay-resize-transition: 0.25s;
     --delay-button-transition: 0.15s;
+
 
     // Header
     --header-height: 6rem;
