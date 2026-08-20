@@ -1,0 +1,16 @@
+symfonycasts_sass:
+    sass_options:
+        # Permet aux `@use`/`@import` des vendors (Bootstrap…) de résoudre
+        load_path:
+            - '%kernel.project_dir%/node_modules'
+        quiet_deps: true
+
+        # Source map en fichier séparé (`var/sass/*.output.css.map`) au lieu d'être embarquée dans le CSS.
+        # C'est ce fichier qui sert de signal « compilation terminée » au hot reload FrankenPHP :
+        # le client JS traite tout event `.css` dans une branche dédiée dont la regex ne matche jamais
+        # les URLs digestées d'AssetMapper — il faut donc un artefact d'une autre extension.
+        # Voir « hot reload du CSS » dans CLAUDE.md. On ne perd rien : les sources référencées par la map
+        # (`../../assets/styles/*.scss`) ne sont de toute façon pas servies (404), et il n'y a pas de
+        # `sourcesContent`. Pour des source maps réellement exploitables en devtools, il faudrait
+        # `embed_source_map: true` + `embed_sources: true` — mais le hot reload du CSS ne marcherait plus.
+        embed_source_map: false
