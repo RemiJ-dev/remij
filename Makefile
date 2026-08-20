@@ -34,9 +34,6 @@ NPX = $(PHP_CONT) npx
 ## Install dependencies
 install: install.composer install.npm install.assets
 
-install.npm:
-	$(NPM) install
-
 install.assets:
 	$(SYMFONY) importmap:install
 
@@ -209,6 +206,15 @@ composer: ## Run composer, pass the parameter "c=" to run a given command, examp
 install.composer: ## Install Composer vendors (dev included)
 install.composer: c=install --prefer-dist --no-progress --no-scripts --no-interaction
 install.composer: composer
+
+## —— NPM 🧙 ——————————————————————————————————————————————————————————————
+npm: ## Run npm, pass the parameter "c=" to run a given command, example: make npm c='install -D bootstrap'
+	@$(eval c ?=)
+	@$(NPM) $(c)
+
+install.npm: ## Install npm vendors
+install.npm: c=install
+install.npm: npm
 
 ## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
 sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
