@@ -1,0 +1,33 @@
+<img src="{{ asset('images/layout/bg-element-top.svg') }}" alt="" class="bg-visual bg-visual--top">
+<img src="{{ asset('images/layout/bg-element-left-1.svg') }}" alt="" class="bg-visual bg-visual--left-1">
+<img src="{{ asset('images/layout/bg-element-right-1.svg') }}" alt="" class="bg-visual bg-visual--right-1">
+
+{% set route = app.request.attributes.get('_route') %}
+{% set activeMenuPosition = null %}
+
+{% for item in site.menu %}
+    {% set isActive =
+        (item.path is defined and route == item.path)
+        or
+        (route in item.children|default([]))
+    %}
+
+    <!--
+        index: {{ loop.index }}
+        label: {{ item.label }}
+        route courante: {{ route }}
+        path: {{ item.path|default('NO PATH') }}
+        children: {{ item.children|default([])|json_encode }}
+        active: {{ isActive ? 'YES' : 'NO' }}
+    -->
+
+    {% if isActive %}
+        {% set activeMenuPosition = loop.index %}
+    {% endif %}
+{% endfor %}
+
+<img
+    src="{{ asset('images/layout/bg-active-menu.svg') }}"
+    alt=""
+    class="bg-visual bg-visual--active-menu{% if activeMenuPosition is not null %} bg-visual--active-menu-{{ activeMenuPosition }}{% endif %}"
+>

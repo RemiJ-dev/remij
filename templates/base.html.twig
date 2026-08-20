@@ -47,6 +47,8 @@
         {% endif %}
     </head>
     <body>
+        {{ include('layout/_bg.html.twig') }}
+
         {% block header %}
             {{ include('layout/_header.html.twig') }}
         {% endblock %}

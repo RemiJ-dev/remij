@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="b" data-name="Calque 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 209.337 1096.346">
+  <defs>
+    <mask id="d" data-name="mask" x="0" y="-514.924" width="2000" height="4000" maskUnits="userSpaceOnUse">
+      <rect y="-514.924" width="2000" height="4000" fill="#fff" stroke-width="0"/>
+    </mask>
+  </defs>
+  <g id="c" data-name="Calque 2">
+    <g mask="url(#d)">
+      <g>
+        <polygon points="0 217.21 209.337 0 195.449 0 0 202.8 0 217.21" fill="#b74fb2" stroke-width="0"/>
+        <polygon points="0 1003.054 189.455 806.473 0 806.473 0 1003.054" fill="#333d42" stroke-width="0"/>
+        <polygon points="0 441.508 189.455 244.927 147.79 244.927 0 398.275 0 441.508" fill="#fff" stroke-width="0"/>
+        <polygon points="0 1096.346 104.668 987.74 90.78 987.74 0 1081.935 0 1096.346" fill="#262e30" stroke-width="0"/>
+      </g>
+    </g>
+  </g>
+</svg>

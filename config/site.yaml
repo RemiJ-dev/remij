@@ -9,7 +9,7 @@ twig:
                 - { path: 'page_home', label: 'Accueil' }
                 - { path: 'article_list', label: 'Articles', children: ['article_show'] }
                 - { path: 'tutorial_list', label: 'Tutoriels', children: ['tutorial_show', 'tutorial_chapter'] }
-                - { path: 'page_content', params: { slug: 'contact' }, label: 'Me contacter' }
+                - { path: 'page_content', params: { slug: 'contact' }, label: 'Me contacter', children: ['page_contact']  }
 
             footer:
                 - { path: 'page_content', params: { slug: 'outils-et-partenaires' }, label: 'Outils et partenaires' }

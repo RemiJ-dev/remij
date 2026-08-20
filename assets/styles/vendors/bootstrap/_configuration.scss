@@ -7,6 +7,19 @@
 @use '../../base/colors' as colors;
 @use '../../base/variables' as variables;
 
+
+// Global spacing
+$spacer: variables.$spacer;
+
+
+// Grid
+$grid-breakpoints: variables.$grid-breakpoints;
+$grid-gutter-width: variables.$grid-gutter-width;
+
+// Containers
+$container-max-widths: variables.$container-max-widths;
+$container-padding-x: variables.$container-padding-x-total;
+
 // Colors
 $primary: map.get(colors.$theme-colors, 'primary');
 $secondary: map.get(colors.$theme-colors, 'secondary');
@@ -55,10 +68,6 @@ $headings-font-weight: variables.$font-weight-normal;
 $link-color: $primary;
 $link-hover-color: $primary;
 $link-decoration: none;
-
-
-// Global spacing
-$spacer: variables.$spacer;
 
 
 // Shadows
