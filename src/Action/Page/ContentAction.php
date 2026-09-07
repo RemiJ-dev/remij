@@ -22,11 +22,8 @@ readonly class ContentAction
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws LoaderError
-     *
-     * This route is used to display pages from `content/pages`.
-     * Since this is a catch-all route, it has a very low priority.
      */
-    #[Route('/{slug<[^\.]+>}', name: 'page_content', priority: -500)]
+    #[Route('/{slug<[^./]+(?:/[^./]+)*>}', name: 'page_content', priority: -500)]
     public function __invoke(
         string $slug,
         PageRepository $pageRepository,
