@@ -3,5 +3,11 @@ framework:
         # The paths to make available to the asset mapper.
         paths:
             assets/: ''
+
+            # Bootstrap
+            '%kernel.project_dir%/node_modules/bootstrap/dist/js/': 'bootstrap'
+            '%kernel.project_dir%/node_modules/@popperjs/core/dist/esm/': 'popper'
+
+            # Font Awesome
             '%kernel.project_dir%/node_modules/@fortawesome/fontawesome-pro/css/': 'fontawesome/css'
             '%kernel.project_dir%/node_modules/@fortawesome/fontawesome-pro/webfonts/': 'fontawesome/webfonts'
