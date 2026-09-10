@@ -29,13 +29,9 @@ return [
         'version' => '8.0.23',
     ],
     'bootstrap' => [
-        'version' => '5.3.8',
+        'path' => 'bootstrap/bootstrap.esm.min.js',
     ],
     '@popperjs/core' => [
-        'version' => '2.11.8',
-    ],
-    'bootstrap/dist/css/bootstrap.min.css' => [
-        'version' => '5.3.8',
-        'type' => 'css',
+        'path' => 'popper/index.js',
     ],
 ];
