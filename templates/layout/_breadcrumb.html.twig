@@ -1,11 +1,14 @@
 <nav aria-label="{{ 'layout.breadcrumb.aria_label'|trans }}">
-    <ol class="breadcrumb">
+    <ul class="breadcrumb">
         {% for menuItem in breadcrumb() %}
             <li class="breadcrumb-item{% if menuItem.isActive %} active{% endif %}"{% if menuItem.isActive %} aria-current="page"{% endif %}>
                 <a href="{{ path(menuItem.route, menuItem.routeParams) }}">
+                    {% if loop.first %}
+                        <i class="fa-sharp fa-light fa-house"></i>
+                    {% endif %}
                     {{ menuItem.label is defined ? (menuItem.translate|default(true) ? menuItem.label|trans : menuItem.label) : pageTitle|default('') }}
                 </a>
             </li>
         {% endfor %}
-    </ol>
+    </ul>
 </nav>
