@@ -1,3 +1,21 @@
 /////////////////////
 //// Breadcrumbs ////
 /////////////////////
+
+.breadcrumb {
+    display: flex;
+    gap: var(--spacer-2);
+    list-style: none;
+    padding-left: 0;
+
+    a {
+        color: var(--color-white);
+        text-decoration: none;
+
+        &:hover,
+        &:active,
+        &:focus {
+            color: var(--color-primary);
+        }
+    }
+}

@@ -1,3 +1,31 @@
 ////////////////
 //// Header ////
 ////////////////
+
+header {
+    backdrop-filter: blur(0);
+    background-color: transparent;
+    padding: 0;
+    transition: all 0.25s;
+
+    &.is-scrolled {
+        backdrop-filter: blur(0.6rem);
+        background-color: hsla(210, 12%, 10%, 0.9);
+        max-width: 100vw;
+        padding: 0;
+        transition: all 0.25s;
+
+        .navbar-brand {
+            margin-bottom: var(--spacer-2);
+            margin-top: var(--spacer-2);
+
+            &__logo {
+                width: 30% !important;
+            }
+        }
+
+        .navbar-nav--main .nav-link.active {
+            background-color: var(--color-primary);
+        }
+    }
+}

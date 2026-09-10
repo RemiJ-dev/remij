@@ -11,8 +11,13 @@
 {% endblock %}
 
 {% block content %}
-
-    {{ page.content|raw }}
+    <section class="section">
+        <h1>Développement Symfony,<br>Formation et accompagnement</h1>
+{#        {{ page.content|raw }}#}
+        <p class="fs-4">
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet <a href="#">dolore</a> magna aliquam erat volutpat.
+        </p>
+    </section>
 
     {% for section in sections %}
         {{ include('pages/sections/' ~ section.type.value ~ '.html.twig', {

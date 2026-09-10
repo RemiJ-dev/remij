@@ -6,8 +6,11 @@
                     {% if loop.first %}
                         <i class="fa-sharp fa-light fa-house"></i>
                     {% endif %}
+
                     {{ menuItem.label is defined ? (menuItem.translate|default(true) ? menuItem.label|trans : menuItem.label) : pageTitle|default('') }}
                 </a>
+
+                {% if not loop.last %}<span class="text-primary ps-2">/</span>{% endif %}
             </li>
         {% endfor %}
     </ul>
