@@ -21,6 +21,7 @@
             <link rel="stylesheet" href="{{ asset('styles/app.scss') }}">
 
             <link rel="stylesheet" href="{{ asset('fontawesome/css/fontawesome.css') }}">
+            <link rel="stylesheet" href="{{ asset('fontawesome/css/sharp-solid.css') }}">
             <link rel="stylesheet" href="{{ asset('fontawesome/css/sharp-light.css') }}">
             <link rel="stylesheet" href="{{ asset('fontawesome/css/sharp-regular.css') }}">
         {% endblock %}
@@ -50,7 +51,10 @@
             <script defer src="/stats/script.js" data-website-id="0f2bea39-4a15-4503-b548-c3bec47f6981"></script>
         {% endif %}
     </head>
-    <body>
+    <body data-controller="scroll-state"
+          data-scroll-state-active-class="is-scrolled"
+          data-scroll-state-target-value="header"
+    >
         {{ include('layout/_bg.html.twig') }}
 
         {% block header %}

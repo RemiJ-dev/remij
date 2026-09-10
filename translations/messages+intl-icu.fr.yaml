@@ -13,7 +13,7 @@ layout:
 
 menu:
     home: "Accueil"
-    blog: "Blog"
+    blog: "Articles"
     tutorials: "Tutoriels"
 
 error:

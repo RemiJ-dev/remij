@@ -16,9 +16,11 @@ $spacer: variables.$spacer;
 $grid-breakpoints: variables.$grid-breakpoints;
 $grid-gutter-width: variables.$grid-gutter-width;
 
+
 // Containers
 $container-max-widths: variables.$container-max-widths;
 $container-padding-x: variables.$container-padding-x-total;
+
 
 // Colors
 $primary: map.get(colors.$theme-colors, 'primary');

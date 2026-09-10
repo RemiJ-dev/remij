@@ -2,6 +2,8 @@
 //// Background ////
 ////////////////////
 
+@use '../vendors/bootstrap/bootstrap' as *;
+
 .bg-visual {
     position: absolute;
     z-index: -1;
@@ -24,24 +26,57 @@
     }
 
     &--active-menu {
+        display: none;
         top: 0;
         transition: all 0.25s;
         width: 31rem;
 
+        @include media-breakpoint-down(xxl) {
+            top: -13rem;
+        }
+
         &-1 {
-            right: calc(var(--container-margin) + 36rem);
+            --link-spacing: 29rem;
+
+            right: calc(var(--container-margin) + var(--link-spacing));
+
+            @include media-breakpoint-down(xxl) {
+                --link-spacing: 21rem;
+            }
         }
 
         &-2 {
-            right: calc(var(--container-margin) + 25rem);
+            --link-spacing: 19rem;
+
+            right: calc(var(--container-margin) + var(--link-spacing));
+
+            @include media-breakpoint-down(xxl) {
+                --link-spacing: 11.5rem;
+            }
         }
 
         &-3 {
-            right: calc(var(--container-margin) + 15rem);
+            --link-spacing: 9rem;
+
+            right: calc(var(--container-margin) + var(--link-spacing));
+
+            @include media-breakpoint-down(xxl) {
+                --link-spacing: 1rem;
+            }
         }
 
         &-4 {
-            right: calc(var(--container-margin) + 3rem);
+            --link-spacing: 3rem;
+
+            right: calc(var(--container-margin) - var(--link-spacing));
+
+            @include media-breakpoint-down(xxl) {
+                --link-spacing: 11rem;
+            }
+        }
+
+        @include media-breakpoint-up(lg) {
+            display: block;
         }
     }
 }
