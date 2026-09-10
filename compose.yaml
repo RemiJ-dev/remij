@@ -1,6 +1,9 @@
 ---
 services:
   php:
+    env_file:
+      - path: .env.docker.local
+        required: false
     # restart: unless-stopped
     environment:
       SERVER_NAME: ${SERVER_NAME:-localhost}, php:80

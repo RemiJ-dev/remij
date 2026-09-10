@@ -1,0 +1,9 @@
+@use '@fortawesome/fontawesome-pro/scss/variables' with (
+    $font-path: '../fontawesome/webfonts'
+);
+
+@use '@fortawesome/fontawesome-pro/scss/fontawesome';
+@use '@fortawesome/fontawesome-pro/scss/fa' as fa;
+
+@use '@fortawesome/fontawesome-pro/scss/sharp-regular' as fa-sharp-regular;
+@use '@fortawesome/fontawesome-pro/scss/sharp-light' as fa-sharp-light;
