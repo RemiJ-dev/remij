@@ -74,8 +74,8 @@ class SitemapActionTest extends WebTestCase
         $actionsDir = \dirname(__DIR__, 2) . '/src/Action';
         $excludedRoutes = ['rss', 'seo_robots', 'seo_sitemap'];
 
-        // Static routes (no parameters), excluding Seo controllers and non-HTML routes
-        foreach (self::discoverControllerRoutes($actionsDir, ['Seo']) as $route) {
+        // Static routes (no parameters), excluding Seo controllers, webhooks (POST only) and non-HTML routes
+        foreach (self::discoverControllerRoutes($actionsDir, ['Seo', 'Hook']) as $route) {
             if ([] !== $route['params'] || \in_array($route['name'], $excludedRoutes, true)) {
                 continue;
             }

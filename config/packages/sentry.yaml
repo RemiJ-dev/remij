@@ -8,6 +8,11 @@ when@prod:
             ignore_exceptions:
                 - 'Symfony\Component\ErrorHandler\Error\FatalError'
                 - 'Symfony\Component\Debug\Exception\FatalErrorException'
+                # Webhooks publics (hooks.remij.dev) : un jeton absent/invalide (401) ou un corps illisible (400)
+                # vient de l'appelant, pas d'une panne — sinon n'importe quel scanner remplit GlitchTip.
+                # AccessDeniedHttpException (jeton non configuré côté serveur) reste remontée.
+                - 'Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException'
+                - 'Symfony\Component\HttpKernel\Exception\BadRequestHttpException'
 #
 #        # If you are using Monolog, you also need this additional configuration to log the errors correctly:
 #        # https://docs.sentry.io/platforms/php/guides/symfony/integrations/monolog/

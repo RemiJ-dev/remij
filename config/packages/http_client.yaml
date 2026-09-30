@@ -1,0 +1,9 @@
+framework:
+    http_client:
+        scoped_clients:
+            # API Planka, authentifiée par la clé API du compte hooks@remij.dev (autowiring : $plankaClient)
+            planka.client:
+                base_uri: '%env(PLANKA_URL)%'
+                headers:
+                    X-Api-Key: '%env(PLANKA_API_KEY)%'
+                timeout: 10

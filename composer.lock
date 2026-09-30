@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e178e7ae6448348d8f923a10b7c80497",
+    "content-hash": "0ba769733160eaa06d1651d28b5e1a2a",
     "packages": [
         {
             "name": "composer/semver",
@@ -3143,16 +3143,16 @@
         },
         {
             "name": "symfony/http-client",
-            "version": "v8.1.6",
+            "version": "v8.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client.git",
-                "reference": "fe91dd1ddf09b61aa01e73d29907acbf1775c0a9"
+                "reference": "e20aca4ceaa888197de5c792ffc551d99e43d98a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client/zipball/fe91dd1ddf09b61aa01e73d29907acbf1775c0a9",
-                "reference": "fe91dd1ddf09b61aa01e73d29907acbf1775c0a9",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/e20aca4ceaa888197de5c792ffc551d99e43d98a",
+                "reference": "e20aca4ceaa888197de5c792ffc551d99e43d98a",
                 "shasum": ""
             },
             "require": {
@@ -3216,7 +3216,7 @@
                 "http"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client/tree/v8.1.6"
+                "source": "https://github.com/symfony/http-client/tree/v8.1.8"
             },
             "funding": [
                 {
@@ -3236,7 +3236,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-30T14:03:40+00:00"
+            "time": "2026-09-24T11:09:32+00:00"
         },
         {
             "name": "symfony/http-client-contracts",
