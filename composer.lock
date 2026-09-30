@@ -11258,7 +11258,8 @@
         "ext-ctype": "*",
         "ext-dom": "*",
         "ext-iconv": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-libxml": "*"
     },
     "platform-dev": {
         "ext-simplexml": "*"
