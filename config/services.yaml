@@ -6,7 +6,14 @@
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
-#parameters:
+parameters:
+    # Hooks Planka (hooks.remij.dev) : nom du champ personnalisé à remplir, et préfixe de branche selon
+    # les étiquettes de la carte — la première étiquette de la liste portée par la carte l'emporte.
+    planka.branch_field: 'Branche'
+    planka.branch_prefixes:
+        Bug: fix
+        Evolution: feat
+    planka.default_branch_prefix: feat
 
 services:
     # default configuration for services in *this* file

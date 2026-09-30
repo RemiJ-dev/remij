@@ -15,6 +15,7 @@ config:
     - .env.local
   shared_dirs:
     - var/log
+    - var/share
     - var/sass
     - var/dart-sass
     - public/images
@@ -23,6 +24,7 @@ config:
   writable_dirs:
     - var
     - var/log
+    - var/share
     - var/cache
     - var/sass
     - var/dart-sass

@@ -25,6 +25,8 @@ class MenuBuilderTest extends TestCase
         'page_content' => 2,
         'article_list' => 2,
         'article_show' => 3,
+        'hook_planka_create' => 1,
+        'hook_planka_labels' => 1,
         'publication_list_by_author' => 2,
         'publication_list_by_tag' => 2,
         'rss' => 1,

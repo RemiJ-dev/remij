@@ -216,6 +216,22 @@ src/
 - **`Infrastructure/Twig/MenuExtension`** — expose `MenuBuilder::breadcrumb()` via la fonction Twig `breadcrumb()`.
 - **`Infrastructure/Stenope/Processor/AssetsProcessor`** — post-traite le HTML des articles pour résoudre les URLs d'assets locaux pour les éléments `<source>` et `<video>` via le composant Asset de Symfony.
 
+### Hooks Planka (`hooks.remij.dev`)
+
+Seule partie **dynamique en prod** avec `/contact` : des webhooks reçus du Planka auto-hébergé (`projet.remij.dev`), servis par PHP-FPM via le vhost nginx `hooks.remij.dev.conf` (seul `/planka/` en POST est exposé, le reste répond 404). Les routes portent `options: ['stenope' => ['ignore' => true]]` et sont POST-only : absentes du build statique et du sitemap.
+
+- **`POST /planka/create`** (`hook_planka_create`, événement `cardCreate`) — numérote la carte dans son titre (`#42 · Titre`, compteur **par projet**) et remplit le champ personnalisé `Branche` (`feat/42-titre-en-slug`). Une carte dupliquée reçoit un nouveau numéro.
+- **`POST /planka/labels`** (`hook_planka_labels`, `cardLabelCreate`/`cardLabelDelete`) — recalcule le préfixe du champ `Branche` en gardant numéro et slug. Préfixes par étiquette dans `config/services.yaml` (`planka.branch_prefixes` : `Bug` → `fix`, `Evolution` → `feat`, première étiquette de la liste gagnante ; défaut `feat`). Nécessaire car une carte est presque toujours créée **sans** étiquette.
+- **`bin/console app:planka:number-cards <board-id> [--dry-run]`** — rattrapage des cartes existantes, dans l'ordre de création. Ne couvre pas la liste système d'archive : sa pagination renvoie un 500 en Planka 2.1.1 (plankanban/planka#1761).
+
+Pièces : `Domain/Planka/` (`Model/CardTitle`, `Model/BranchName`, DTOs, `Service/CardNumberer`, `Repository/CardCounterRepository`), `Infrastructure/Planka/PlankaClient` (client HTTP scopé `planka.client`, en-tête `X-Api-Key` — un `Authorization: Bearer` avec la clé API renvoie 401), `Infrastructure/Planka/WebhookRequestReader` (vérifie `Authorization: Bearer <PLANKA_WEBHOOK_TOKEN>`, refuse tout si le jeton n'est pas configuré ; n'accepte que des ids numériques, concaténés dans les chemins d'API), `Responder/Hook/WebhookResponder` (JSON du résultat), `Infrastructure/Console/PlankaNumberCardsCommand`.
+
+- **Activation par adhésion** : le compte `hooks@remij.dev` n'agit que sur les tableaux dont il est membre *éditeur* ; ailleurs Planka répond 404/403 et le hook renvoie `ignored` (le webhook Planka est global, sans filtre par tableau).
+- **Champ `Branche`** : défini dans un groupe **de base** du projet, exposé sur le tableau par un groupe de tableau basé dessus ; retrouvé **par nom** (`planka.branch_field`), aucun id en config. Sans ce groupe sur le tableau, seul le titre est numéroté.
+- **Compteur** : `%kernel.share_dir%/planka/card-counters.json` (`var/share/<env>/`, dans les `shared_dirs` Deployer), incrément sous `flock`. Il ne redescend jamais sous le plus grand `#N` visible sur le tableau. **Il fait foi** : à copier en cas de changement de serveur.
+- **Env** : `PLANKA_URL`, `PLANKA_API_KEY`, `PLANKA_WEBHOOK_TOKEN` — valeurs réelles dans `.env.local` (dev) et `shared/.env.local` (prod, mode 600 ; prises en compte au déploiement suivant via `composer dump-env`).
+- **Traces en prod** : les logs `info` ne sont pas persistés (`fingers_crossed` au niveau `error`) ; la trace d'un appel est sa réponse JSON, les exceptions remontent dans GlitchTip.
+
 ### Content Files Format
 
 Articles in `content/articles/` follow the naming convention `YYYY-MM-topic.md` with YAML front matter:
@@ -323,6 +339,7 @@ AbstractResponder                  ← base commune : injecte ControllerHelper::
     ├── Page/ContactResponder      ← délègue à ContactFormHandler ; addFlash + redirectToRoute('page_contact') on success, status 422 si invalide
     ├── Page/ContentResponder      ← sélection template custom vs fallback via twig loader ; surcharge le constructeur pour injecter Twig\Environment séparément
     ├── Seo/RobotsResponder        ← Content-Type: text/plain
+    ├── Hook/WebhookResponder      ← étend AbstractResponder (pas Twig) : JsonResponse du NumberingResult
     └── Seo/SitemapResponder       ← Content-Type: application/xml (l'agrégation tags/auteurs vit dans PublicationRepository, pas ici)
 ```
 
@@ -350,6 +367,7 @@ Un fichier par action, organisé en sous-dossiers. Chaque action est une `readon
 - **`Publication/ListByAuthorAction`** — `GET /auteur/{slug:author}` → `publication_list_by_author`
 - **`Publication/RssAction`** — `GET /rss.xml` → `rss`, flux Atom transversal (`Content-Type: application/atom+xml`) : articles + tutoriels + parties publiées de séries publiées, via `PublicationRepository::findFeedEntries()`
 - **`Seo/RobotsAction`** — `GET /robots.txt` → `seo_robots`
+- **`Hook/PlankaCreateAction`** — `POST /planka/create` → `hook_planka_create` ; **`Hook/PlankaLabelsAction`** — `POST /planka/labels` → `hook_planka_labels` (webhooks Planka, voir [Hooks Planka](#hooks-planka-hooksremijdev))
 - **`Seo/SitemapAction`** — `GET /sitemap.xml` → `seo_sitemap`, liste toutes les URLs publiques (articles, tutoriels, parties, pages, tags, auteurs) sauf `seo_robots` et `seo_sitemap`
 
 ### Templates (`templates/`)
@@ -406,6 +424,7 @@ Global site metadata (title, description) and navigation menus (main + footer) a
 - `tests/Domain/Publication/Repository/PublicationRepositoryTest.php` — l'agrégateur, avec les repositories composés **stubés** (`self::createStub()` sur les classes concrètes) : fusion + tri par date, agrégations `findTags()`/`findAuthors()`, `findFeedEntries()` (brouillons exclus, titres contextualisés, noms d'auteurs résolus — slug inconnu conservé tel quel).
 - `tests/Domain/Publication/Repository/AuthorRepositoryTest.php` et `tests/Domain/Publication/DTO/FeedEntryTest.php` — les named constructors de `FeedEntry` (routes par type, héritage tags/auteurs de la série, fallback `updated` = `publishedAt`).
 - `tests/Responder/` — un test par Responder, miroir de `src/Responder/`. Chaque test couvre : le bon template appelé, les headers HTTP spécifiques (Content-Type, Last-Modified), et les cas limites (liste vide, template fallback). Utilise de vraies instances de Domain Models plutôt que des mocks. Le constructeur reçoit les **trois closures** d'`AbstractResponder`/`AbstractTwigResponder` dans l'ordre **`addFlash`, `redirectToRoute`, `render`** (car ils utilisent `AutowireMethodOf`). Les Responders qui n'en ont pas l'usage reçoivent des no-op : `static fn () => null` pour `addFlash`, `static fn (): RedirectResponse => new RedirectResponse('/')` pour `redirectToRoute` (le retour doit être un `RedirectResponse` pour PHPStan), et un vrai closure `render(string, array, ?Response): Response`. `ContentResponder` reçoit en plus un `Twig\Environment` stub pour le check du loader. `ContactResponderTest` couvre les trois branches de `__invoke()` : non soumis (rendu, 200), succès (flash + redirect, pas de rendu), invalide (rendu, 422), en stubbant `ContactFormHandler`.
+- `tests/Domain/Planka/`, `tests/Infrastructure/Planka/`, `tests/Infrastructure/Console/`, `tests/Responder/Hook/` — hooks Planka : `PlankaClient` contre `MockHttpClient`, `CardNumberer` avec `PlankaClient` mocké et un vrai compteur dans un dossier temporaire. `tests/Action/HookActionsTest.php` ne couvre que les branches sans appel à Planka (401, 400, événement ignoré, GET non servi) ; `SitemapActionTest` exclut le dossier `Action/Hook`.
 - `tests/Helper/RouteDiscoveryTrait.php` — shared trait that scans `src/Action/` via Reflection to extract route names, paths, and parameter names. Supports excluding subdirectories and handles `{param:mapping}` syntax.
 - Adding a new file to `content/` automatically adds an action test case — no code change needed.
 
