@@ -68,8 +68,8 @@ jobs:
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
           ssh-keyscan -H 162.19.44.51 >> ~/.ssh/known_hosts
 
-      # make deploy = `php vendor/bin/dep deploy` ; PHP_CONT= force l'exécution
+      # make deploy/prod = `php vendor/bin/dep deploy` ; HAS_DOCKER= force l'exécution
       # hors Docker (ubuntu-latest a docker, donc sans ça le Makefile passerait
       # par `docker compose exec php`).
       - name: '🚀 Deploy'
-        run: make deploy PHP_CONT=
+        run: make deploy/prod HAS_DOCKER=

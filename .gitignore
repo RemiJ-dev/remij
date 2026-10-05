@@ -39,3 +39,7 @@ phpstan.neon
 
 ###> symfonycasts/sass-bundle ###
 ###< symfonycasts/sass-bundle ###
+
+###> docker ###
+/docker/nginx/certs/*.pem
+###< docker ###

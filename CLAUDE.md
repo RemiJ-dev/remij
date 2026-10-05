@@ -6,146 +6,110 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is **RémiJ** — a personal blog and static website built with [Stenope](https://stenopephp.github.io/Stenope/) (a Symfony-based static site generator). The site is a French-language PHP/Symfony developer blog. Content is written in Markdown and compiled into a static site.
 
-**Stack:** PHP 8.5, Symfony 8.0, Stenope (fork RemiJ-dev/Stenope, branche `update-to-sf-80-php-85`), Symfony AssetMapper, Sass, Turbo/Stimulus. Dev environment runs in **Docker via FrankenPHP** (see [Docker development environment](#docker-development-environment)).
+**Stack:** PHP 8.5, Symfony 8.0, Stenope (fork RemiJ-dev/Stenope, branche `update-to-sf-80-php-85`), Symfony AssetMapper, Sass, Turbo/Stimulus. Dev environment runs in **Docker: nginx + PHP-FPM (Alpine)** (see [Docker development environment](#docker-development-environment)).
 
 ## Commands
 
-The `Makefile` is the single entry point and is **Docker-aware**: when the `docker` binary is detected on the host, every PHP/Composer/Symfony/npm command is transparently run inside the `php` container (`docker compose exec php …`). When `docker` is absent — inside the container itself, or on GitHub Actions — the same targets run the binaries directly (this is why CI needs no Docker). Always drive the project through `make`, not the `symfony` CLI.
+The `Makefile` is the single entry point and is **Docker-aware**: when the `docker` binary is detected on the host, every PHP/Composer/Symfony command runs inside the `php` container (`docker compose exec php …`) and every npm/npx command in a throwaway `assets` container (`docker compose run --rm assets …`). When `docker` is absent — inside a container, or with `HAS_DOCKER=` (GitHub Actions) — the same targets run the binaries directly. Always drive the project through `make`, not the `symfony` CLI. `make` (no argument) prints the help.
 
-### Setup
+Naming follows the Wid project's Makefile: `/`-namespaced targets (`npm/install`, `site/build`…), `c=` to pass arguments (`make sf c=about`, `make phpunit c="--testdox"`), `s=` to pick a service (`make logs s=nginx`).
+
+### Setup & everyday
 ```shell
-make install          # Install all dependencies (Composer + npm + importmap assets)
+make setup            # From scratch (destroys containers AND volumes): build, start, npm/install, vendor
+make update           # Every day (after a pull / branch switch): same without destroying anything, idempotent
+make certs            # Once: trusted HTTPS certificate for localhost (needs mkcert on the host)
+make perms            # Once: give back to you files left owned by root (containers used to run as root)
+```
+
+### Docker
+```shell
+make start            # Start the stack in the foreground (logs) — make start/daemon: detached
+make build            # Build images (with cache) — make rebuild: without cache
+make stop / down / downv / uninstall   # Levels 1→4: stop, + containers, + volumes, + images
+make logs s=php       # Follow logs (all services without s=)
+make php              # Shell in the php container (make sh s=<service> for another one)
+make node             # Shell in a throwaway node container
 ```
 
 ### Development
 ```shell
-make serve            # Clear assets + start FrankenPHP in detached mode (site sur https://localhost)
-make logs             # Follow container logs (after make serve)
-make serve.assets     # Watch & compile Sass (bin/console sass:build --watch, runs in the php container)
-make serve.slides     # Start the Marp slides watch server (Docker, http://localhost:8080)
-make start            # Rebuild images then start (after Dockerfile changes)
+make assets/watch     # Watch & compile Sass (bin/console sass:build --watch, php container)
+make assets/install   # importmap:install
+make slides/start     # Marp slides watch server (http://localhost:8080)
+make sf c="…"         # Symfony console — make cc: cache:clear
+make composer c="…"   # Composer — make vendor: composer install
+make npm c="…"        # npm (assets container) — make npm/install: npm install
 ```
 
-### Build
+### Build (static site)
 ```shell
-make build.static     # Full production build (assets + static content)
-make build.assets     # Compile assets for production
-make build.content    # Build static site (APP_ENV=prod, clears image cache)
-make build.content.without-images  # Faster build, skips image resizing
-make build.slides     # Copy slide images, then compile Marp slides
+make site/build              # Full production build: assets + content + slides
+make site/assets             # Compile assets for production
+make site/content            # Build static site (APP_ENV=prod, clears resized images)
+make site/content-fast       # Same, keeps resized images
+make slides/build            # Copy slide images, then compile Marp slides
+make site/clear              # Remove build/ and public/assets/ — site/clear-images: public/resized/ (Glide cache)
 ```
 
-### Lint
+### Quality
 ```shell
-make lint                      # Run all linters
-make lint.php-cs-fixer         # Fix PHP code style (auto-fixes)
-make lint.phpstan              # Static analysis (level max)
-make lint.twig                 # Lint Twig templates
-make lint.yaml                 # Lint YAML files (config + content)
-make lint.eslint               # Lint JS/JSON assets (auto-fixes)
-make lint.container            # Lint Symfony DI container
-```
-
-### Test
-```shell
-make test              # Run PHPUnit tests (APP_ENV=test, via docker compose exec)
-make test c="--testdox"  # Pass options to phpunit via c=
-bin/phpunit            # Run PHPUnit tests directly (hors Docker)
-bin/phpunit --testdox  # Run with human-readable output
-```
-
-### Cache
-```shell
-make clear.cache     # Clear Symfony cache
-make clear.assets    # Remove public/assets/
-make clear.build     # Remove build/ and public/assets/
-make clear.images    # Remove public/resized/ (Glide image cache)
+make tests                   # Everything, without modifying any file: phpcs-check phpstan lint eslint-check phpunit check_composer
+make phpcs / make eslint     # Fix code style (PHP / JS) — *-check variants: dry-run
+make phpstan                 # Static analysis (level max), on a freshly warmed test container
+make lint                    # lint:twig + lint:yaml (config + content) + lint:container
+make phpunit c="--testdox"   # PHPUnit, options via c=
+make check_php_dependencies  # composer audit
 ```
 
 ## Docker development environment
 
-The dev environment is fully containerized via Docker Compose with **FrankenPHP** — no host PHP install or `symfony` CLI binary required. FrankenPHP (Caddy + PHP embedded) remplace le duo `php-fpm` + `nginx` par un seul conteneur.
-
-**How `make` routes commands:** the `Makefile` checks for the `docker` binary (`command -v docker`). When found, `PHP` / `COMPOSER` / `SYMFONY` / `NPM` / `NPX` are prefixed with `docker compose exec php`, so `make install`, `make lint`, `make serve.assets`, etc. all execute **inside the `php` container**. When `docker` is absent (in the container, or in CI), the same targets call the binaries directly. The `@dist` targets (`install@dist`, `build@dist`) always run raw commands, for production/deploy.
+The dev environment is fully containerized via Docker Compose — no host PHP, Node or `symfony` CLI required. Host dependencies: Docker + Compose, `make`, and optionally [mkcert](https://github.com/FiloSottile/mkcert) for a trusted HTTPS certificate.
 
 **`compose.yaml` / `compose.override.yaml` services:**
-- **`php`** — built from the `frankenphp_dev` Dockerfile stage; mounts the project at `/app`. FrankenPHP/Caddy sert HTTP (port 80) et HTTPS (port 443) nativement — aucun nginx séparé. Hot-reload en dev via `FRANKENPHP_WORKER_CONFIG: watch …` (voir le piège du cache mémoire Stenope plus bas). Tous les commandes CLI s'exécutent ici.
-- **`slides`** — `marpteam/marp-cli`; Marp watch server on **http://localhost:8080** (`make serve.slides`).
+- **`php`** — `app_php` Dockerfile stage (`php:8.5-fpm-alpine`); project bind-mounted at `/srv`; PHP-FPM listens on a unix socket shared with nginx through the `php-socket` volume. Also mounts `~/.ssh` and the SSH agent socket (for `deploy/prod`) and a `composercache` volume. All PHP CLI commands run here.
+- **`nginx`** — `app_nginx` stage (`nginx:1-alpine`); serves `public/` (read-only mount) and passes `index.php` to PHP-FPM. Port 80 redirects (302) to 443. Site on **https://localhost**.
+- **`assets`** — `node:24-alpine`, profile `node` (never started by `up`): used by `make` through `docker compose run --rm assets` for npm/npx (install, ESLint, Marp build).
+- **`slides`** — `marpteam/marp-cli`; Marp watch server on **http://localhost:8080** (`make slides/start`).
+- **`mailpit`** — catches the mails sent in dev: **http://localhost:8025**.
 
-Site accessible sur **https://localhost** (port 443, certificat auto-signé Caddy) en développement.
+**Host user, not root:** `php`, `assets` and `slides` run with the host UID/GID, so everything they write in the bind-mounted project (`vendor/`, `node_modules/`, `var/`…) belongs to the host user. The `Makefile` exports `UID`/`GID` (`id -u`/`id -g`); `compose.yaml` passes them as build args to the `php` image (user `app`, home `/home/app`), as `user:` to `assets` and as `MARP_USER` to `slides`. Without `make` (raw `docker compose`), they default to 1000. **After a UID change, rebuild** (`make build`) — and if `php-socket`/`composercache` were created by another user, remove them (`docker volume rm remij_php-socket remij_composercache`). nginx keeps its own users (it only reads `public/`).
 
-**Mode worker & contenu Markdown (piège du cache mémoire Stenope) :** en mode worker, le kernel Symfony et ses services restent vivants entre les requêtes. Le `ContentManager` de Stenope (`vendor/stenope/stenope/src/ContentManager.php`) garde son contenu dans un cache **en mémoire** (`private array $cache`), qui survit donc d'une requête à l'autre. Conséquence : modifier un fichier de `content/**/*.md` ne se voit pas en rechargeant la page tant que le worker n'a pas redémarré. Le `watch` de FrankenPHP redémarre bien le worker sur changement de fichier, **mais son pattern par défaut (`./**/*.{php,yaml,yml,twig,env}`) n'inclut pas `.md`**. D'où le `FRANKENPHP_WORKER_CONFIG: watch ./**/*.{php,yaml,yml,twig,env,md}` explicite dans `compose.override.yaml` : sans le `md`, le contenu reste périmé. À noter : ce glob matche aussi `compose.override.yaml` lui-même (`*.yaml`) → l'éditer redémarre le worker. La prod n'est pas concernée (build statique Stenope, le contenu est pré-compilé).
+**HTTPS:** nginx reads `docker/nginx/certs/localhost.pem` + `localhost-key.pem` (bind-mounted, `*.pem` gitignored). `make certs` creates them with mkcert on the host (`mkcert -install` puts its CA in the host trust stores — that host step is why mkcert is not run inside Docker: a CA installed in a container is trusted by nobody). Without them, `docker/nginx/docker-entrypoint.d/40-ssl-certificate.sh` generates a self-signed certificate at nginx startup (browser warning) so a fresh clone still starts.
 
-**Deux patterns `watch` à garder synchronisés** dans `compose.override.yaml`, qui répondent à deux besoins distincts — **les deux doivent inclure `md`** :
-- `FRANKENPHP_WORKER_CONFIG: watch …` → redémarre le **worker** (= vide le cache mémoire Stenope ci-dessus). Sans lui, le contenu servi reste périmé.
-- `FRANKENPHP_SITE_CONFIG: hot_reload …` → surveille les fichiers et **pousse un update Mercure** vers le navigateur quand un fichier surveillé change. Son champ `watch` vaut `null` par défaut (pattern interne avec `twig` mais sans `md`), d'où la forme explicite `hot_reload ./**/*.{php,yaml,yml,twig,env,md}`. Vérifiable via `frankenphp adapt --config /etc/frankenphp/Caddyfile` (champs `hot_reload.watch` et `workers[].watch`).
+**`.env.docker.local`** (gitignored by `/.env.*.local`, optional — `required: false`) is loaded with `env_file` into `php`, `assets` and `slides`. It holds `FONTAWESOME_PACKAGE_TOKEN`, used by `.npmrc` to install Font Awesome Pro from its private registry.
 
-  **⚠️ Le directive `hot_reload` ne suffit PAS à recharger le navigateur** : contrairement à ce qu'on pourrait croire, FrankenPHP **n'injecte aucun script** dans le HTML. Il expose seulement, par requête, la variable `$_SERVER['FRANKENPHP_HOT_RELOAD']` (= l'URL d'abonnement Mercure, ex. `/.well-known/mercure?topic=…/hot-reload/<hash>`) et publie les events de changement sur ce topic. C'est au **layout** d'embarquer le client JS qui s'abonne et recharge/morph la page. D'où le bloc dans `templates/base.html.twig` (head), gardé par la présence de la variable (donc dev only — le build statique de prod ne l'a pas) :
-  ```twig
-  {% set hotReloadUrl = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-  {% if hotReloadUrl %}
-      <meta name="frankenphp-hot-reload:url" content="{{ hotReloadUrl }}">
-      <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-      <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-  {% endif %}
-  ```
-  (`idiomorph` = morphing DOM en préservant scroll/inputs ; sans lui, simple `reload`. CDN jsdelivr déjà autorisé par le firewall du devcontainer.) Sans ce bloc, le worker redémarre bien et le contenu `.md` est à jour **au rechargement manuel**, mais la page ouverte ne se recharge jamais toute seule.
+**`Dockerfile`** (multi-stage):
+- **`app_php`** — extensions (intl, zip, apcu, opcache, gd, imagick, exif, ftp, curl), git/make/openssh, Composer, **Dart Sass** (musl build in `/opt/dart-sass`, on the `PATH`), the **`node` binary** (copied from `node:24-alpine`, + `libstdc++`), `docker/php/` config (`conf.d/app.ini`, `php-fpm.d/zz-docker.conf`, `entrypoint.sh`), then the `app` user.
+- **`app_nginx`** — `docker/nginx/` config (`nginx.conf`, `gzip.conf`, `templates/default.conf.template` rendered by envsubst at startup) + `openssl` for the self-signed fallback.
 
-**`Dockerfile`** (multi-stage, image de base `dunglas/frankenphp:1-php8.5`, Debian) :
-- **`frankenphp_base`** — installe les extensions PHP (apcu, intl, opcache, zip), Composer, et l'entrypoint `frankenphp/docker-entrypoint.sh`.
-- **`frankenphp_dev`** — hérite de `frankenphp_base`, ajoute les outils dev (curl, xdebug), Node 24 (copié depuis `node:24-bookworm-slim`), et Dart Sass (`npm install -g sass`).
+**Why `node` in the php image:** Stenope's Prism highlighter (`vendor/stenope/stenope/src/Highlighter/Prism.php`) spawns `node` from PHP. Without it, any page with a code block hangs 60 s then returns a 500 (`ProcessTimedOutException`), and `stenope:build` fails the same way. npm itself lives in the `assets` service.
 
-**`.frankenphp/` config files** (remplace l'ancien `.docker/`) :
-- `.frankenphp/Caddyfile` — config Caddy (root `/app/public`, worker mode FrankenPHP, hub Mercure intégré requis pour le hot-reload dev, fichiers statiques).
-- `.frankenphp/conf.d/10-app.ini` — PHP ini pour tous les envs (timezone UTC, OPcache).
-- `.frankenphp/conf.d/20-app.dev.ini` — config PHP dev uniquement (Xdebug `client_host`).
-- `.frankenphp/docker-entrypoint.sh` — entrypoint du conteneur : au démarrage, lance `npm install` si `node_modules/` est vide, **puis** `composer install` si `vendor/` est vide. L'ordre compte : les `auto-scripts` de Composer exécutent `sass:build`, qui résout Bootstrap depuis `node_modules/` (`load_path` de `symfonycasts_sass.yaml`) — même contrainte dans `install@dist` et dans `tests.yaml`. L'entrypoint est copié dans l'image au build : après modification, `make start` (rebuild).
+**Why Dart Sass in the php image:** `symfonycasts/sass-bundle` (`search_for_binary`, default `true`) uses a `sass` found on the `PATH` before its own download in `var/dart-sass/`. That download path is fixed (`var/dart-sass/sass`) whatever the libc, and `var/` is bind-mounted: a glibc build left there (by the host or an older Debian image) does not run on Alpine (`dart: not found`). With `sass` on the `PATH`, `var/dart-sass/` is never used. Version: `DART_SASS_VERSION` build arg.
 
-**Typical bootstrap:**
-```shell
-make serve            # clear assets + build image (first run) + start FrankenPHP detached
-make install          # composer (dev deps) + npm + importmap, inside the php container
-make serve.assets     # second terminal: Sass watcher
-make logs             # optionnel : suivre les logs FrankenPHP
-```
+**Order `npm/install` → `vendor`:** Composer's `auto-scripts` run `sass:build`, which resolves Bootstrap from `node_modules/` (`load_path` in `symfonycasts_sass.yaml`) — same constraint in `install@dist` and `tests.yaml`.
 
-After a `Dockerfile` change, use `make start` instead of `make serve` to force a rebuild.
-
-**Sass / dart-sass:** `symfonycasts/sass-bundle` needs a `sass` binary. Its `search_for_binary` option (default `true`) looks for `sass` on the `PATH` *before* downloading anything, so the image installs Dart Sass globally (`npm install -g sass`) and the bundle uses it directly — it never downloads a platform binary into `var/dart-sass/`. L'image est Debian-based (plus Alpine/musl), mais le principe reste le même : garder `sass` sur le `PATH` évite tout téléchargement automatique par le bundle.
-
-## Dev Container (usage agent / autonome)
-
-Le dossier `.devcontainer/` configure un Dev Container VSCode pour faire tourner Claude Code de manière autonome à l'intérieur du conteneur `php` (FrankenPHP).
-
-**Spécificités du devcontainer :**
-- `remoteUser: nonroot` — Claude Code tourne sous l'utilisateur `nonroot` (défini dans le Dockerfile `frankenphp_dev`).
-- `postCreateCommand` — installe `intelephense` globalement, crée `AGENTS.md` (symlink vers `.devcontainer/AGENTS.md` pour les outils compatibles OpenAI Codex), et symlinke `.claude` vers `.devcontainer/.claude` (config Claude Code spécifique au devcontainer).
-- `postStartCommand` — lance `.devcontainer/init-firewall.sh` : configure un pare-feu sortant via `iptables` + `dnsmasq` qui bloque tout trafic réseau sauf les domaines autorisés (GitHub, Anthropic, npm, Packagist, CDN jsdelivr…). Pour autoriser un nouveau domaine, l'ajouter à la ligne `ipset=` dans `init-firewall.sh` puis reconstruire le devcontainer.
-- `compose.devcontainer.yaml` — surcharge supplémentaire : ajoute `NET_ADMIN` (requis par le firewall) et active Xdebug en mode `develop,debug` avec `start_with_request=yes`.
-- `claudeCode.initialPermissionMode: bypassPermissions` — Claude Code tourne en mode sans confirmation de permissions (conçu pour usage autonome).
-
-**Extensions VSCode installées :** `anthropic.claude-code`, `bmewburn.vscode-intelephense-client` (LSP PHP), `xdebug.php-debug`.
+**No auto-reload:** PHP-FPM boots a fresh kernel per request, so edited `content/**/*.md` or templates show up on a manual reload (no Stenope in-memory cache surviving between requests). Nothing pushes changes to the browser.
 
 ## Verification workflow
 
-After any code change, always verify in this order:
+After any code change, always verify with:
 
 ```shell
-make lint      # Must pass before running tests
-make test      # Run after lint passes
+make tests     # phpcs-check phpstan lint eslint-check phpunit check_composer — must pass
 ```
 
-Never use `bin/phpunit` directly — always go through `make test`.
+Use `make phpcs` / `make eslint` to fix code style. Never use `bin/phpunit` directly — always go through `make phpunit`.
 
 ## Continuous integration & deployment (GitHub Actions)
 
-Two workflows under `.github/workflows/`, both running **without Docker**. GitHub runners ship the `docker` binary, so the Docker-aware Makefile would otherwise route through `docker compose exec php`; every `make` call in CI therefore passes **`PHP_CONT=`** to force the direct, non-container path. **When editing or adding a `make` step in a workflow, always append `PHP_CONT=`** — forgetting it makes the step try to exec into a non-existent container.
+Two workflows under `.github/workflows/`, both running **without Docker**. GitHub runners ship the `docker` binary, so the Docker-aware Makefile would otherwise route through `docker compose exec php`; every `make` call in CI therefore passes **`HAS_DOCKER=`**, which empties `PHP_CONT` and `NODE_CONT` at once and forces the direct, non-container path. **When editing or adding a `make` step in a workflow, always append `HAS_DOCKER=`** — forgetting it makes the step try to exec into a non-existent container.
 
-**`tests.yaml` (« Tests »)** — on push to `main`, pull requests, and manual dispatch. Sets up PHP 8.4 + Node 24 via `shivammathur/setup-php` and `actions/setup-node` (no Docker), installs deps, then runs the lint suite and tests through the Makefile (`make lint.<x>@integration PHP_CONT=`, `make test PHP_CONT=`) plus a production static-build smoke check (`sass:build` + `asset-map:compile` + `stenope:build`).
+**`tests.yaml` (« Tests »)** — on push to `main`, pull requests, and manual dispatch. Sets up PHP 8.5 + Node 24 via `shivammathur/setup-php` and `actions/setup-node` (no Docker), installs deps, then runs the checks through the Makefile (`make phpcs-check phpstan lint eslint-check check_composer HAS_DOCKER=`, `make phpunit HAS_DOCKER=`) plus a production static-build smoke check (`sass:build` + `asset-map:compile` + `stenope:build`).
 
 **`deploy.yaml` (« Deploy to server »)** — server deployment via Deployer, **gated on Tests**:
 - Triggered by `workflow_run` when the **Tests** workflow completes on `main`; the job's `if` proceeds only when `github.event.workflow_run.conclusion == 'success'`. `workflow_dispatch` allows a manual deploy that bypasses the gate. Note: `workflow_run` only fires from the workflow file on the **default branch** — it won't trigger from a feature branch, so the gate is testable only once merged to `main`.
-- The runner is only an **orchestrator**: installs Composer deps (Deployer is in `require-dev` → `vendor/bin/dep`), loads the `DEPLOY_SSH_KEY` secret into `ssh-agent` (`webfactory/ssh-agent`), trusts the server host key (`ssh-keyscan`), and runs `make deploy PHP_CONT=` (= `php vendor/bin/dep deploy`). No assets/site are built in CI.
+- The runner is only an **orchestrator**: installs Composer deps (Deployer is in `require-dev` → `vendor/bin/dep`), loads the `DEPLOY_SSH_KEY` secret into `ssh-agent` (`webfactory/ssh-agent`), trusts the server host key (`ssh-keyscan`), and runs `make deploy/prod HAS_DOCKER=` (= `php vendor/bin/dep deploy`). No assets/site are built in CI.
 - The actual build happens **on the server**: Deployer's `update` task runs `make install@dist` + `make build@dist` in the new release dir. The `@dist` Makefile targets are the raw, Docker-free variants made for this.
 
 **Deployer recipe — `deploy.yaml` at the repo root** (not to be confused with `.github/workflows/deploy.yaml`): a Deployer 7 YAML recipe importing `recipe/symfony.php`. Single host `prod` (`162.19.44.51`, user `ubuntu`, `deploy_path: /var/www/remij.dev`), clones `git@github.com:RemiJ-dev/remij.git` on `branch: main`, `forward_agent: true` (the server reuses the runner's forwarded SSH agent to clone from GitHub — so `DEPLOY_SSH_KEY`'s public half must also be a read-only **deploy key** on the GitHub repo, in addition to `ubuntu@…:~/.ssh/authorized_keys`), keeps 2 releases, and posts start/success/fail notifications to a Mattermost webhook.
@@ -315,8 +279,8 @@ header: "Slide header"
 
 Slides are compiled with [Marp CLI](https://github.com/marp-team/marp-cli) (configured in `package.json`):
 ```shell
-make serve.slides   # Watch mode via Docker (marpteam/marp-cli image, port 8080)
-make build.slides   # Copy images to slides/images/, then npx marp
+make slides/start   # Watch mode via Docker (marpteam/marp-cli image, port 8080)
+make slides/build   # Copy images to slides/images/, then npx marp (assets container)
 ```
 The `marp` config in `package.json`: `inputDir: ./content/videos`, `glob: **/slides.md`, `output: ./slides`, `themeSet: ./assets/styles/slides`, theme `remij`, lang `fr`.
 
@@ -386,7 +350,7 @@ Un fichier par action, organisé en sous-dossiers. Chaque action est une `readon
 - `assets/styles/app.scss` — main Sass entry point.
 - `assets/styles/prism.scss` — syntax highlighting styles.
 - `assets/controllers/` — Stimulus controllers.
-- Managed via Symfony AssetMapper + sass-bundle (no webpack/vite). The `sass` binary is provided globally in the Docker image (`npm install -g sass`) and found via the bundle's `search_for_binary` — see the Sass note in [Docker development environment](#docker-development-environment).
+- Managed via Symfony AssetMapper + sass-bundle (no webpack/vite). The `sass` binary (Dart Sass, musl build) is installed in the php image and found on the `PATH` via the bundle's `search_for_binary` — see « Why Dart Sass in the php image » in [Docker development environment](#docker-development-environment).
 
 ### Site Configuration (`config/site.yaml`)
 
@@ -394,7 +358,7 @@ Global site metadata (title, description) and navigation menus (main + footer) a
 
 ### Tests (`tests/`)
 
-- **PHPUnit 13** is used for tests via `bin/phpunit`.
+- **PHPUnit 13** is used for tests via `bin/phpunit` (run through `make phpunit`).
 - `phpunit.xml.dist` uses `Symfony\Bridge\PhpUnit\SymfonyExtension` (replaces the old `SymfonyTestsListener`).
 - **Every new service** in `src/` must have a corresponding unit test in `tests/` (mirroring the `src/` directory structure). Use plain `PHPUnit\Framework\TestCase` for services with no kernel dependency.
 - Data providers use `symfony/finder` (`Finder`) to scan directories dynamically — no hardcoded slugs or route names.

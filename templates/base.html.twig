@@ -33,14 +33,6 @@
         <meta name="apple-mobile-web-app-title" content="RémiJ" />
         <link rel="manifest" href="{{ asset('site.webmanifest') }}" />
 
-        {# FrankenPHP hot reload (dev only): the server var is only set when the `hot_reload` directive is active. #}
-        {% set hotReloadUrl = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if hotReloadUrl %}
-            <meta name="frankenphp-hot-reload:url" content="{{ hotReloadUrl }}">
-            <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-            <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
-
         {# Umami analytics (prod only, so the dev server never reports traffic).
            Nginx proxies both the script and its collect endpoint under /stats/,
            so they share the site's own origin: no third-party request, nothing

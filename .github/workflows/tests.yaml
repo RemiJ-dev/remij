@@ -80,10 +80,10 @@ jobs:
 
       - name: 'Lint'
         if: always() && steps.deps.outcome == 'success'
-        run: make lint@integration PHP_CONT= DOCKER_COMP=
+        run: make phpcs-check phpstan lint eslint-check check_composer HAS_DOCKER=
 
       - name: Run tests
-        run: make test PHP_CONT= DOCKER_COMP=
+        run: make phpunit HAS_DOCKER=
 
       - name: 'Check build static'
         run: |

@@ -1,41 +1,56 @@
 ---
 services:
   php:
+    build:
+      context: .
+      target: app_php
+      args:
+        COMPOSER_GITHUB_TOKEN: ${COMPOSER_GITHUB_TOKEN:-}
+        # Host user, exported by the Makefile (default 1000)
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
     env_file:
       - path: .env.docker.local
         required: false
-    # restart: unless-stopped
-    environment:
-      SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
-      DEFAULT_URI: https://${SERVER_NAME:-localhost}:${HTTPS_PORT:-443}
-      MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-      MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
-      # Run "composer require symfony/orm-pack" to install and configure Doctrine ORM
-      # DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?serverVersion=${POSTGRES_VERSION:-15}&charset=${POSTGRES_CHARSET:-utf8}
-      # Run "composer require symfony/mercure-bundle" to install and configure the Mercure integration
-      MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
-      MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}:${HTTPS_PORT:-443}/.well-known/mercure}
-      MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
     volumes:
-      - caddy_data:/data
-      - caddy_config:/config
-    ports:
-      - name: http
-        target: 80
-        published: "80"
-        protocol: tcp
-      - name: https
-        target: 443
-        published: "443"
-        protocol: tcp
-      - name: http3
-        target: 443
-        published: "443"
-        protocol: udp
+      - ./:/srv
+      - ${SSH_AUTH_SOCK}:${SSH_AUTH_SOCK}
+      - ~/.ssh:/home/app/.ssh
+      - php-socket:/var/run/php
+      - composercache:/home/app/.composer
+    environment:
+      - SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
 
-# Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
+  nginx:
+    build:
+      context: .
+      target: app_nginx
+    depends_on:
+      - php
+    volumes:
+      - php-socket:/var/run/php
+      - ./public:/srv/public:ro
+      - ./docker/nginx/certs:/etc/nginx/certs
+    ports:
+      - "80:80"
+      - "443:443"
+
+  assets:
+    profiles:
+      - node
+    image: node:24-alpine
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /srv
+    env_file:
+      - path: .env.docker.local
+        required: false
+    volumes:
+      - ./:/srv
+    environment:
+      # npm cache: the host UID may have no home directory in the image
+      HOME: /tmp
+    ports:
+      - "8000:8080"
 
 ###> symfony/mailer ###
   mailpit:
@@ -54,8 +69,6 @@ services:
 ###< symfony/mailer ###
 
 volumes:
-  caddy_data:
-  caddy_config:
+  php-socket:
   mailer_data:
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
+  composercache:

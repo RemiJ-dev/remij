@@ -1,94 +1,106 @@
-#syntax=docker/dockerfile:1
-
-# Versions
-FROM dunglas/frankenphp:1-php8.5 AS frankenphp_upstream
+#syntax=docker/dockerfile:1.4
 
 # The different stages of this Dockerfile are meant to be built into separate images
-# https://docs.docker.com/build/building/multi-stage/#stop-at-a-specific-build-stage
-# https://docs.docker.com/reference/compose-file/build/#target
+# https://docs.docker.com/develop/develop-images/multistage-build/#stop-at-a-specific-build-stage
+# https://docs.docker.com/compose/compose-file/#target
 
+FROM php:8.5-fpm-alpine AS app_php
 
-# Base FrankenPHP image
-FROM frankenphp_upstream AS frankenphp_base
+WORKDIR /srv
 
-SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+# php extensions installer: https://github.com/mlocati/docker-php-extension-installer
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-WORKDIR /app
-
-# persistent deps
-# hadolint ignore=DL3008
-RUN <<-EOF
-	apt-get update
-	apt-get install -y --no-install-recommends \
-		file \
+# persistent / runtime deps
+RUN apk add --no-cache \
 		git \
-		make
+		make \
+		openssh \
+	;
+
+RUN set -eux; \
 	install-php-extensions \
-		@composer \
-		apcu \
 		intl \
+		zip \
+		apcu \
 		opcache \
-		zip
-	rm -rf /var/lib/apt/lists/*
-EOF
+		gd \
+		imagick \
+		exif \
+		ftp \
+		curl \
+	;
 
-# https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
-ENV COMPOSER_ALLOW_SUPERUSER=1
+# Dart Sass (musl build), found on the PATH by symfonycasts/sass-bundle (search_for_binary):
+# the bundle then never uses var/dart-sass/, which may hold a glibc build downloaded from elsewhere
+ARG DART_SASS_VERSION=1.105.1
+ARG TARGETARCH
+RUN set -eux; \
+	case "${TARGETARCH:-amd64}" in \
+		amd64) arch=x64 ;; \
+		arm64) arch=arm64 ;; \
+		*) echo "Unsupported architecture: ${TARGETARCH}" >&2; exit 1 ;; \
+	esac; \
+	wget -qO- "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-${arch}-musl.tar.gz" \
+		| tar -xz -C /opt; \
+	/opt/dart-sass/sass --version
+ENV PATH="/opt/dart-sass:${PATH}"
 
-ENV PHP_INI_SCAN_DIR=":$PHP_INI_DIR/app.conf.d"
+# Node binary only (npm runs in the "assets" service): Stenope's Prism highlighter runs `node` from PHP
+RUN apk add --no-cache libstdc++
+COPY --from=node:24-alpine /usr/local/bin/node /usr/local/bin/node
 
-###> recipes ###
-###< recipes ###
+# PHP configuration
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+COPY docker/php/conf.d/app.ini $PHP_INI_DIR/conf.d/
 
-COPY --link .frankenphp/conf.d/10-app.ini $PHP_INI_DIR/app.conf.d/
-COPY --link --chmod=755 .frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
-COPY --link .frankenphp/Caddyfile /etc/frankenphp/Caddyfile
+# PHP-FPM configuration
+COPY docker/php/php-fpm.d/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
+
+# Entrypoint
+COPY docker/php/entrypoint.sh /usr/local/bin/docker-entrypoint
+RUN chmod +x /usr/local/bin/docker-entrypoint
 
 ENTRYPOINT ["docker-entrypoint"]
+CMD ["php-fpm"]
 
-HEALTHCHECK --start-period=60s CMD php -r 'exit(false === @file_get_contents("http://localhost:2019/metrics", context: stream_context_create(["http" => ["timeout" => 5]])) ? 1 : 0);'
-CMD [ "frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile" ]
+COPY --from=composer/composer:2-bin /composer /usr/bin/composer
 
-# Dev FrankenPHP image
-FROM frankenphp_base AS frankenphp_dev
+# The project is bind-mounted: git refuses to work in a directory owned by another user
+RUN git config --system --add safe.directory /srv
 
-ENV APP_ENV=dev
-ENV XDEBUG_MODE=off
-ENV FRANKENPHP_WORKER_CONFIG=watch
+# Host user: the container runs with the host UID/GID (passed by the Makefile),
+# so that files written in the bind-mounted project belong to the host user, not root
+ARG UID=1000
+ARG GID=1000
+RUN set -eux; \
+	group="$(getent group "${GID}" | cut -d: -f1)"; \
+	if [ -z "${group}" ]; then \
+		group=app; \
+		addgroup -g "${GID}" "${group}"; \
+	fi; \
+	adduser -D -u "${UID}" -G "${group}" -h /home/app -s /bin/sh app; \
+	mkdir -p /var/run/php /home/app/.composer /home/app/.ssh; \
+	chown -R "${UID}:${GID}" /var/run/php /home/app
 
-# dev dependencies
-# hadolint ignore=DL3008
-RUN <<-EOF
-	mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-	apt-get update
-	apt-get install -y --no-install-recommends \
-		aggregate \
-		curl \
-		dnsmasq \
-		dnsutils \
-		iproute2 \
-		ipset \
-		iptables \
-		jq \
-		sudo
-	install-php-extensions xdebug
-	rm -rf /var/lib/apt/lists/*
-	useradd -m -s /bin/bash nonroot
-	echo "nonroot ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/nonroot
-	git config --system --add safe.directory /app
-EOF
+ENV COMPOSER_HOME=/home/app/.composer
+ENV PATH="${PATH}:/home/app/.composer/vendor/bin"
 
-COPY --from=node:24-bookworm-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
-COPY --from=node:24-bookworm-slim /usr/local/include/node /usr/local/include/node
-COPY --from=node:24-bookworm-slim /usr/local/share/man/man1/node.1 /usr/local/share/man/man1/node.1
-COPY --from=node:24-bookworm-slim /usr/local/share/doc/node /usr/local/share/doc/node
-COPY --from=node:24-bookworm-slim /usr/local/bin/node /usr/local/bin/node
-RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
-	&& ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx \
-	&& npm install -g sass npm
+USER app
 
+ARG COMPOSER_GITHUB_TOKEN=""
+RUN set -eux; \
+	if [ -n "${COMPOSER_GITHUB_TOKEN}" ]; then \
+		composer config -g github-oauth.github.com "${COMPOSER_GITHUB_TOKEN}"; \
+	fi
 
-COPY --link .frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
+# Nginx
+FROM nginx:1-alpine AS app_nginx
 
-CMD [ "frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile", "--watch" ]
+# openssl: self-signed certificate fallback for HTTPS, see docker/nginx/docker-entrypoint.d/
+RUN apk add --no-cache openssl
 
+# Copy nginx conf
+COPY docker/nginx/*.conf /etc/nginx/
+COPY docker/nginx/templates/ /etc/nginx/templates/
+COPY --chmod=755 docker/nginx/docker-entrypoint.d/ /docker-entrypoint.d/
