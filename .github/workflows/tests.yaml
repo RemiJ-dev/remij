@@ -50,6 +50,11 @@ jobs:
       - name: 'Install dependencies'
         id: deps
         run: |
+          # npm before composer: composer's auto-scripts run sass:build, which resolves Bootstrap from node_modules/
+          echo "::group::npm install"
+            npm install --color=always --no-progress --no-audit
+          echo "::endgroup::"
+
           echo "::group::composer install"
             composer install --no-progress --ansi
           echo "::endgroup::"
@@ -57,10 +62,6 @@ jobs:
           # echo "::group::install phpunit"
           #   vendor/bin/simple-phpunit install
           # echo "::endgroup::"
-
-          echo "::group::npm install"
-            npm install --color=always --no-progress --no-audit
-          echo "::endgroup::"
 
           echo "::group::importmap install"
             php bin/console importmap:install --ansi

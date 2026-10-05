@@ -2,6 +2,11 @@
 set -e
 
 if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
+	# Before composer: its post-install auto-scripts run sass:build, which resolves Bootstrap from node_modules/
+	if [ -z "$(ls -A 'node_modules/' 2>/dev/null)" ] && command -v npm >/dev/null; then
+		npm install --no-progress --no-audit --no-fund
+	fi
+
 	if [ -z "$(ls -A 'vendor/' 2>/dev/null)" ]; then
 		composer install --prefer-dist --no-progress --no-interaction
 	fi

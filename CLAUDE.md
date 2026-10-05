@@ -99,7 +99,7 @@ Site accessible sur **https://localhost** (port 443, certificat auto-signé Cadd
 - `.frankenphp/Caddyfile` — config Caddy (root `/app/public`, worker mode FrankenPHP, hub Mercure intégré requis pour le hot-reload dev, fichiers statiques).
 - `.frankenphp/conf.d/10-app.ini` — PHP ini pour tous les envs (timezone UTC, OPcache).
 - `.frankenphp/conf.d/20-app.dev.ini` — config PHP dev uniquement (Xdebug `client_host`).
-- `.frankenphp/docker-entrypoint.sh` — entrypoint du conteneur : lance `composer install` automatiquement si `vendor/` est vide au démarrage.
+- `.frankenphp/docker-entrypoint.sh` — entrypoint du conteneur : au démarrage, lance `npm install` si `node_modules/` est vide, **puis** `composer install` si `vendor/` est vide. L'ordre compte : les `auto-scripts` de Composer exécutent `sass:build`, qui résout Bootstrap depuis `node_modules/` (`load_path` de `symfonycasts_sass.yaml`) — même contrainte dans `install@dist` et dans `tests.yaml`. L'entrypoint est copié dans l'image au build : après modification, `make start` (rebuild).
 
 **Typical bootstrap:**
 ```shell

@@ -47,9 +47,9 @@ update.npm:
 	$(NPM) update
 
 install@dist:
+	npm install
 	composer install
 	composer dump-env prod
-	npm install
 	php bin/console importmap:install
 
 ###############
@@ -186,7 +186,7 @@ down: ## Stop the docker hub
 	@$(DOCKER_COMP) down --remove-orphans
 
 logs: ## Show live logs
-	@$(DOCKER_COMP) logs --tail=0 --follow
+	@$(DOCKER_COMP) logs --tail=100 --follow
 
 sh: ## Connect to the FrankenPHP container
 	@$(PHP_CONT) sh
