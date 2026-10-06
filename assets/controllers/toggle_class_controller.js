@@ -1,30 +1,228 @@
 import { Controller } from '@hotwired/stimulus';
 
 /**
- * ToggleClassController (Stimulus)
+ * ToggleClassController
  *
- * Objectif :
- * - Ajouter / retirer une ou plusieurs classes CSS sur un élément "trigger"
- *   et éventuellement sur un ou plusieurs "targets"
+ * Ajoute ou retire une ou plusieurs classes CSS au clic sur un élément.
  *
- * API :
- * - via stimulus_action() + params :
- *   {{ stimulus_action('toggle-class', 'toggle', 'click', {
- *       name: 'active',
- *       group: 'faq-1'
- *   }) }}
+ * Par défaut, les classes sont appliquées uniquement sur l'élément déclencheur.
+ * Il est également possible de synchroniser l'état avec une ou plusieurs
+ * targets grâce à un identifiant de groupe.
  *
- * Comportements :
- * - accordion = false (défaut) :
- *   -> toggle normal sur le trigger + les targets du group
  *
- * - accordion = true :
- *   -> au clic sur un item :
- *      - si l’item est déjà actif : on retire les classes partout
- *      - sinon :
- *          1) on retire les classes partout
- *          2) on ajoute les classes sur l’item cliqué + ses targets
+ * --------------------------------------------------------------------------
+ * Configuration du controller
+ * --------------------------------------------------------------------------
+ *
+ * Valeurs :
+ *
+ * - defaultClass : classe(s) utilisée(s) lorsque le paramètre `name`
+ *                  n'est pas renseigné.
+ *                  Défaut : "active"
+ *
+ * - accordion    : active le comportement accordéon.
+ *                  Défaut : false
+ *
+ *
+ * Exemple :
+ *
+ * <div
+ *     data-controller="toggle-class"
+ *     data-toggle-class-default-class-value="active"
+ *     data-toggle-class-accordion-value="false"
+ * >
+ *     ...
+ * </div>
+ *
+ *
+ * --------------------------------------------------------------------------
+ * 1. Toggle simple sur le trigger
+ * --------------------------------------------------------------------------
+ *
+ * La classe est ajoutée / retirée directement sur l'élément cliqué.
+ *
+ * Twig :
+ *
+ * <button
+ *     {{ stimulus_action('toggle-class', 'toggle', 'click', {
+ *         name: 'active'
+ *     }) }}
+ * >
+ *     Toggle
+ * </button>
+ *
+ * `name` peut être omis pour utiliser `defaultClass`.
+ *
+ *
+ * --------------------------------------------------------------------------
+ * 2. Plusieurs classes
+ * --------------------------------------------------------------------------
+ *
+ * Plusieurs classes peuvent être passées dans `name`, séparées par des
+ * espaces. Elles sont toujours ajoutées / retirées ensemble.
+ *
+ * <button
+ *     {{ stimulus_action('toggle-class', 'toggle', 'click', {
+ *         name: 'active is-open'
+ *     }) }}
+ * >
+ *     Toggle
+ * </button>
+ *
+ *
+ * --------------------------------------------------------------------------
+ * 3. Toggle du trigger + une target
+ * --------------------------------------------------------------------------
+ *
+ * Le paramètre `group` du trigger permet de l'associer à une target portant
+ * le même `data-group`.
+ *
+ * <button
+ *     {{ stimulus_action('toggle-class', 'toggle', 'click', {
+ *         name: 'active',
+ *         group: 'menu'
+ *     }) }}
+ * >
+ *     Toggle menu
+ * </button>
+ *
+ * <div
+ *     data-toggle-class-target="target"
+ *     data-group="menu"
+ * >
+ *     ...
+ * </div>
+ *
+ * La classe `active` est alors synchronisée sur le bouton ET sur la target.
+ *
+ *
+ * --------------------------------------------------------------------------
+ * 4. Toggle du trigger + plusieurs targets
+ * --------------------------------------------------------------------------
+ *
+ * Plusieurs targets peuvent appartenir au même groupe.
+ *
+ * <button
+ *     {{ stimulus_action('toggle-class', 'toggle', 'click', {
+ *         group: 'menu'
+ *     }) }}
+ * >
+ *     Toggle menu
+ * </button>
+ *
+ * <div data-toggle-class-target="target" data-group="menu">
+ *     ...
+ * </div>
+ *
+ * <div data-toggle-class-target="target" data-group="menu">
+ *     ...
+ * </div>
+ *
+ * Toutes les targets du groupe sont synchronisées avec le trigger.
+ *
+ *
+ * --------------------------------------------------------------------------
+ * 5. Plusieurs groupes indépendants
+ * --------------------------------------------------------------------------
+ *
+ * <button
+ *     {{ stimulus_action('toggle-class', 'toggle', 'click', {
+ *         group: 'first'
+ *     }) }}
+ * >
+ *     First
+ * </button>
+ *
+ * <div data-toggle-class-target="target" data-group="first">
+ *     ...
+ * </div>
+ *
+ * <button
+ *     {{ stimulus_action('toggle-class', 'toggle', 'click', {
+ *         group: 'second'
+ *     }) }}
+ * >
+ *     Second
+ * </button>
+ *
+ * <div data-toggle-class-target="target" data-group="second">
+ *     ...
+ * </div>
+ *
+ * En mode normal (`accordion = false`), chaque groupe est indépendant.
+ *
+ *
+ * --------------------------------------------------------------------------
+ * 6. Mode accordéon
+ * --------------------------------------------------------------------------
+ *
+ * Avec `accordion = true`, une seule entrée peut être active à la fois
+ * dans le scope du controller.
+ *
+ * Au clic :
+ *
+ * - si le trigger est déjà actif :
+ *     toutes les classes sont retirées ;
+ *
+ * - sinon :
+ *     toutes les entrées sont désactivées, puis les classes sont ajoutées
+ *     au trigger courant et à ses targets.
+ *
+ * Exemple :
+ *
+ * <div
+ *     data-controller="toggle-class"
+ *     data-toggle-class-accordion-value="true"
+ * >
+ *     <button
+ *         {{ stimulus_action('toggle-class', 'toggle', 'click', {
+ *             group: 'faq-1'
+ *         }) }}
+ *     >
+ *         Question 1
+ *     </button>
+ *
+ *     <div data-toggle-class-target="target" data-group="faq-1">
+ *         Réponse 1
+ *     </div>
+ *
+ *     <button
+ *         {{ stimulus_action('toggle-class', 'toggle', 'click', {
+ *             group: 'faq-2'
+ *         }) }}
+ *     >
+ *         Question 2
+ *     </button>
+ *
+ *     <div data-toggle-class-target="target" data-group="faq-2">
+ *         Réponse 2
+ *     </div>
+ * </div>
+ *
+ *
+ * --------------------------------------------------------------------------
+ * Notes
+ * --------------------------------------------------------------------------
+ *
+ * - Sans `group`, aucune target n'est utilisée : seul le trigger est modifié.
+ *
+ * - Une target doit avoir :
+ *
+ *     data-toggle-class-target="target"
+ *
+ *   ainsi qu'un :
+ *
+ *     data-group="..."
+ *
+ *   correspondant au paramètre `group` du trigger.
+ *
+ * - Toutes les targets doivent se trouver dans le scope du controller.
+ *
+ * - En mode accordéon, la fermeture des autres éléments concerne toute
+ *   l'instance du controller. Utiliser plusieurs controllers distincts pour
+ *   obtenir plusieurs accordéons indépendants.
  */
+
 export default class extends Controller {
 
     static targets = ['target'];

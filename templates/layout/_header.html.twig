@@ -27,75 +27,77 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            {% set currentRoute = app.request.attributes.get('_route') %}
+            <div class="navbar-content-wrapper">
+                {% set currentRoute = app.request.attributes.get('_route') %}
 
-            <ul class="navbar-nav navbar-nav--main">
-                {% for item in site.menu %}
-                    {% set isActive =
-                        (item.path is defined and currentRoute == item.path)
-                        or currentRoute in item.children|default([])
-                    %}
+                <ul class="navbar-nav navbar-nav--main">
+                    {% for item in site.menu %}
+                        {% set isActive =
+                            (item.path is defined and currentRoute == item.path)
+                            or currentRoute in item.children|default([]) %}
 
-                    <li class="nav-item">
-                        <a
-                            href="{{ item.url ?? path(item.path, item.params|default({})) }}"
-                            class="nav-link{{ isActive ? ' active' : '' }}"
-                            {% if isActive %}aria-current="page"{% endif %}
-                            {% if item.url is defined %}target="_blank"{% endif %}
-                        >
-                            {% if item.icon|default(false) %}
-                                <i class="icon icon--{{ item.icon }}" aria-hidden="true"></i>
-                            {% endif %}
+                        <li class="nav-item">
+                            <a
+                                href="{{ item.url ?? path(item.path, item.params|default({})) }}"
+                                class="nav-link{{ isActive ? ' active' : '' }}"
+                                {% if isActive %}aria-current="page"{% endif %}
+                                {% if item.url is defined %}target="_blank"{% endif %}
+                            >
+                                {% if item.icon|default(false) %}
+                                    <i class="icon icon--{{ item.icon }}" aria-hidden="true"></i>
+                                {% endif %}
 
-                            <span>{{ item.label }}</span>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-
-            <div class="navbar-theme-dropdown" {{ stimulus_controller('theme') }}>
-                <button type="button"
-                        class="btn btn-link nav-link px-0 px-lg-2 py-2 dropdown-toggle"
-                        aria-expanded="false"
-                        data-bs-toggle="dropdown"
-                        data-bs-display="static"
-                        aria-label="{{ 'layout.header.theme.toggle'|trans }}"
-                >
-                    <i class="fa-sharp fa-solid fa-circle-half-stroke text-white" title="{{ 'layout.header.theme.toggle'|trans }}"></i>
-                    <span class="d-flex gap-2 d-lg-none">{{ 'layout.header.theme.toggle'|trans }}</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <button type="button"
-                                class="dropdown-item d-flex align-items-center"
-                                data-theme-target="toggle"
-                                data-theme-value="light"
-                                data-action="click->theme#switch"
-                        >
-                            {{ 'layout.header.theme.light'|trans }}
-                        </button>
-                    </li>
-                    <li>
-                        <button type="button"
-                                class="dropdown-item d-flex align-items-center"
-                                data-theme-target="toggle"
-                                data-theme-value="dark"
-                                data-action="click->theme#switch"
-                        >
-                            {{ 'layout.header.theme.dark'|trans }}
-                        </button>
-                    </li>
-                    <li>
-                        <button type="button"
-                                class="dropdown-item d-flex align-items-center"
-                                data-theme-target="toggle"
-                                data-theme-value="auto"
-                                data-action="click->theme#switch"
-                        >
-                            {{ 'layout.header.theme.auto'|trans }}
-                        </button>
-                    </li>
+                                <span>{{ item.label }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
                 </ul>
+
+                <div class="navbar-theme-dropdown" {{ stimulus_controller('theme') }}>
+                    <button type="button"
+                            class="btn btn-link nav-link px-2 py-2 dropdown-toggle"
+                            aria-expanded="false"
+                            data-bs-toggle="dropdown"
+                            data-bs-display="static"
+                            aria-label="{{ 'layout.header.theme.toggle'|trans }}"
+                    >
+                        <i class="fa-sharp fa-solid fa-circle-half-stroke text-white"
+                           title="{{ 'layout.header.theme.toggle'|trans }}"></i>
+                        <span class="d-flex gap-2 d-lg-none ms-2">{{ 'layout.header.theme.toggle'|trans }}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-lg-end">
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item d-flex align-items-center"
+                                    data-theme-target="toggle"
+                                    data-theme-value="light"
+                                    data-action="click->theme#switch"
+                            >
+                                {{ 'layout.header.theme.light'|trans }}
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item d-flex align-items-center"
+                                    data-theme-target="toggle"
+                                    data-theme-value="dark"
+                                    data-action="click->theme#switch"
+                            >
+                                {{ 'layout.header.theme.dark'|trans }}
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item d-flex align-items-center"
+                                    data-theme-target="toggle"
+                                    data-theme-value="auto"
+                                    data-action="click->theme#switch"
+                            >
+                                {{ 'layout.header.theme.auto'|trans }}
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
