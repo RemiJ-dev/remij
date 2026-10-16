@@ -16,3 +16,5 @@ twig:
                 - { path: 'page_content', params: { slug: 'mentions-legales' }, label: 'Mentions légales' }
                 - { path: 'page_content', params: { slug: 'contact' }, label: 'Me contacter' }
                 - { path: 'rss', label: 'Flux RSS' }
+                - { url: 'https://connect.symfony.com/profile/remij-dev', label: 'Symfony' }
+                - { url: 'https://github.com/Dreeckan', label: 'GitHub' }
