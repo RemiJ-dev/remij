@@ -84,6 +84,40 @@ jobs:
       - name: Run tests
         run: make test PHP_CONT= DOCKER_COMP=
 
+      # Les SVG des diagrammes sont versionnés : le build de prod tourne sur le
+      # serveur (Deployer -> `make build@dist`), qui n'a donc pas besoin de D2.
+      # En contrepartie, `make build.diagrams` est une commande d'écriture, et
+      # rien n'empêcherait un `.d2` modifié de partir sans son SVG régénéré —
+      # l'ancien schéma serait alors déployé sans le moindre signal. On régénère
+      # donc ici pour comparer.
+      - name: 'Check diagrams are up to date'
+        if: always()
+        run: |
+          # Version alignée sur celle de l'image de dev : régénérer avec une autre
+          # version de D2 produirait un diff permanent.
+          d2_version="$(grep -oP '^ARG D2_VERSION=\K.*' Dockerfile)"
+          arch="$(dpkg --print-architecture)"
+
+          echo "::group::install d2 ${d2_version} (${arch})"
+            curl -fsSL "https://github.com/terrastruct/d2/releases/download/v${d2_version}/d2-v${d2_version}-linux-${arch}.tar.gz" -o /tmp/d2.tar.gz
+            tar -xzf /tmp/d2.tar.gz -C /tmp
+            sudo install -m 0755 "/tmp/d2-v${d2_version}/bin/d2" /usr/local/bin/d2
+            d2 --version
+          echo "::endgroup::"
+
+          # `-B` est indispensable : un checkout frais donne à tous les fichiers le
+          # même mtime, donc le rendu incrémental ne verrait aucune source plus
+          # récente que sa cible et ne régénérerait rien — le contrôle ne
+          # détecterait jamais rien.
+          echo "::group::make -B build.diagrams"
+            make -B build.diagrams PHP_CONT= DOCKER_COMP=
+          echo "::endgroup::"
+
+          if ! git diff --exit-code --stat -- assets/images; then
+            echo "::error::Des SVG sont désynchronisés de leurs sources D2. Lancer 'make build.diagrams' et commiter les fichiers régénérés."
+            exit 1
+          fi
+
       - name: 'Check build static'
         run: |
           bin/console sass:build --ansi

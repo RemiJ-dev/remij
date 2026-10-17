@@ -183,6 +183,18 @@
   padding-top: var(--bs-gutter-x);
 }
 
+// Diagrammes D2 inlinés dans le contenu, cf. D2DiagramProcessor.
+// Le rendu est fait avec `--scale=1` (cf. Makefile), donc la racine porte ses
+// dimensions : chaque schéma s'affiche à sa taille naturelle, plafonnée à la
+// colonne de contenu. Pas de `width: 100%`, qui agrandirait les petits schémas
+// jusqu'à en déformer le texte et empêcherait `margin: auto` de les centrer.
+svg[data-d2-version] {
+  display: block;
+  height: auto;
+  margin: 1.5rem auto;
+  max-width: 100%;
+}
+
 h1:not(.card-header) {
   border-left: 6px solid rgba(var(--bs-primary-rgb), 1);
 }
